@@ -48,3 +48,4 @@ hist(Z,xlab="Value",col="cyan" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm F
 curve(dnorm(x,0,1),add=T)
 exp<- mean(normgen)
 var<- var(normgen)
+
