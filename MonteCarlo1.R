@@ -1,4 +1,4 @@
-set.seed(12)
+set.seed(13)
 
 
 
@@ -53,24 +53,19 @@ var<- var(normgen)
 
 
 
-upper_tail_prob<- function(N,gen_norm){
-  
-  
-  theta_upp_lim <- 5
-  theta_low_lim <- 0
-  prob = rep(NA,theta_upp_lim+1)
-  for(theta in 0:theta_upp_lim){
-    prob[theta+1]=sum(gen_norm>theta)/length(gen_norm)
-    
-  }
-  
+upper_tail_prob<- function(gen_norm,theta){
+  prob=sum(gen_norm>theta)/length(gen_norm)
   return(prob)
-  
-  
 }
+x <- seq(0, 5, by = 0.01)
+R<- sapply(seq(0, 5, by = 0.01), function(x) upper_tail_prob(gen_norm,x))
+# Calculate cumulative probabilities using pnorm
+prob <- 1-pnorm(x,0,1)
+
+# Plot the cumulative probabilities
+matplot(x, cbind(prob,R), type = "l", xlab = "x", ylab = "Cumulative Probability", main = "Normal Distribution")
 
 
 
-print(upper_tail_prob(1000,gen_norm))
 
 

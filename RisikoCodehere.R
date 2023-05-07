@@ -1,4 +1,3 @@
-
 set.seed(123)
 combat_round <- function(def_units, att_units,sim=1000) {
   Results = rep(NA,sim)
@@ -16,16 +15,12 @@ combat_round <- function(def_units, att_units,sim=1000) {
           att_units<-att_units-1
         }
       }
-      
     }
     Results[i]<- ifelse(att_units>0,1,0)
     att_units<-AS
     def_units<-DS
   }
   return(mean(Results))
-    
-    
-   
 }
 
 
