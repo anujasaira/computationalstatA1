@@ -41,7 +41,6 @@ sum(Z >= 3) / length(Z)
 sum(X1 >= 3) / length(X1)
 
 normgen <- rnorm(10000)
-par(mfrow=c(1,3))
 hist(X1, main="Normal Distribution", xlab="Value",col="blue" ,breaks=30,freq = F,xlim=c(-4,4))
 curve(dnorm(x,0,1),add=T)
 hist(normgen,xlab="Value",col="darkgreen" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function")
@@ -64,8 +63,5 @@ prob <- 1-pnorm(x,0,1)
 
 # Plot the cumulative probabilities
 matplot(x, cbind(prob,R), type = "l", xlab = "x", ylab = "Cumulative Probability", main = "Normal Distribution")
-
-
-
-
+legend("topright", legend = c("pnorm", "old-naive approach"), col = 1:3, lty = 1, bty = "n", cex = 0.8)
 
