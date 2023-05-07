@@ -36,3 +36,150 @@ ggplot(data, aes(x = Quantiles)) +
 
 ggplot(data, aes(x = Quantiles)) +
   geom_line(aes(y = True_Probabilities, color = "True Normal"))
+
+
+
+
+
+# Set the parameter for Pareto distribution
+gamma <- 2
+
+# Function to sample X from Pareto distribution
+sample_X <- function() {
+  return(rpareto(1, gamma))
+}
+
+# Function to sample Y = log(X)
+sample_Y <- function() {
+  x <- sample_X()
+  return(log(x))
+}
+
+# Sample X and Y
+x <- sample_X()
+y <- sample_Y()
+
+# Print the sampled values
+print(paste("X:", x))
+print(paste("Y:", y))
+
+
+
+
+
+# Required packages
+library(ggplot2)
+library(ggthemes)
+library(ggpubr)
+
+# Function to sample from Pareto distribution
+pareto_sampler <- function(n, gamma) {
+  u <- runif(n)
+  x <- (1/u)^(1/gamma)
+  return(x)
+}
+
+# Function to calculate Y = log(X)
+y_transform <- function(x) {
+  y <- log(x)
+  return(y)
+}
+
+
+
+
+# Required packages
+library(ggplot2)
+library(ggthemes)
+library(ggpubr)
+
+# Function to sample from Pareto distribution
+pareto_sampler <- function(n, gamma) {
+  u <- runif(n)
+  x <- (1/u)^(1/gamma)
+  return(x)
+}
+
+# Function to calculate Y = log(X)
+y_transform <- function(x) {
+  y <- log(x)
+  return(y)
+}
+
+# Generate samples and transform
+gamma_values <- c(1, 2, 5)  # Example gamma values
+n_samples <- 1000  # Number of samples to generate
+
+sample_data <- data.frame()
+
+for (gamma in gamma_values) {
+  x <- pareto_sampler(n_samples, gamma)
+  y <- y_transform(x)
+  data <- data.frame(x = x, y = y, gamma = as.factor(gamma))
+  sample_data <- rbind(sample_data, data)
+}
+
+# Plot histogram and density
+histogram_plot <- ggplot(sample_data, aes(x = y, fill = gamma)) +
+  geom_histogram(binwidth = 0.5, alpha = 0.7) +
+  facet_wrap(~gamma, ncol = 1) +
+  labs(title = "Histogram of Y = log(X) for different gamma values",
+       x = "Y", y = "Count") +
+  theme_bw()
+
+density_plot <- ggplot(sample_data, aes(x = y, fill = gamma)) +
+  geom_density(alpha = 0.7) +
+  facet_wrap(~gamma, ncol = 1) +
+  labs(title = "Density Plot of Y = log(X) for different gamma values",
+       x = "Y", y = "Density") +
+  theme_bw()
+
+# Combine plots
+combined_plot <- ggarrange(histogram_plot, density_plot,
+                           nrow = 2, ncol = 1,
+                           common.legend = TRUE,
+                           legend = "right")
+
+# Display the combined plot
+print(combined_plot)
+
+
+
+
+
+# Load required library
+library(ggplot2)
+
+# Function to generate samples from Pareto distribution
+generate_samples <- function(gamma, n) {
+  return(1 / (runif(n)^(1/gamma)))
+}
+
+# Generate samples and compute Y = log(X)
+gamma_values <- c(1, 2, 5)  # Different values of gamma
+num_samples <- 10000        # Number of samples to generate
+
+# Create a list to store the samples and their transformed values
+samples_list <- list()
+
+for (gamma in gamma_values) {
+  X <- generate_samples(gamma, num_samples)
+  Y <- log(X)
+  samples_list[[as.character(gamma)]] <- Y
+}
+
+# Plot histogram and density for each gamma value
+for (gamma in gamma_values) {
+  # Create a new plot
+  plot_title <- paste("Histogram and Density Plot (γ =", gamma, ")", sep=" ")
+  p <- ggplot(data.frame(x = samples_list[[as.character(gamma)]]), aes(x = x)) +
+    theme_minimal() +
+    ggtitle(plot_title) +
+    labs(x = "Y", y = "Density") +
+    geom_histogram(binwidth = 0.1, fill = "steelblue", color = "white", alpha = 0.7) +
+    geom_density(color = "red", size = 0.7)
+  
+  # Display the plot
+  print(p)
+}
+
