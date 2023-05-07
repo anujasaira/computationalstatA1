@@ -3,7 +3,7 @@ combat_round <- function(def_units, att_units,sim=1) {
   Results = rep(NA,sim)
   AS<-att_units
   DS<-def_units
-  for(i in 1:N){
+  for(i in 1:sim){
     while(def_units>0 & att_units>0){
       Dnum <- sort(sample(1:6, min(def_units,3),replace = TRUE),decreasing = T)
       Anum <- sort(sample(1:6, min(att_units,3),replace = TRUE),decreasing = T)
