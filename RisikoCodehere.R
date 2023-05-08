@@ -1,11 +1,11 @@
 set.seed(123)
-combat_round <- function(def_units, att_units,sim=1) {
+combat_round <- function(att_units,def_units,sim=10) {
   Results = rep(NA,sim)
   AS<-att_units
   DS<-def_units
-  for(i in 1:N){
+  for(i in 1:sim){
     while(def_units>0 & att_units>0){
-      Dnum <- sort(sample(1:6, min(def_units,3),replace = TRUE),decreasing = T)
+      Dnum <- sort(sample(1:6, min(def_units,2),replace = TRUE),decreasing = T)
       Anum <- sort(sample(1:6, min(att_units,3),replace = TRUE),decreasing = T)
       for (j in 1:min(length(Dnum),length(Anum))){
         if(Anum[j]>Dnum[j]){
@@ -23,36 +23,36 @@ combat_round <- function(def_units, att_units,sim=1) {
   return(mean(Results))
 }
 
+print(combat_round(10,10))
 
-
-result2 <- function(){
-  att_unit <- 1:10
-  def_unit <- 1:10
-  res<-matrix(nrow=length(att_unit),ncol =length(def_unit))
-  
-  for(i in 1:length(att_unit)){
-    for(j in 1:length(def_unit)){
-      res[i,j] <- combat_round(att_unit[i],def_unit[j])
-    }
-  }
-  return(res)
-}
-
-print(result2())
+# result2 <- function(){
+#   att_unit <- 1:10
+#   def_unit <- 1:10
+#   res<-matrix(nrow=length(att_unit),ncol =length(def_unit))
+#   
+#   for(i in 1:length(att_unit)){
+#     for(j in 1:length(def_unit)){
+#       res[i,j] <- combat_round(att_unit[i],def_unit[j],1000)
+#     }
+#   }
+#   return(res)
+# }
+# 
+# print(result2())
 
 result1 <- function(){
   res<-sapply(1:10, function(x) {
   sapply(1:10, function(y) {
-    combat_round(x,y,1)
+    combat_round(y,x,1000)
     })
   })
   return(res)
 }
 # Print the result
-print(result)
+#print(result)
 
 
-result1()
+print(result1())
 
 microbenchmark::microbenchmark(result2(),result1())
 
