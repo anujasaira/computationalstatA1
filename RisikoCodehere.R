@@ -45,6 +45,13 @@ att_prob<- data.frame(
 
 
 #go through outer 
+ggplot(att_prob,aes(x=defender_unit,y=attacker_unit,fill=win_prob))+
+  geom_tile()+
+  scale_fill_gradient(low="grey",high="darkgreen")+
+  labs(title = "Attacker Win Probability",x="Defender Units",y="Attacker Units")+
+  theme_minimal()
+
+
 
 print(combat_round(def_units=1,att_units=2,sim=10000))
 
