@@ -1,3 +1,5 @@
+library(ggplot2)
+
 set.seed(123)
 combat_round <- function(att_units,def_units,sim=10000) {
   Results = rep(NA,sim)
@@ -42,7 +44,7 @@ att_prob<- data.frame(
 )
 
 
-
+#go through outer 
 
 print(combat_round(def_units=1,att_units=2,sim=10000))
 
