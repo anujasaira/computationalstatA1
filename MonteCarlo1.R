@@ -11,15 +11,9 @@ normal_functn_gen = function(sim){
 }
 
 gen_norm<-normal_functn_gen(sim=10000)
-gen_norm_mean<- mean(gen_norm)
-gen_norm_mean
-gen_norm_variance<-var(gen_norm)
-gen_norm_variance
+mean(gen_norm)
+var(gen_norm)
 
-#code to be deleted
-
-variance <- sum((Z - mean(Z))^2) / (length(Z) - 1)
-variance
 
 
 N <- 10000

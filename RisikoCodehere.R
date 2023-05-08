@@ -1,11 +1,11 @@
 set.seed(123)
-combat_round <- function(att_units,def_units,sim=10) {
+combat_round <- function(att_units,def_units,sim=10000) {
   Results = rep(NA,sim)
   AS<-att_units
   DS<-def_units
   for(i in 1:sim){
     while(def_units>0 & att_units>0){
-      Dnum <- sort(sample(1:6, min(def_units,2),replace = TRUE),decreasing = T)
+      Dnum <- sort(sample(1:6, min(def_units,3),replace = TRUE),decreasing = T)
       Anum <- sort(sample(1:6, min(att_units,3),replace = TRUE),decreasing = T)
       for (j in 1:min(length(Dnum),length(Anum))){
         if(Anum[j]>Dnum[j]){
@@ -23,24 +23,7 @@ combat_round <- function(att_units,def_units,sim=10) {
   return(mean(Results))
 }
 
-print(combat_round(10,10))
-
-# result2 <- function(){
-#   att_unit <- 1:10
-#   def_unit <- 1:10
-#   res<-matrix(nrow=length(att_unit),ncol =length(def_unit))
-#   
-#   for(i in 1:length(att_unit)){
-#     for(j in 1:length(def_unit)){
-#       res[i,j] <- combat_round(att_unit[i],def_unit[j],1000)
-#     }
-#   }
-#   return(res)
-# }
-# 
-# print(result2())
-
-result1 <- function(){
+prob_att_win <- function(){
   res<-sapply(1:10, function(x) {
   sapply(1:10, function(y) {
     combat_round(y,x,1000)
@@ -52,9 +35,11 @@ result1 <- function(){
 #print(result)
 
 
-print(result1())
-
-microbenchmark::microbenchmark(result2(),result1())
+att_prob<- data.frame(
+  attacker_unit<- rep(1:10,10),
+  defender_unit<- rep(1:10,each= 10),
+  win_prob<- as.vector(prob_att_win())
+)
 
 
 
