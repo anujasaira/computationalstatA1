@@ -10,13 +10,15 @@ normal_functn_gen = function(sim){
   return(Z)
 }
 
+N <- 10000
+
 gen_norm<-normal_functn_gen(sim=10000)
 mean(gen_norm)
 var(gen_norm)
 
 
 
-N <- 10000
+
 U1 <- runif(N)
 U2 <- runif(N)
 X1 <- sqrt( -2*log(U1) )*cos(2*pi*U2)
