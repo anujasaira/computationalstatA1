@@ -3,13 +3,8 @@ title: "Assignment I - CompStat2023"
 author: "Aldo Giovanni e Giacomo"
 date: "Anuja Saira Abraham 5204982, Alessia Marzotti 5108443, Miriam Mercuri 5207057"
 output:
-  pdf_document:
-    toc: yes
-  html_document:
-    theme: readable
-    toc: yes
-    code_folding: show
-    df_print: paged
+  pdf_document: default
+  html_document: default
 ---
 
 # Set up
@@ -36,21 +31,18 @@ and $$P(Z>y)=1 - 0,421=0,579$$
 
 Here there are some code to simulate a generic Risiko! game for different values of competing units.
 ```{r}
-set.seed(123)
+library(ggplot2)
 
-combat_round <- function(def_units, att_units,sim=1000) {
-  
+set.seed(123)
+combat_round <- function(att_units,def_units,sim=10000) {
   Results = rep(NA,sim)
   AS<-att_units
   DS<-def_units
-  for(i in 1:N){
-    
+  for(i in 1:sim){
     while(def_units>0 & att_units>0){
       Dnum <- sort(sample(1:6, min(def_units,3),replace = TRUE),decreasing = T)
       Anum <- sort(sample(1:6, min(att_units,3),replace = TRUE),decreasing = T)
-      
       for (j in 1:min(length(Dnum),length(Anum))){
-        
         if(Anum[j]>Dnum[j]){
           def_units<-def_units-1
         }
@@ -63,14 +55,40 @@ combat_round <- function(def_units, att_units,sim=1000) {
     att_units<-AS
     def_units<-DS
   }
-  
   return(mean(Results))
 }
-```
 
-```{r}
+prob_att_win <- function(){
+  res<-sapply(1:10, function(x) {
+  sapply(1:10, function(y) {
+    combat_round(y,x,1000)
+    })
+  })
+  return(res)
+}
+# Print the result
+#print(result)
+
+
+att_prob<- data.frame(
+  attacker_unit<- rep(1:10,10),
+  defender_unit<- rep(1:10,each= 10),
+  win_prob<- as.vector(prob_att_win())
+)
+
+
+#go through outer 
+ggplot(att_prob,aes(x=defender_unit,y=attacker_unit,fill=win_prob))+
+  geom_tile()+
+  scale_fill_gradient(low="grey",high="darkgreen")+
+  labs(title = "Attacker Win Probability",x="Defender Units",y="Attacker Units")+
+  theme_minimal()
+
+
+
 print(combat_round(def_units=1,att_units=2,sim=10000))
 ```
+
 
 
 # Exercise 3
