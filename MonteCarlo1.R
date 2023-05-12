@@ -31,7 +31,7 @@ curve(dnorm(x,0,1),add=T)
 
 
 #old and naive algorithm
-sum(Z >= 3) / length(Z)
+##############sum(Z >= 3) / length(Z) could NOT find "Z"############
 
 #BM
 sum(X1 >= 3) / length(X1)
@@ -41,7 +41,8 @@ hist(X1, main="Normal Distribution", xlab="Value",col="blue" ,breaks=30,freq = F
 curve(dnorm(x,0,1),add=T)
 hist(normgen,xlab="Value",col="darkgreen" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function")
 curve(dnorm(x,0,1),add=T)
-hist(Z,xlab="Value",col="cyan" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function")
+#hist(Z,xlab="Value",col="cyan" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function") 
+#################### NOT FIND Z #####################
 curve(dnorm(x,0,1),add=T)
 exp<- mean(normgen)
 var<- var(normgen)
