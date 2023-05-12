@@ -2,9 +2,7 @@
 title: "Assignment I - CompStat2023"
 author: "Aldo Giovanni e Giacomo"
 date: "Anuja Saira Abraham 5204982, Alessia Marzotti 5108443, Miriam Mercuri 5207057"
-output:
-  pdf_document: default
-  html_document: default
+output: 
 ---
 
 # Set up
@@ -14,22 +12,33 @@ output:
 ```
 
 
+
 # Simulation problem: \texttt{RISIKO!}
+
+# Exeercise 1
 
 ## Point a
 
 Compute $P [\max(X_1, X_2) > Y_1]$.
 
-We know that $Z=max(X_1,X_2) \in (1,2,3,4,5,6)$ and that $P(Z=z)=(2(z-1)+1)/36$.
-In other word we want to find $P(Z>y)=1-P(Z \leq y)$.
+We know that $Z=max(X_1,X_2) \in (1,2,3,4,5,6)$ and that
+$P(Z=z)=(2(z-1)+1)/36$. In other word we want to find
+$P(Z>y)=1-P(Z \leq y)$.
 $P(Z \leq y)=\\P(Z=1 \cap y=1)+\\P(Z=1 \cap y=2)+P(Z=2 \cap y=2)+\\P(Z=1 \cap y=3)+P(Z=2 \cap y=3)+P(Z=3 \cap y=3)+\\P(Z=1 \cap y=4)+P(Z=2 \cap y=4)+P(Z=3 \cap y=4)+P(Z=4 \cap y=4)+\\P(Z=1 \cap y=5)+P(Z=2 \cap y=5)+P(Z=3 \cap y=5)+P(Z=4 \cap y=5)+P(Z=5 \cap y=5)+\\P(Z=1 \cap y=6)+P(Z=2 \cap y=6)+P(Z=3 \cap y=6)+P(Z=4 \cap y=6)+P(Z=5 \cap y=6)+P(Z=6 \cap y=6)$
 
-So we have $P(Z \leq y)= 6\frac{1}{36}\frac{1}{6}+5\frac{3}{36}\frac{1}{6}+4\frac{5}{36}\frac{1}{6}+3\frac{7}{36}\frac{1}{6}+2\frac{9}{36}\frac{1}{6}+\frac{11}{36}\frac{1}{6}\approx0,421$
+So we have
+$P(Z \leq y)= 6\frac{1}{36}\frac{1}{6}+5\frac{3}{36}\frac{1}{6}+4\frac{5}{36}\frac{1}{6}+3\frac{7}{36}\frac{1}{6}+2\frac{9}{36}\frac{1}{6}+\frac{11}{36}\frac{1}{6}\approx0,421$
 and $$P(Z>y)=1 - 0,421=0,579$$
 
 ## Point b-c-d
 
+<<<<<<< HEAD
 Here there are some code to simulate a generic \texttt{Risiko!} game for different values of competing units.
+
+Here there are some code to simulate a generic Risiko! game for
+different values of competing units.
+
+
 ```{r}
 library(ggplot2)
 
@@ -85,11 +94,15 @@ ggplot(att_prob,aes(x=defender_unit,y=attacker_unit,fill=win_prob))+
   geom_tile(color = "white",lwd = 0.5,linetype = 1)+
   theme_minimal()+
   theme(plot.title = element_text(hjust = 0.5))
+  scale_fill_gradient(low="grey",high="darkgreen")+
+  labs(title = "Attacker Win Probability",x="Defender Units",y="Attacker Units")+
+  theme_minimal()
 
 
 
 print(combat_round(def_units=1,att_units=2,sim=10000))
 ```
+
 
 # Monte Carlo simulations I
 
@@ -149,24 +162,28 @@ curve(dnorm(x,0,1),add=T)
 
 ## Point a
 
-The Pareto distribution is defined by a density $f(x;\gamma)=\gamma x^{-(\gamma +1)}$ over $(1;+\infty)$, with $\gamma >0$.
+The Pareto distribution is defined by a density
+$f(x;\gamma)=\gamma x^{-(\gamma +1)}$ over $(1;+\infty)$, with
+$\gamma >0$.
 
-It can be generated as the $-\frac{1}{\gamma}$ power of a uniform r.v. 
+It can be generated as the $-\frac{1}{\gamma}$ power of a uniform r.v.
 
-Cumulative distribution function of Pareto distribution $\int_1^x \gamma z^{-(\gamma +1)} dz= \gamma \int_1^x z^{-1-\gamma}dz=-[x^{-\gamma}-1^{-\gamma}]=-x^{-\gamma}+1=1-(\frac{1}{x})^{\gamma}$
+Cumulative distribution function of Pareto distribution
+$\int_1^x \gamma z^{-(\gamma +1)} dz= \gamma \int_1^x z^{-1-\gamma}dz=-[x^{-\gamma}-1^{-\gamma}]=-x^{-\gamma}+1=1-(\frac{1}{x})^{\gamma}$
 
-We will use the following theorem:
-if $X \sim F(x)$ then $U=F(x) \sim U(0,1)$
-$F(X)=1-(\frac{1}{x})^{\gamma}=U$ $(1-U)^{-\frac{1}{\gamma}}=(x^{\gamma})^{-\frac{1}{\gamma}}$
+We will use the following theorem: if $X \sim F(x)$ then
+$U=F(x) \sim U(0,1)$ $F(X)=1-(\frac{1}{x})^{\gamma}=U$
+$(1-U)^{-\frac{1}{\gamma}}=(x^{\gamma})^{-\frac{1}{\gamma}}$
 $x=(1-U)^{-\frac{1}{\gamma}}=U^{-\frac{1}{\gamma}}$
 
 ## Pont b
 
-Reference: Wikipedia
-The Pareto distribution is related to the exponential distribution as follows. If X is Pareto-distributed with minimum $x_m$ and index $\alpha$, then $Y=log(\frac{X}{x_m})$ is exponentially distributed with rate parameter $\alpha$.
+Reference: Wikipedia The Pareto distribution is related to the
+exponential distribution as follows. If X is Pareto-distributed with
+minimum $x_m$ and index $\alpha$, then $Y=log(\frac{X}{x_m})$ is
+exponentially distributed with rate parameter $\alpha$.
 
-$Y=log(\frac{X}{x_m}) \sim Exp(\gamma)$
-$Y=log(X) \sim Exp(\gamma)$
+$Y=log(\frac{X}{x_m}) \sim Exp(\gamma)$ $Y=log(X) \sim Exp(\gamma)$
 
 ##Point c
 
@@ -206,18 +223,44 @@ ggplot(data.frame(x=xsampler(10000,gamma[1])), aes(x)) +
   geom_density()
 ```
 
+Implement two samplers, one for X and one for Y . Plot the histogram and
+the density and comment on the results exploring different values of γ.
+
+
+```{r}
+#sampler for Pareto
+xsampler<- function(n, gamma){
+  u<- runif(n)
+  1/((1-u)^(1/gamma))
+}
+
+#sampler for exponential
+ysampler<- function(n,gamma){
+  x<- xsampler(n,gamma)
+  y<- log(x)
+  return(y)
+}
+
+x1=xsampler(10000,40)
+y1=ysampler(10000,40)
+hist(x1,breaks = 30, freq=F)
+hist(y1,breaks = 30, freq=F)
+```
 
 # MC integration
 
 ## Point a
 
-We write the probability of a standard Normal r.v. X as an integral thanks to its probability density function.
+We write the probability of a standard Normal r.v. X as an integral
+thanks to its probability density function.
 
 $P(X>20)=\int_{20}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{x^{2}}{2}} dx$
 
 Reference: Wikipedia
 
-The crude Monte Carlo estimation of this quantity is deemed to fail because the region of integration is so far out in the tails of the standard normal distribution. 
+The crude Monte Carlo estimation of this quantity is deemed to fail
+because the region of integration is so far out in the tails of the
+standard normal distribution.
 
 ## Point b
 
@@ -225,8 +268,8 @@ Rewrite the integral employing the change of variable $Y = \frac{1}{X}$.
 
 $dy=-\frac{1}{x^{2}} dx\\dx=-x^{2}dy=-\frac{1}{y^{2}}dy\\y=Y_{20}=0,05\\y=Y_\infty=0$
 
-So $\int_{20}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{x^{2}}{2}} dx\\=\int_{0,05}^0 \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2y^{2}}} -\frac{1}{y^2} dy \\=\int_0^{0,05} \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2y^{2}}} \frac{1}{y^2} dy$
-
+So
+$\int_{20}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{x^{2}}{2}} dx\\=\int_{0,05}^0 \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2y^{2}}} -\frac{1}{y^2} dy \\=\int_0^{0,05} \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2y^{2}}} \frac{1}{y^2} dy$
 
 
 
