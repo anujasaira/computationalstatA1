@@ -14,12 +14,8 @@ ysampler<- function(x){
   return(y)
 }
 i=0
-gamma = c(5,10,20)
-for (g in gamma){
-  i=i+1
-  X[[i]]<-xsampler(10000,g)
-  
-}
+gamma = c(7,15,25)
+
 x1=xsampler(10000,10)
 y1=ysampler(x1)
 x2<-xsampler(10000,10)
@@ -28,6 +24,12 @@ y2<- ysampler(x2)
 library(ggplot2)
 
 ggplot(data.frame(x=xsampler(10000,gamma[1])), aes(x)) +
+  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  geom_density()
+ggplot(data.frame(x=xsampler(10000,gamma[2])), aes(x)) +
+  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  geom_density()
+ggplot(data.frame(x=xsampler(10000,gamma[3])), aes(x)) +
   geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
   geom_density()
 
