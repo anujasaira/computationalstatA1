@@ -30,64 +30,6 @@ and $$P(Z>y)=1 - 0,421=0,579$$
 ## Point b-c-d
 
 Here there are some code to simulate a generic Risiko! game for different values of competing units.
-```{r}
-library(ggplot2)
-
-set.seed(123)
-combat_round <- function(att_units,def_units,sim=10000) {
-  Results = rep(NA,sim)
-  AS<-att_units
-  DS<-def_units
-  for(i in 1:sim){
-    while(def_units>0 & att_units>0){
-      Dnum <- sort(sample(1:6, min(def_units,3),replace = TRUE),decreasing = T)
-      Anum <- sort(sample(1:6, min(att_units,3),replace = TRUE),decreasing = T)
-      for (j in 1:min(length(Dnum),length(Anum))){
-        if(Anum[j]>Dnum[j]){
-          def_units<-def_units-1
-        }
-        else{
-          att_units<-att_units-1
-        }
-      }
-    }
-    Results[i]<- ifelse(att_units>0,1,0)
-    att_units<-AS
-    def_units<-DS
-  }
-  return(mean(Results))
-}
-
-prob_att_win <- function(){
-  res<-sapply(1:10, function(x) {
-  sapply(1:10, function(y) {
-    combat_round(y,x,1000)
-    })
-  })
-  return(res)
-}
-# Print the result
-#print(result)
-
-
-att_prob<- data.frame(
-  attacker_unit<- rep(1:10,10),
-  defender_unit<- rep(1:10,each= 10),
-  win_prob<- as.vector(prob_att_win())
-)
-
-
-#go through outer 
-ggplot(att_prob,aes(x=defender_unit,y=attacker_unit,fill=win_prob))+
-  geom_tile()+
-  scale_fill_gradient(low="grey",high="darkgreen")+
-  labs(title = "Attacker Win Probability",x="Defender Units",y="Attacker Units")+
-  theme_minimal()
-
-
-
-print(combat_round(def_units=1,att_units=2,sim=10000))
-```
 
 
 
@@ -116,26 +58,8 @@ $Y=log(X) \sim Exp(\gamma)$
 
 ##Point c
 
-Implement two samplers, one for X and one for Y . Plot the histogram and the density and comment on the results exploring different values of γ.
-```{r}
-#sampler for Pareto
-xsampler<- function(n, gamma){
-  u<- runif(n)
-  1/((1-u)^(1/gamma))
-}
+Implement two samplers, one for X and one for Y . Plot the histogram and the density and comment on the results exploring different values of Y.
 
-#sampler for exponential
-ysampler<- function(n,gamma){
-  x<- xsampler(n,gamma)
-  y<- log(x)
-  return(y)
-}
-
-x1=xsampler(10000,40)
-y1=ysampler(10000,40)
-hist(x1,breaks = 30, freq=F)
-hist(y1,breaks = 30, freq=F)
-```
 
 # Exercise 4
 
