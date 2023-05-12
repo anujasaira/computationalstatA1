@@ -47,9 +47,11 @@ att_prob<- data.frame(
 #go through outer 
 ggplot(att_prob,aes(x=defender_unit,y=attacker_unit,fill=win_prob))+
   geom_tile()+
-  scale_fill_gradient(low="grey",high="darkgreen")+
+  scale_fill_gradient(low="red",high="darkgreen")+
   labs(title = "Attacker Win Probability",x="Defender Units",y="Attacker Units")+
-  theme_minimal()
+  geom_tile(color = "white",lwd = 0.5,linetype = 1)+
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5))
 
 
 

@@ -1,48 +1,41 @@
 library(ggplot2)
+library(gridExtra)
 
-# Function to sample X from Pareto distribution
-sample_X<- function(n, gamma){
-  u<- runif(n)
-  x<-1/((1-u)^(1/gamma))
-  return(x)
-}
-
-
-# Function to sample Y = log(X)
-sample_Y <- function(size,gamma) {
-  X <- sample_X(gamma, size)
-  y<- log(x)
-  return(y)
-}
-
-# Set the gamma values to explore
+# Define the parameter values for gamma
 gamma_values <- c(1, 2, 5)
 
-# Set the sample size
-sample_size <- 10000
-x1=sample_X(10000,40)
-y1=sample_Y(10000,40)
+# Create an empty list to store the plots
+plots <- list()
 
-# Generate samples for different gamma values and plot histograms
+# Loop over the gamma values
 for (gamma in gamma_values) {
-  # Generate samples of Y = log(X)
-  Y <- sample_Y(gamma, sample_size)
+  # Generate samples for X from Pareto distribution
+  n <- 1000
+  X <- 1 / rgamma(n, shape = gamma)
   
-  # Create a histogram plot of Y
-  hist_plot <- ggplot(data = data.frame(Y), aes(x = Y)) +
-    geom_histogram(binwidth = 0.1, fill = "steelblue", color = "white") +
-    labs(title = paste0("Histogram of Y (gamma =", gamma, ")"),
-         x = "Y", y = "Frequency")
+  # Transform X to Y = log(X)
+  Y <- log(X)
   
-  # Plot the histogram
-  print(hist_plot)
+  # Create a data frame
+  df <- data.frame(X = X, Y = Y)
   
-  # Create a density plot of Y
-  density_plot <- ggplot(data = data.frame(Y), aes(x = Y)) +
-    geom_density(fill = "steelblue", color = "white") +
-    labs(title = paste0("Density Plot of Y (gamma =", gamma, ")"),
-         x = "Y", y = "Density")
+  # Create the histogram plot for Y
+  hist_plot <- ggplot(df, aes(x = Y)) +
+    geom_histogram(aes(y = ..density..), binwidth = 0.2, color = "black", fill = "skyblue") +
+    geom_density(color = "red") +
+    labs(title = paste0("Histogram and Density (γ =", gamma, ")"), x = "Y", y = "Density") +
+    theme_minimal()
   
-  # Plot the density
-  print(density_plot)
+  # Create the histogram plot for X
+  density_plot <- ggplot(df, aes(x = X)) +
+    geom_histogram(aes(y = ..density..), binwidth = 0.1, color = "black", fill = "skyblue") +
+    geom_density(color = "red") +
+    labs(title = paste0("Histogram and Density (γ =", gamma, ")"), x = "X", y = "Density") +
+    theme_minimal()
+  
+  # Store the plots in the list
+  plots[[gamma]] <- list(hist_plot, density_plot)
 }
+
+
+plots[1]+plots[2]

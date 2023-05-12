@@ -1,6 +1,6 @@
 #Implement two samplers, one for X and one for Y. Plot the histogram and the density
 #and comment on the results exploring different values of γ.
-
+library(patchwork)
 #sampler for Pareto
 xsampler<- function(n, gamma){
   u<- runif(n)
@@ -9,22 +9,25 @@ xsampler<- function(n, gamma){
 }
 
 #sampler for Exponential
-ysampler<- function(n,gamma){
-  x<- xsampler(n,gamma)
+ysampler<- function(x){
   y<- log(x)
   return(y)
 }
-
-x1=xsampler(10000,40)
-y1=ysampler(10000,40)
-#hist(x1,breaks = 30, freq=F)
-#gamma<-40
-#curve((gamma/x)^(gamma+1), from=1, to=10, col="blue", x_lab="x", ylab="density", main="Pareto density")
-#hist(y1,breaks = 30, freq=F)
-
+i=0
+gamma = c(5,10,20)
+for (g in gamma){
+  i=i+1
+  X[[i]]<-xsampler(10000,g)
+  
+}
+x1=xsampler(10000,10)
+y1=ysampler(x1)
+x2<-xsampler(10000,10)
+y2<- ysampler(x2)
 
 library(ggplot2)
-ggplot(data.frame(x=x1), aes(x = x1)) +
-  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")
 
+ggplot(data.frame(x=xsampler(10000,gamma[1])), aes(x)) +
+  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  geom_density()
 

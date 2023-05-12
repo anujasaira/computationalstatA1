@@ -24,7 +24,7 @@ U2 <- runif(N)
 X1 <- sqrt( -2*log(U1) )*cos(2*pi*U2)
 
 par(mfrow=c(1,2))
-hist(Z, main="Normal Distribution", xlab="Value",col="lightblue" ,breaks=30,freq = F,xlim=c(-4,4))
+hist(gen_norm, main="Normal Distribution", xlab="Value",col="lightblue" ,breaks=30,freq = F,xlim=c(-4,4))
 curve(dnorm(x,0,1),add=T)
 hist(X1, main="BM Distribution", xlab="Value",col="lightgreen" ,breaks=30,freq = F,xlim=c(-4,4))
 curve(dnorm(x,0,1),add=T)

@@ -183,3 +183,34 @@ for (gamma in gamma_values) {
   print(p)
 }
 
+
+
+library(ggplot2)
+
+# Create sample data
+data <- matrix(runif(100), nrow = 10)
+
+# Convert data to a data frame
+df <- as.data.frame(data)
+
+# Add row and column names
+df$row <- paste0("Row", 1:10)
+df$column <- paste0("Column", 1:10)
+
+# Reshape the data to long format
+df_long <- reshape2::melt(df, id.vars = c("row", "column"))
+
+# Set up the plot
+ggplot(df_long, aes(x = column, y = row, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  geom_hline(yintercept = 1:(nrow(df) + 1), color = "gray80", size = 0.5) +
+  geom_vline(xintercept = 1:(ncol(df) + 1), color = "gray80", size = 0.5) +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_blank(),
+        panel.grid = element_blank(),
+        panel.border = element_blank(),
+        legend.position = "bottom",
+        legend.title = element_blank())
+
