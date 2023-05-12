@@ -2,7 +2,9 @@
 title: "Assignment I - CompStat2023"
 author: "Aldo Giovanni e Giacomo"
 date: "Anuja Saira Abraham 5204982, Alessia Marzotti 5108443, Miriam Mercuri 5207057"
-output: 
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 # Set up
@@ -37,7 +39,6 @@ Here there are some code to simulate a generic \texttt{Risiko!} game for differe
 
 Here there are some code to simulate a generic Risiko! game for
 different values of competing units.
-
 
 ```{r}
 library(ggplot2)
@@ -94,14 +95,12 @@ ggplot(att_prob,aes(x=defender_unit,y=attacker_unit,fill=win_prob))+
   geom_tile(color = "white",lwd = 0.5,linetype = 1)+
   theme_minimal()+
   theme(plot.title = element_text(hjust = 0.5))
-  scale_fill_gradient(low="grey",high="darkgreen")+
-  labs(title = "Attacker Win Probability",x="Defender Units",y="Attacker Units")+
-  theme_minimal()
 
 
 
 print(combat_round(def_units=1,att_units=2,sim=10000))
 ```
+
 
 
 # Monte Carlo simulations I
@@ -206,11 +205,7 @@ ysampler<- function(x){
 }
 i=0
 gamma = c(5,10,20)
-for (g in gamma){
-  i=i+1
-  X[[i]]<-xsampler(10000,g)
-  
-}
+
 x1=xsampler(10000,10)
 y1=ysampler(x1)
 x2<-xsampler(10000,10)
