@@ -174,7 +174,7 @@ curve(dnorm(x,0,1),add=T)
 ```{r}
 normgen <- rnorm(10000)
 par(mfrow=c(1,2))
-hist(X1, main="Normal Distribution", xlab="Value",col="blue" ,breaks=30,freq = F,xlim=c(-4,4))
+hist(X1, main="BM Distribution", xlab="Value",col="blue" ,breaks=30,freq = F,xlim=c(-4,4))
 curve(dnorm(x,0,1),add=T)
 hist(normgen,xlab="Value",col="darkgreen" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function")
 curve(dnorm(x,0,1),add=T)
