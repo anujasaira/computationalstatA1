@@ -4,12 +4,11 @@ author: "Aldo Giovanni e Giacomo"
 date: "Anuja Saira Abraham 5204982, Alessia Marzotti 5108443, Miriam Mercuri 5207057"
 output:
   pdf_document: default
-  html_document: default
 ---
 
 # Set up
 
-```{r}
+```{r setup, warning=FALSE}
 library(ggplot2)
 library(patchwork)
 library(tidyverse)
@@ -26,8 +25,8 @@ library(mixtools)
 
 Compute $P [\max(X_1, X_2) > Y_1]$.
 
-We know that $Z=max(X_1,X_2) \in (1,2,3,4,5,6)$ and that
-$P(Z=z)=(2(z-1)+1)/36$. In other word we want to find
+We know that $$Z=max(X_1,X_2) \in (1,2,3,4,5,6)$$ and that
+$$P(Z=z)=\frac{(2(z-1)+1)}{36}$$. In other word we want to find
 $P(Z>y)=1-P(Z \leq y)$.
 $P(Z \leq y)=\\P(Z=1 \cap y=1)+\\P(Z=1 \cap y=2)+P(Z=2 \cap y=2)+\\P(Z=1 \cap y=3)+P(Z=2 \cap y=3)+P(Z=3 \cap y=3)+\\P(Z=1 \cap y=4)+P(Z=2 \cap y=4)+P(Z=3 \cap y=4)+P(Z=4 \cap y=4)+\\P(Z=1 \cap y=5)+P(Z=2 \cap y=5)+P(Z=3 \cap y=5)+P(Z=4 \cap y=5)+P(Z=5 \cap y=5)+\\P(Z=1 \cap y=6)+P(Z=2 \cap y=6)+P(Z=3 \cap y=6)+P(Z=4 \cap y=6)+P(Z=5 \cap y=6)+P(Z=6 \cap y=6)$
 
@@ -35,9 +34,9 @@ So we have
 $P(Z \leq y)= 6\frac{1}{36}\frac{1}{6}+5\frac{3}{36}\frac{1}{6}+4\frac{5}{36}\frac{1}{6}+3\frac{7}{36}\frac{1}{6}+2\frac{9}{36}\frac{1}{6}+\frac{11}{36}\frac{1}{6}\approx0,421$
 and $$P(Z>y)=1 - 0,421=0,579$$
 
-## Point b-c-d
+## Point b
 
-Here there are some code to simulate a generic \texttt{Risiko!} game for different values of competing units.
+Here there are some code to simulate a generic \texttt{Risiko!} game for different values of competing units. Starting with a function, *combat_round*, that take as arguments: *att_units*, the number of attacking units, *def_units*, the number of defending units and *sim*, the number of scenarios to simulate.
 
 ```{r}
 set.seed(123)
@@ -64,7 +63,13 @@ combat_round <- function(att_units,def_units,sim=10000) {
   }
   return(mean(Results))
 }
+```
 
+## Point c
+
+Now we replicate the results a sufficient amount of time equal to 10 to estimate the probability that the attacker has to win the battle for different values of *att_units* and *def_units*.
+
+```{r}
 prob_att_win <- function(){
   res<-sapply(1:10, function(x) {
   sapply(1:10, function(y) {
@@ -73,18 +78,20 @@ prob_att_win <- function(){
   })
   return(res)
 }
-# Print the result
-#print(result)
-
 
 att_prob<- data.frame(
   attacker_unit<- rep(1:10,10),
   defender_unit<- rep(1:10,each= 10),
   win_prob<- as.vector(prob_att_win())
 )
+```
 
 
-#go through outer 
+## Point d
+
+Finally, we display the results in a plot. 
+
+```{r}
 ggplot(att_prob,aes(x=defender_unit,y=attacker_unit,fill=win_prob))+
   geom_tile()+
   scale_fill_gradient(low="red",high="darkgreen")+
@@ -93,30 +100,43 @@ ggplot(att_prob,aes(x=defender_unit,y=attacker_unit,fill=win_prob))+
   theme_minimal()+
   theme(plot.title = element_text(hjust = 0.5))
 
+```
 
+The probability we obtain when *att_units* = 2 and *def_units* = 1 in the *combat_round* function is different from the one computed analytically in point a. 
 
+```{r}
 print(combat_round(def_units=1,att_units=2,sim=10000))
 ```
 
+This discrepancy arises due to a difference in the calculations. In point a, we specifically calculated the probability of the attacker winning the battle in the first round. However, in point d, we calculate the probability of the attacker winning the battle overall, without necessarily considering it happening in the first round alone. 
 
 # Monte Carlo simulations I
 
 ## Point a
 
-$E(X)=\int_a^b\frac{x}{b-a}dx=\frac{b^2-a^2}{2(b-a)}$
+An old and naive algorithm for the generation of Normally distributed random numbers is the following: $\\$
+1. Generate independent variables as $U_1, ..., U_{12} \sim U[-\frac{1}{2},\frac{1}{2}]$
+2. Set $Z=\sum_{i=1}^{12}U_i$ $\\$
+The rational here is that 12 realizations are usually enough to exploit the CLT. 
 
-$E(Z)=E(\sum_{i=1}^{12}U_i)$ 
-$=\sum_{i=1}^{12}E(U_i)$ independent 
-$=12E(U_i)$ identically distributed
+We want to show analytically that $E(X)=0$ and $V(Z)=1$.
+
+We know that $$E(X)=\int_a^b\frac{x}{b-a}dx=\frac{b^2-a^2}{2(b-a)}$$
+
+So $E(Z)=E(\sum_{i=1}^{12}U_i)\\$ 
+$=\sum_{i=1}^{12}E(U_i)$ independent $\\$
+$=12E(U_i)$ identically distributed $\\$
 $12\frac{\frac{1}{2}^2-(-\frac{1}{2})^2}{2(\frac{1}{2}-(-\frac{1}{2}))}=0$ 
 
-$V(Z)=E[(X-E(X))^2]=\int_a^b(x-\frac{a+b}{2})^2\frac{dx}{b-a}=\frac{(b-a)^2}{12}$
+And $$V(Z)=E[(X-E(X))^2]=\int_a^b(x-\frac{a+b}{2})^2\frac{dx}{b-a}=\frac{(b-a)^2}{12}$$
 
-$V(Z)=V(\sum_{i=1}^{12}U_i)$
-$=\sum_{i=1}^{12}V(U_i)$ variable independent 
-$=12V(U_i)$ $U_i$ identically distributed
-$=12\frac{(\frac{1}{2}-(-\frac{1}{2}))^2}{12}$
+So $V(Z)=V(\sum_{i=1}^{12}U_i)\\$
+$=\sum_{i=1}^{12}V(U_i)$ variable independent $\\$
+$=12V(U_i)$ $U_i$ identically distributed $\\$
+$=12\frac{(\frac{1}{2}-(-\frac{1}{2}))^2}{12}$ $\\$
 $=12\frac{(\frac{1}{2}+\frac{1}{2})^2}{12}=1$
+
+## Point b
 
 ```{r}
 set.seed(13)
@@ -135,8 +155,9 @@ N <- 10000
 gen_norm<-normal_functn_gen(sim=10000)
 mean(gen_norm)
 var(gen_norm)
+```
 
-
+```{r}
 U1 <- runif(N)
 U2 <- runif(N)
 X1 <- sqrt( -2*log(U1) )*cos(2*pi*U2)
@@ -146,6 +167,51 @@ hist(gen_norm, main="Normal Distribution", xlab="Value",col="lightblue" ,breaks=
 curve(dnorm(x,0,1),add=T)
 hist(X1, main="BM Distribution", xlab="Value",col="lightgreen" ,breaks=30,freq = F,xlim=c(-4,4))
 curve(dnorm(x,0,1),add=T)
+```
+
+## Point c
+
+```{r}
+normgen <- rnorm(10000)
+par(mfrow=c(1,2))
+hist(X1, main="Normal Distribution", xlab="Value",col="blue" ,breaks=30,freq = F,xlim=c(-4,4))
+curve(dnorm(x,0,1),add=T)
+hist(normgen,xlab="Value",col="darkgreen" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function")
+curve(dnorm(x,0,1),add=T)
+```
+
+```{r}
+par(mfrow=c(1,2))
+hist(gen_norm, main="Normal Distribution", xlab="Value",col="lightblue" ,breaks=30,freq = F,xlim=c(-4,4))
+curve(dnorm(x,0,1),add=T)
+hist(normgen,xlab="Value",col="darkgreen" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function")
+curve(dnorm(x,0,1),add=T)
+```
+
+
+## Point d
+
+```{r}
+upper_tail_prob<- function(gen_norm,theta){
+  prob=sum(gen_norm>theta)/length(gen_norm)
+  return(prob)
+}
+x <- seq(0, 5, by = 0.01)
+R<- sapply(seq(0, 5, by = 0.01), function(x) upper_tail_prob(gen_norm,x))
+# Calculate cumulative probabilities using pnorm
+prob <- 1-pnorm(x,0,1)
+```
+
+## Point e
+
+```{r}
+matplot(x, cbind(prob,R), 
+        type = "l", 
+        xlab = "x", 
+        ylab = "Cumulative Probability", 
+        main = "Normal Distribution")
+legend("topright", legend = c("pnorm", "old-naive approach"), 
+       col = 1:3, lty = 1, bty = "n", cex = 0.8)
 ```
 
 
@@ -160,27 +226,24 @@ $\gamma >0$.
 It can be generated as the $-\frac{1}{\gamma}$ power of a uniform r.v.
 
 Cumulative distribution function of Pareto distribution
-$\int_1^x \gamma z^{-(\gamma +1)} dz= \gamma \int_1^x z^{-1-\gamma}dz=-[x^{-\gamma}-1^{-\gamma}]=-x^{-\gamma}+1=1-(\frac{1}{x})^{\gamma}$
+$$\int_1^x \gamma z^{-(\gamma +1)} dz= \gamma \int_1^x z^{-1-\gamma}dz=-[x^{-\gamma}-1^{-\gamma}]=-x^{-\gamma}+1=1-(\frac{1}{x})^{\gamma}$$
 
 We will use the following theorem: if $X \sim F(x)$ then
-$U=F(x) \sim U(0,1)$ $F(X)=1-(\frac{1}{x})^{\gamma}=U$
-$(1-U)^{-\frac{1}{\gamma}}=(x^{\gamma})^{-\frac{1}{\gamma}}$
+$U=F(x) \sim U(0,1)\\$ 
+$F(X)=1-(\frac{1}{x})^{\gamma}=U\\$
+$(1-U)^{-\frac{1}{\gamma}}=(x^{\gamma})^{-\frac{1}{\gamma}}\\$
 $x=(1-U)^{-\frac{1}{\gamma}}=U^{-\frac{1}{\gamma}}$
 
 ## Pont b
 
-Reference: Wikipedia The Pareto distribution is related to the
-exponential distribution as follows. If X is Pareto-distributed with
-minimum $x_m$ and index $\alpha$, then $Y=log(\frac{X}{x_m})$ is
-exponentially distributed with rate parameter $\alpha$.
+The Pareto distribution is related to the exponential distribution as follows. If X is Pareto-distributed with minimum $x_m$ and index $\alpha$, then $Y=log(\frac{X}{x_m})$ is exponentially distributed with rate parameter $\alpha$.
 
-$Y=log(\frac{X}{x_m}) \sim Exp(\gamma)$ $Y=log(X) \sim Exp(\gamma)$
+$Y=log(\frac{X}{x_m}) \sim Exp(\gamma)\\$ 
+$Y=log(X) \sim Exp(\gamma)$
 
 ## Point c
 
-Implement two samplers, one for X and one for . Plot the histogram and the density and comment on the results exploring different values of .
-
-```{r}
+```{r, warning=FALSE}
 #sampler for Pareto
 xsampler<- function(n, gamma){
   u<- runif(n)
@@ -221,7 +284,7 @@ ggplot(data.frame(x=xsampler(10000,gamma[3])), aes(x)) +
 We write the probability of a standard Normal r.v. X as an integral
 thanks to its probability density function.
 
-$P(X>20)=\int_{20}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{x^{2}}{2}} dx$
+$$P(X>20)=\int_{20}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{x^{2}}{2}} dx$$
 
 Reference: Wikipedia
 
@@ -263,6 +326,8 @@ plot( i_1n, cummean(H1), type='l', lwd=1,
 abline(h=integrate(intfunc, a, b)$value, lwd=1, col=2, lty=2)
 ```
 
+## Point c
+
 ```{r}
 H2 <- (b-a)*intfunc(0.05-u) 
 MC1 <- mean(H1)
@@ -284,6 +349,8 @@ MCE_MCA
 effgain<- MCE_MCA/MCE_MC1
 effgain
 ```
+## Point d
+
 ```{r}
 integrate(intfunc, a, b)
 pnorm(20,0,1,lower.tail = F)
