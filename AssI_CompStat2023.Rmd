@@ -10,7 +10,10 @@ output:
 # Set up
 
 ```{r}
-
+library(ggplot2)
+library(patchwork)
+library(tidyverse)
+library(mixtools)
 ```
 
 
@@ -34,15 +37,9 @@ and $$P(Z>y)=1 - 0,421=0,579$$
 
 ## Point b-c-d
 
-<<<<<<< HEAD
 Here there are some code to simulate a generic \texttt{Risiko!} game for different values of competing units.
 
-Here there are some code to simulate a generic Risiko! game for
-different values of competing units.
-
 ```{r}
-library(ggplot2)
-
 set.seed(123)
 combat_round <- function(att_units,def_units,sim=10000) {
   Results = rep(NA,sim)
@@ -102,7 +99,6 @@ print(combat_round(def_units=1,att_units=2,sim=10000))
 ```
 
 
-
 # Monte Carlo simulations I
 
 ## Point a
@@ -126,7 +122,6 @@ $=12\frac{(\frac{1}{2}+\frac{1}{2})^2}{12}=1$
 set.seed(13)
 
 
-
 normal_functn_gen = function(sim){
   n<-12 
   Uz<-runif(sim*n,min = -0.5,max = 0.5) 
@@ -142,8 +137,6 @@ mean(gen_norm)
 var(gen_norm)
 
 
-
-
 U1 <- runif(N)
 U2 <- runif(N)
 X1 <- sqrt( -2*log(U1) )*cos(2*pi*U2)
@@ -154,7 +147,6 @@ curve(dnorm(x,0,1),add=T)
 hist(X1, main="BM Distribution", xlab="Value",col="lightgreen" ,breaks=30,freq = F,xlim=c(-4,4))
 curve(dnorm(x,0,1),add=T)
 ```
-
 
 
 # Monte Carlo simulations II
@@ -184,13 +176,11 @@ exponentially distributed with rate parameter $\alpha$.
 
 $Y=log(\frac{X}{x_m}) \sim Exp(\gamma)$ $Y=log(X) \sim Exp(\gamma)$
 
-##Point c
+## Point c
 
-Implement two samplers, one for X and one for Y . Plot the histogram and the density and comment on the results exploring different values of Y.
+Implement two samplers, one for X and one for . Plot the histogram and the density and comment on the results exploring different values of .
+
 ```{r}
-#Implement two samplers, one for X and one for Y. Plot the histogram and the density
-#and comment on the results exploring different values of γ.
-library(patchwork)
 #sampler for Pareto
 xsampler<- function(n, gamma){
   u<- runif(n)
@@ -204,43 +194,25 @@ ysampler<- function(x){
   return(y)
 }
 i=0
-gamma = c(5,10,20)
+gamma = c(7,15,25)
 
 x1=xsampler(10000,10)
 y1=ysampler(x1)
 x2<-xsampler(10000,10)
 y2<- ysampler(x2)
 
-library(ggplot2)
 
 ggplot(data.frame(x=xsampler(10000,gamma[1])), aes(x)) +
   geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
   geom_density()
+ggplot(data.frame(x=xsampler(10000,gamma[2])), aes(x)) +
+  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  geom_density()
+ggplot(data.frame(x=xsampler(10000,gamma[3])), aes(x)) +
+  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  geom_density()
 ```
 
-Implement two samplers, one for X and one for Y . Plot the histogram and
-the density and comment on the results exploring different values of γ.
-
-
-```{r}
-#sampler for Pareto
-xsampler<- function(n, gamma){
-  u<- runif(n)
-  1/((1-u)^(1/gamma))
-}
-
-#sampler for exponential
-ysampler<- function(n,gamma){
-  x<- xsampler(n,gamma)
-  y<- log(x)
-  return(y)
-}
-
-x1=xsampler(10000,40)
-y1=ysampler(10000,40)
-hist(x1,breaks = 30, freq=F)
-hist(y1,breaks = 30, freq=F)
-```
 
 # MC integration
 
@@ -253,9 +225,7 @@ $P(X>20)=\int_{20}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{x^{2}}{2}} dx$
 
 Reference: Wikipedia
 
-The crude Monte Carlo estimation of this quantity is deemed to fail
-because the region of integration is so far out in the tails of the
-standard normal distribution.
+The crude Monte Carlo estimation of this quantity is deemed to fail because the region of integration is so far out in the tails of the standard normal distribution.
 
 ## Point b
 
@@ -266,6 +236,58 @@ $dy=-\frac{1}{x^{2}} dx\\dx=-x^{2}dy=-\frac{1}{y^{2}}dy\\y=Y_{20}=0,05\\y=Y_\inf
 So
 $\int_{20}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{x^{2}}{2}} dx\\=\int_{0,05}^0 \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2y^{2}}} -\frac{1}{y^2} dy \\=\int_0^{0,05} \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2y^{2}}} \frac{1}{y^2} dy$
 
+```{r}
+theme_set(theme_bw())
+
+set.seed(155523)
+n <- 1000000
+a <- 0
+b <-  0.05 
+u <-runif(n, a, b)
+
+intfunc <- function(y){
+  f = (1/sqrt(2*pi)) * (1/(y^2)) * (exp(-1/(2*(y^2))))
+}
+
+
+
+H1 = (b-a)* intfunc(u)
+psi_hat_MC <- mean(H1) 
+psi_hat_MC
+```
+```{r}
+set.seed(1234)
+i_1n <- 1:n
+plot( i_1n, cummean(H1), type='l', lwd=1,  
+      xlab="Sample Size N", ylab="Integral Value",col=1)
+abline(h=integrate(intfunc, a, b)$value, lwd=1, col=2, lty=2)
+```
+
+```{r}
+H2 <- (b-a)*intfunc(0.05-u) 
+MC1 <- mean(H1)
+MC2 <- mean(H2)
+
+MCA <- (MC1+MC2)/2
+
+
+MCE_MC1 <- sd(H1)/sqrt(n)
+MCE_MC1 
+MCE_MC2 <- sd(H2)/sqrt(n)
+MCE_MC2 
+```
+```{r}
+MCE_MCA <- sqrt(1+cor(H1,H2))*sd(H1)/sqrt(2*n)
+MCE_MCA 
+```
+```{r}
+effgain<- MCE_MCA/MCE_MC1
+effgain
+```
+```{r}
+integrate(intfunc, a, b)
+pnorm(20,0,1,lower.tail = F)
+```
 
 
 

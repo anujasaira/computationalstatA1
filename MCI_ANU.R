@@ -16,7 +16,7 @@ intfunc <- function(y){
 
 
 H1 = (b-a)* intfunc(u)
-psi_hat_MC <- mean(H) 
+psi_hat_MC <- mean(H1) 
 psi_hat_MC
 
 
