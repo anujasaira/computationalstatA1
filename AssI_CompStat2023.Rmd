@@ -115,13 +115,14 @@ This discrepancy arises due to a difference in the calculations. In point a, we 
 ## Point a
 
 An old and naive algorithm for the generation of Normally distributed random numbers is the following: $\\$
-1. Generate independent variables as $U_1, ..., U_{12} \sim U[-\frac{1}{2},\frac{1}{2}]$
+1. Generate independent variables as $U_1, ..., U_{12} \sim U[-\frac{1}{2},\frac{1}{2}]$ $\\$
 2. Set $Z=\sum_{i=1}^{12}U_i$ $\\$
 The rational here is that 12 realizations are usually enough to exploit the CLT. 
 
 We want to show analytically that $E(X)=0$ and $V(Z)=1$.
 
 We know that $$E(X)=\int_a^b\frac{x}{b-a}dx=\frac{b^2-a^2}{2(b-a)}$$
+Reference: Wikipedia
 
 So $E(Z)=E(\sum_{i=1}^{12}U_i)\\$ 
 $=\sum_{i=1}^{12}E(U_i)$ independent $\\$
@@ -129,6 +130,7 @@ $=12E(U_i)$ identically distributed $\\$
 $12\frac{\frac{1}{2}^2-(-\frac{1}{2})^2}{2(\frac{1}{2}-(-\frac{1}{2}))}=0$ 
 
 And $$V(Z)=E[(X-E(X))^2]=\int_a^b(x-\frac{a+b}{2})^2\frac{dx}{b-a}=\frac{(b-a)^2}{12}$$
+Reference: Wikipedia
 
 So $V(Z)=V(\sum_{i=1}^{12}U_i)\\$
 $=\sum_{i=1}^{12}V(U_i)$ variable independent $\\$
@@ -139,8 +141,9 @@ $=12\frac{(\frac{1}{2}+\frac{1}{2})^2}{12}=1$
 ## Point b
 
 ```{r}
-set.seed(13)
+#Using histograms to compare the above Normal generator with the Box–Muller algorithm
 
+set.seed(13)
 
 normal_functn_gen = function(sim){
   n<-12 
@@ -153,11 +156,7 @@ normal_functn_gen = function(sim){
 N <- 10000
 
 gen_norm<-normal_functn_gen(sim=10000)
-mean(gen_norm)
-var(gen_norm)
-```
 
-```{r}
 U1 <- runif(N)
 U2 <- runif(N)
 X1 <- sqrt( -2*log(U1) )*cos(2*pi*U2)
@@ -168,6 +167,8 @@ curve(dnorm(x,0,1),add=T)
 hist(X1, main="BM Distribution", xlab="Value",col="lightgreen" ,breaks=30,freq = F,xlim=c(-4,4))
 curve(dnorm(x,0,1),add=T)
 ```
+
+The histograms and curves indicate that both the Normal generator and the Box-Muller algorithm produce samples that closely follow a standard normal distribution and the tail probabilities for extreme values like 3 are expected to be very small in both cases.
 
 ## Point c
 
@@ -223,10 +224,11 @@ The Pareto distribution is defined by a density
 $f(x;\gamma)=\gamma x^{-(\gamma +1)}$ over $(1;+\infty)$, with
 $\gamma >0$.
 
-It can be generated as the $-\frac{1}{\gamma}$ power of a uniform r.v.
+It can be generated as the $-\frac{1}{\gamma}$ power of a uniform random variable.
 
 Cumulative distribution function of Pareto distribution
 $$\int_1^x \gamma z^{-(\gamma +1)} dz= \gamma \int_1^x z^{-1-\gamma}dz=-[x^{-\gamma}-1^{-\gamma}]=-x^{-\gamma}+1=1-(\frac{1}{x})^{\gamma}$$
+Reference: Wikipedia
 
 We will use the following theorem: if $X \sim F(x)$ then
 $U=F(x) \sim U(0,1)\\$ 
@@ -264,7 +266,7 @@ y1=ysampler(x1)
 x2<-xsampler(10000,10)
 y2<- ysampler(x2)
 
-
+#Histograms and densities for different value of gamma 
 ggplot(data.frame(x=xsampler(10000,gamma[1])), aes(x)) +
   geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
   geom_density()
@@ -276,6 +278,9 @@ ggplot(data.frame(x=xsampler(10000,gamma[3])), aes(x)) +
   geom_density()
 ```
 
+The plots above show histograms and density plots in the Pareto distribution for $\gamma$ respectively equal to 7, 15 and 25. As the value of $\gamma$ increases, the Pareto distribution becomes less skewed and more concentrated around the mode. Higher gamma values result in distributions with shorter tails of extreme values. On the other hand, lower gamma values lead to distributions with pronounced right-skewness and longer tails.
+
+## Point d
 
 # MC integration
 
@@ -285,7 +290,6 @@ We write the probability of a standard Normal r.v. X as an integral
 thanks to its probability density function.
 
 $$P(X>20)=\int_{20}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{x^{2}}{2}} dx$$
-
 Reference: Wikipedia
 
 The crude Monte Carlo estimation of this quantity is deemed to fail because the region of integration is so far out in the tails of the standard normal distribution.
@@ -299,9 +303,13 @@ $dy=-\frac{1}{x^{2}} dx\\dx=-x^{2}dy=-\frac{1}{y^{2}}dy\\y=Y_{20}=0,05\\y=Y_\inf
 So
 $\int_{20}^\infty \frac{1}{\sqrt{2\pi}} e^{-\frac{x^{2}}{2}} dx\\=\int_{0,05}^0 \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2y^{2}}} -\frac{1}{y^2} dy \\=\int_0^{0,05} \frac{1}{\sqrt{2\pi}} e^{-\frac{1}{2y^{2}}} \frac{1}{y^2} dy$
 
+Express the integral as the expected value of a Uniform distribution over (0, 0.05).
+$0,05\int_0^{0,05}\frac{f_y(y)}{0,05}dy$ with $0<y<0,05$
+
 ```{r}
 theme_set(theme_bw())
 
+#Crude method to estimate the integral
 set.seed(155523)
 n <- 1000000
 a <- 0
@@ -319,6 +327,7 @@ psi_hat_MC <- mean(H1)
 psi_hat_MC
 ```
 ```{r}
+#Corrisponding ergotic plot
 set.seed(1234)
 i_1n <- 1:n
 plot( i_1n, cummean(H1), type='l', lwd=1,  
