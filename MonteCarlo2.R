@@ -32,4 +32,4 @@ ggplot(data.frame(x=xsampler(10000,gamma[2])), aes(x)) +
 ggplot(data.frame(x=xsampler(10000,gamma[3])), aes(x)) +
   geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
   geom_density()
-
+x

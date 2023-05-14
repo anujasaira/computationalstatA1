@@ -171,26 +171,20 @@ curve(dnorm(x,0,1),add=T)
 The histograms and curves indicate that both the Normal generator and the Box-Muller algorithm produce samples that closely follow a standard normal distribution and the tail probabilities for extreme values like 3 are expected to be very small in both cases.
 
 ## Point c
-
+Compare both of the generators above with rnorm shows that is a normal distribution that looks almost similar.
 ```{r}
 normgen <- rnorm(10000)
-par(mfrow=c(1,2))
+par(mfrow=c(1,3))
 hist(X1, main="BM Distribution", xlab="Value",col="blue" ,breaks=30,freq = F,xlim=c(-4,4))
 curve(dnorm(x,0,1),add=T)
-hist(normgen,xlab="Value",col="darkgreen" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function")
-curve(dnorm(x,0,1),add=T)
-```
-
-```{r}
-par(mfrow=c(1,2))
 hist(gen_norm, main="Normal Distribution", xlab="Value",col="lightblue" ,breaks=30,freq = F,xlim=c(-4,4))
 curve(dnorm(x,0,1),add=T)
 hist(normgen,xlab="Value",col="darkgreen" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function")
 curve(dnorm(x,0,1),add=T)
 ```
-
-
 ## Point d
+
+The below code estimate P (Z >= $\theta$) for $\theta$ $\in$ (0, 5)
 
 ```{r}
 upper_tail_prob<- function(gen_norm,theta){
@@ -204,7 +198,7 @@ prob <- 1-pnorm(x,0,1)
 ```
 
 ## Point e
-
+The below graph shows the variation of estimated probability and actual probability.For larger $\theta$ the estimate and truth is equal. 
 ```{r}
 matplot(x, cbind(prob,R), 
         type = "l", 
@@ -336,6 +330,9 @@ abline(h=integrate(intfunc, a, b)$value, lwd=1, col=2, lty=2)
 ```
 
 ## Point c
+we consider estimator given by H2 below. 
+We can construct an antithetic estimator as
+ $\hat{\theta}_{AV} =\frac{\hat{\theta}_{MC}(1) + \hat{\theta}_{MC}(2)}{2}$
 
 ```{r}
 H2 <- (b-a)*intfunc(0.05-u) 
@@ -350,6 +347,7 @@ MCE_MC1
 MCE_MC2 <- sd(H2)/sqrt(n)
 MCE_MC2 
 ```
+The above shows the Monte Carlo error in MC1 and MC2. The equation below shows the Monte Carlo error in Antithetic Variable.
 ```{r}
 MCE_MCA <- sqrt(1+cor(H1,H2))*sd(H1)/sqrt(2*n)
 MCE_MCA 
@@ -358,13 +356,14 @@ MCE_MCA
 effgain<- MCE_MCA/MCE_MC1
 effgain
 ```
+The efficiency gain is given above. 
 ## Point d
 
 ```{r}
 integrate(intfunc, a, b)
 pnorm(20,0,1,lower.tail = F)
 ```
-
+The value of both the results is equal.
 
 
 
