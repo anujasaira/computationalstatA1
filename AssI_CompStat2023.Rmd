@@ -253,28 +253,61 @@ ysampler<- function(x){
   return(y)
 }
 i=0
-gamma = c(7,15,25)
+gamma = c(3,15,25)
 
-x1=xsampler(10000,10)
+x1=xsampler(10000,gamma[1])
 y1=ysampler(x1)
-x2<-xsampler(10000,10)
+x2<-xsampler(10000,gamma[2])
 y2<- ysampler(x2)
+x3=xsampler(10000,gamma[3])
+y3=ysampler(x3)
 
-#Histograms and densities for different value of gamma 
-ggplot(data.frame(x=xsampler(10000,gamma[1])), aes(x)) +
+#Histograms and densities for different value of gamma for X
+p1=ggplot(data.frame(x=x1), aes(x)) +
   geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  labs(x="X gamma=3",y="Density")+
   geom_density()
-ggplot(data.frame(x=xsampler(10000,gamma[2])), aes(x)) +
+p2=ggplot(data.frame(x=x2), aes(x)) +
   geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  labs(x="X gamma=15",y="Density")+
   geom_density()
-ggplot(data.frame(x=xsampler(10000,gamma[3])), aes(x)) +
+p3=ggplot(data.frame(x=x3), aes(x)) +
   geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  labs(x="X gamma=25",y="Density")+
   geom_density()
+p1+p2+p3
+```
+```{r}
+#Histograms and densities for different value of gamma for Y
+p1=ggplot(data.frame(x=y1), aes(x)) +
+  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  labs(x="Y gamma=3",y="Density")+
+  geom_density()
+p2=ggplot(data.frame(x=y2), aes(x)) +
+  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  labs(x="Y gamma=15",y="Density")+
+  geom_density()
+p3=ggplot(data.frame(x=y3), aes(x)) +
+  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
+  labs(x="Y gamma=25",y="Density")+
+  geom_density()
+p1+p2+p3
 ```
 
 The plots above show histograms and density plots in the Pareto distribution for $\gamma$ respectively equal to 7, 15 and 25. As the value of $\gamma$ increases, the Pareto distribution becomes less skewed and more concentrated around the mode. Higher gamma values result in distributions with shorter tails of extreme values. On the other hand, lower gamma values lead to distributions with pronounced right-skewness and longer tails.
 
 ## Point d
+
+```{r}
+prob_est1 <- sum(x1 < 5) / 10000
+prob_est2 <- sum(x2 < 5) / 10000
+prob_est3 <- sum(x3 < 5) / 10000
+prob_est1
+prob_est2
+prob_est3
+
+```
+
 
 # MC integration
 
