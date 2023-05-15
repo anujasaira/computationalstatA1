@@ -171,6 +171,7 @@ curve(dnorm(x,0,1),add=T)
 The histograms and curves indicate that both the Normal generator and the Box-Muller algorithm produce samples that closely follow a standard normal distribution and the tail probabilities for extreme values like 3 are expected to be very small in both cases.
 
 ## Point c
+
 Compare both of the generators above with rnorm shows that is a normal distribution that looks almost similar.
 ```{r}
 normgen <- rnorm(10000)
@@ -182,6 +183,7 @@ curve(dnorm(x,0,1),add=T)
 hist(normgen,xlab="Value",col="darkgreen" ,breaks=30,freq = F,xlim=c(-4,4), main = "rnorm Function")
 curve(dnorm(x,0,1),add=T)
 ```
+
 ## Point d
 
 The below code estimate P (Z >= $\theta$) for $\theta$ $\in$ (0, 5)
@@ -198,6 +200,7 @@ prob <- 1-pnorm(x,0,1)
 ```
 
 ## Point e
+
 The below graph shows the variation of estimated probability and actual probability.For larger $\theta$ the estimate and truth is equal. 
 ```{r}
 matplot(x, cbind(prob,R), 
@@ -262,22 +265,6 @@ y2<- ysampler(x2)
 x3=xsampler(10000,gamma[3])
 y3=ysampler(x3)
 
-#Histograms and densities for different value of gamma for X
-p1=ggplot(data.frame(x=x1), aes(x)) +
-  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
-  labs(x="X gamma=3",y="Density")+
-  geom_density()
-p2=ggplot(data.frame(x=x2), aes(x)) +
-  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
-  labs(x="X gamma=15",y="Density")+
-  geom_density()
-p3=ggplot(data.frame(x=x3), aes(x)) +
-  geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
-  labs(x="X gamma=25",y="Density")+
-  geom_density()
-p1+p2+p3
-```
-```{r}
 #Histograms and densities for different value of gamma for Y
 p1=ggplot(data.frame(x=y1), aes(x)) +
   geom_histogram(aes(y=..density..), fill="gray",col="darkblue")+
@@ -294,10 +281,21 @@ p3=ggplot(data.frame(x=y3), aes(x)) +
 p1+p2+p3
 ```
 
-The plots above show histograms and density plots in the Pareto distribution for $\gamma$ respectively equal to 7, 15 and 25. As the value of $\gamma$ increases, the Pareto distribution becomes less skewed and more concentrated around the mode. Higher gamma values result in distributions with shorter tails of extreme values. On the other hand, lower gamma values lead to distributions with pronounced right-skewness and longer tails.
+The plots above show histograms and density plots in the Pareto distribution for $\gamma$ respectively equal to 3, 15 and 25. As the value of $\gamma$ increases, the Pareto distribution becomes less skewed and more concentrated around the mode. Higher gamma values result in distributions with shorter tails of extreme values. On the other hand, lower gamma values lead to distributions with pronounced right-skewness and longer tails.
 
 ## Point d
 
+$P(X<5)=\int_{-\infty}^5{\gamma}z^{-({\gamma}+1)}dz\\$
+$=-(x^{-\gamma}-1^{-\gamma})\\$
+$=-x^{-\gamma}+1\\$
+$1-(\frac{1}{x})^{\gamma}$
+
+$$P(x<5)=1-(\frac{1}{5})^{3}=0,992$$
+when $\gamma=3$.
+$$P(x<15)=1-(\frac{1}{5})^{15}=1$$
+when $\gamma=15$.
+$$P(x<25)=1-(\frac{1}{5})^{25}=1$$
+when $\gamma=25$.
 ```{r}
 prob_est1 <- sum(x1 < 5) / 10000
 prob_est2 <- sum(x2 < 5) / 10000
@@ -363,6 +361,7 @@ abline(h=integrate(intfunc, a, b)$value, lwd=1, col=2, lty=2)
 ```
 
 ## Point c
+
 we consider estimator given by H2 below. 
 We can construct an antithetic estimator as
  $\hat{\theta}_{AV} =\frac{\hat{\theta}_{MC}(1) + \hat{\theta}_{MC}(2)}{2}$
@@ -390,6 +389,7 @@ effgain<- MCE_MCA/MCE_MC1
 effgain
 ```
 The efficiency gain is given above. 
+
 ## Point d
 
 ```{r}
