@@ -24,3 +24,10 @@ for (i in 1:B) {
 }
 
 standard_errors <- apply(bootMatrices, c(1,2), sd)
+
+
+
+
+
+
+
