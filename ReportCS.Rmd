@@ -1,0 +1,43 @@
+---
+title: "Report"
+author: "Aldo Giovanni e Giacomo"
+date: "2023-05-25"
+output: html_document
+---
+
+##INTRODUCTION TO BAGGING PREDICTORS
+
+Bagging predictors is a method for generating multiple versions of a predictor and using these to get an aggregated predictor. The aggregation averages over the versions when predicting a numerical outcome and
+does a plurality vote when predicting a class. The multiple versions are formed by making bootstrap replicates of the learning set and using these as new learning sets. 
+The vital element is the instability of the prediction method. If perturbing the learning set can cause significant changes in the predictor constructed, then bagging can improve accuracy.
+
+Bagging is an ensemble method,which is an approach that combines many simple “building  block” models in order to obtain a single and potentially very powerful model. These simple building block models are sometimes known as weak learners, since they may lead to mediocre predictions on their own. 
+The bootstrap can be used in order to improve statistical learning methods such as decision trees.The decision trees suffer from high variance.
+This means that if we split the training data into two parts at random,
+and fit a decision tree to both halves, the results that we get could be
+quite different. In contrast, a procedure with low variance will yield similar results if applied repeatedly to distinct data sets. Bootsrap
+aggregation, or bagging, is a general-purpose procedure for reducing the variance of a statistical learning method; it is
+particularly useful and frequently used in the context of decision trees.
+Recall that given a set of n independent observations Z1,...,Zn, each
+with variance σ2, the variance of the mean Z¯ of the observations is given
+by σ2/n. In other words, averaging a set of observations reduces variance.
+Hence a natural way to reduce the variance and increase the test set accuracy of a statistical learning method is to take many training sets from the population, build a separate prediction model using each training set,and average the resulting predictions.
+This is not practical because we generally do not have access
+to multiple training sets. Instead, we can bootstrap, by taking repeated
+samples from the (single) training data set. In this approach we generate
+B different bootstrapped training data sets. We then train our method on
+the bth bootstrapped training set in order to get the bth prediction, and finally average all the predictions. This is called bagging.
+
+To apply bagging to regression trees, we simply construct B regression trees using B bootstrapped training sets, and average the resulting predictions. These trees are grown deep, and are not pruned. Hence each individual tree has high variance, but low bias. Averaging these B trees reduces the variance. Bagging has been demonstrated to give impressive improvements in accuracy by combining together hundreds or even thousands of trees into a single procedure.
+
+## Bagging Classification Trees
+
+In a classification problem in which Y is qualitative, there are a few possible approaches, but the simplest is as follows. For a given test
+observation, we can record the class predicted by each of the B trees, and
+take a majority vote: the overall prediction is the most commonly occurring class among the B predictions.
+
+We are going to see results for moderate sized data sets. In all runs the following procedure was used:
+i) The data set is randomly divided into a test set T and a learning set L. In the real data sets T is 10% of the data.
+ii) A classification tree is constructed from L using 10-fold cross-validation. Running the test set T down this tree gives the misclassification rate es(L, T).
+iii) A bootstrap sample Lb is selected from L, and a tree grown using Lb. The original learning set L is used as test set to select the best pruned subtree(but how?)##############################################################ASK##############################################################################################################################################################################.This is repeated 50 times.
+iv) If (jn, xn) belong to T, then the estimated class of Xn is that class having the plurality. (If there is a tie, the estimated class is the one with the lowest class label.) The proportion of times the estimated class differs from the true class is the bagging misclassification rate eb(L, T). v) The random division of the data into L and T is repeated 100 times and the reported es(L,T) and eb(L,T) are the averages over the 100 iterations. 
