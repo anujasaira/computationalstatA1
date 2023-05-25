@@ -41,3 +41,9 @@ i) The data set is randomly divided into a test set T and a learning set L. In t
 ii) A classification tree is constructed from L using 10-fold cross-validation. Running the test set T down this tree gives the misclassification rate es(L, T).
 iii) A bootstrap sample Lb is selected from L, and a tree grown using Lb. The original learning set L is used as test set to select the best pruned subtree(but how?)##############################################################ASK##############################################################################################################################################################################.This is repeated 50 times.
 iv) If (jn, xn) belong to T, then the estimated class of Xn is that class having the plurality. (If there is a tie, the estimated class is the one with the lowest class label.) The proportion of times the estimated class differs from the true class is the bagging misclassification rate eb(L, T). v) The random division of the data into L and T is repeated 100 times and the reported es(L,T) and eb(L,T) are the averages over the 100 iterations. 
+
+
+
+############WE DO THE CODE AND SHOW THAT ACTUALLY THERE IS A REDUCTION IN THE ERROR
+
+
