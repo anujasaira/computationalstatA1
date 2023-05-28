@@ -42,7 +42,7 @@ att_prob<- data.frame(
   defender_unit<- rep(1:10,each= 10),
   win_prob<- as.vector(prob_att_win())
 )
-
+length(win_prob)
 
 #go through outer 
 ggplot(att_prob,aes(x=defender_unit,y=attacker_unit,fill=win_prob))+
