@@ -56,12 +56,36 @@ plot_results <- function(clt_CI, qnt_CI) {
 
 
 eigen_values <- eigen(cov_matrix)$values
-cumulative_proportion <- cumsum(eigen_values) / sum(eigen_values)
+theta <- cumsum(eigen_values) / sum(eigen_values)
 
-jstar <- min(which(cumulative_proportion > 0.76))
+jstar <- min(which(theta > 0.76))
 jstar
 
 #Point e
+#Luca
+
+boot_theta <- matrix(0, nrow = 8, ncol = length(theta))
+boot_jstar <- numeric(8)
+
+for (i in 1:B) {
+  # Generate bootstrap sample by resampling from the original df
+  boot_sample <- games[sample(nrow(games), replace= TRUE),]
+  
+  # Calculate covariance matrix and eigenvalues for the bootstrap
+  cov_boot <- cov(boot_sample)
+  eigen_boot <- eigen(cov_boot)$values
+  
+  #Compute theta for the bootstrap sample
+  theta_boot[i,] <- cumsum(eigen_boot) / sum(eigen_boot)
+  
+  #Compute jstar for the bootstrap sample
+  boot_jstar[i] <- min(which(theta_boot[i,] > 0.76))
+  
+}
+
+p_jstar <- mean(boot_jstar==5)
+###########################
+#mine
 total_sum <- sum(eigen_values)
 
 bias <- rep(0, length(eigen_values))
