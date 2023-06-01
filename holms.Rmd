@@ -1,0 +1,13 @@
+---
+title: "Untitled"
+author: "Aldo Giovanni e Giacomo"
+date: "2023-06-01"
+output: html_document
+---
+## HOLM'S PROCEDURE
+
+When the n hypotheses are tested seperately using tests with the level $$\frac{\alpha}{n}$$ it follows immediately from the Boole inequality that the probability of rejecting any true hypothesis is smaller then or equal to alpha. This constitutes a multiple test procedure with the multiple level of signficance alpha for free combination, the classical Bonferroni mupltiple test procedure. 
+
+As written in the paper "A simple sequentially rejective multiple test procedure" of Sture Holm, the sequentially rejective Bonferroni test the obtained levels are compared to the numbers $$\frac{\alpha}{n}, \frac{\alpha}{n-1}, \ldots, \frac{\alpha}{1}$$, whereas in the classical Bonferroni test they are compared to $$\frac{\alpha}{n}$$. 
+This means that the probability of rejecting any set of (false) hypotheses using the CLASSICAL Bonferroni test is SMALLER than or equal to the same probability using the sequantially rejective Bonferroni test based on the same test statistics. So the classical Bonferroni tesst can be replaced by the corresponding sequentially rejective Bonferroni test without loosing any probability of rejecting false hypotheses. 
+The power gain obtained by using a sequentially rejective Bonferroni test dependes veru much upon the alternative. The power of a hypothesis test is the probability of rejecting the null hypothesis when the alternative hypothesis is the hypothesis that is true. As a consequence, the power gain is small if all the hypothese are "almost true". It may be considerable if a number of hypotheses are "completely wrong". 
