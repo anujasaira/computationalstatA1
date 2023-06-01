@@ -62,10 +62,10 @@ jstar <- min(which(theta > 0.76))
 jstar
 
 #Point e
-#Luca
 
-boot_theta <- matrix(0, nrow = 8, ncol = length(theta))
-boot_jstar <- numeric(8)
+
+boot_theta <- matrix(0, nrow = B, ncol = length(theta))
+boot_jstar <- numeric(B)
 
 for (i in 1:B) {
   # Generate bootstrap sample by resampling from the original df
@@ -76,78 +76,24 @@ for (i in 1:B) {
   eigen_boot <- eigen(cov_boot)$values
   
   #Compute theta for the bootstrap sample
-  theta_boot[i,] <- cumsum(eigen_boot) / sum(eigen_boot)
+  boot_theta[i,] <- cumsum(eigen_boot) / sum(eigen_boot)
   
   #Compute jstar for the bootstrap sample
-  boot_jstar[i] <- min(which(theta_boot[i,] > 0.76))
+  boot_jstar[i] <- min(which(boot_theta[i,] > 0.76))
   
 }
 
-p_jstar <- mean(boot_jstar==5)
-###########################
-#mine
-total_sum <- sum(eigen_values)
-
-bias <- rep(0, length(eigen_values))
-standard_error <- rep(0, length(eigen_values))
-
-for (i in 1:B) {
-  # Generate bootstrap sample by sampling with replacement
-  boot_theta_j <- sample(eigen_values, replace = TRUE)
-  
-  # Calculate the bootstrap estimator for each parameter θj
-  for (j in 1:length(eigen_values)) {
-    theta_j <- sum(boot_theta_j[1:j]) / total_sum
-    
-    # Calculate bias and update the estimate
-    bias[j] <- bias[j] + (theta_j - cumulative_proportion[j])
-    
-    # Calculate squared differences and update standard error
-    standard_error[j] <- standard_error[j] + (theta_j - cumulative_proportion[j])^2
-  }
-}
-
-
-
-bias <- bias / B
+bias <- colMeans(boot_theta)-theta
+se <- apply(boot_theta, 2, sd)
 bias
+se
+bias_jstar <- mean(boot_jstar) - jstar
+se_jstar <- sd(boot_jstar)
+bias_jstar
+se_jstar
+p_jstar <- mean(boot_jstar==5)
+p_jstar
 
-standard_error <- sqrt(standard_error / (B - 1))
-standard_error
-
-
-
-bias_jstar <- rep(0, jstar)
-std_error_jstar <- rep(0, jstar)
-
-# Perform bootstrap sampling and calculations
-for (i in 1:B) {
-  # Generate bootstrap sample by sampling with replacement
-  boot_theta_jstar <- sample(eigen_values, replace = TRUE)
-  
-  # Calculate the bootstrap estimator for jstar
-  theta_jstar <- sum(boot_theta_jstar[1:jstar]) / total_sum
-  
-  # Calculate bias and update the estimate
-  bias_jstar <- bias_jstar + (theta_jstar - cumulative_proportion[1:jstar])
-  
-  # Calculate squared differences and update standard error
-  std_error_jstar <- std_error_jstar + (theta_jstar - cumulative_proportion[1:jstar])^2
-}
-
-# Calculate average bias and standard error across bootstrap samples
-bias_jstar <- bias_jstar / B
-std_error_jstar <- sqrt(std_error_jstar / (B - 1))
-
-
-bootstrap_estimate <- cumulative_proportion[jstar] + bias_jstar[jstar]
-bootstrap_estimate
-bootstrap_std_error <- std_error_jstar[jstar]
-bootstrap_std_error
-
-#I don't know how to do the probability 
-p_jstar_5 <- mean(boot_theta_jstar==5)
-p_jstar_5
 
 #Point f 
 set.seed(abs(636-555-3226))
@@ -162,8 +108,7 @@ summary(regression)
 #PAIRED BOOTSTRAP
 num_coeffs <- length(coef(regression))
 bootstrap_estimates <- matrix(0, nrow = B, ncol = num_coeffs)
-  
-set.seed(123)  # Set a seed for reproducibility
+
 
 for (i in 1:B) {
   # Generate bootstrap sample indices by sampling with replacement
@@ -185,7 +130,65 @@ coefficient_std_error <- apply(bootstrap_estimates, 2, sd)
 coefficient_std_error
 coefficient_confidence_intervals <- t(apply(bootstrap_estimates, 2, function(x) quantile(x, c(0.025, 0.975))))
 coefficient_confidence_intervals
+
+adjusted_r_squared <- numeric(B)
+for (i in 1:B) {
+  # Generate bootstrap sample indices by sampling with replacement
+  bootstrap_indices <- sample(nrow(sub_data), replace = TRUE)
   
+  # Create bootstrap sample using the selected indices
+  bootstrap_sample <- sub_data[bootstrap_indices, ]
+  
+  # Fit the regression model on the bootstrap sample
+  bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
+  
+  # Calculate the adjusted R-squared for the bootstrap regression model
+  adjusted_r_squared[i] <- 1 - (1 - summary(bootstrap_regression)$r.squared) * ((nrow(bootstrap_sample) - 1) / (nrow(bootstrap_sample) - length(coef(bootstrap_regression)) - 1))
+}
+adjusted_r_squared_bias <- mean(adjusted_r_squared) - summary(regression)$adj.r.squared
+adjusted_r_squared_bias
+adjusted_r_squared_std_error <- sd(adjusted_r_squared)
+adjusted_r_squared_std_error
+adjusted_r_squared_confidence_interval <- quantile(adjusted_r_squared, c(0.025, 0.975))
+adjusted_r_squared_confidence_interval
+###############################################à
+#Point h
+regr_jack <- function(df, B){
+  
+  n_vars <- ncol(df)
+  n_obs <- nrow(df)
+  
+  betas <- matrix(NA,nrow = B, ncol = n_vars)
+  R2_adj <- numeric(B)
+
+  
+  for (i in 1:B) {
+    j_sample <- df[-i,]
+    model <- lm(average_rating~., data = j_sample)
+    s <- summary(model)
+    betas[i,] <- model$coefficients
+    R2_adj[i] <- s$adj.r.squared
+
+  }
+  return(list(betas=betas, R2_adj=R2_adj))
+}
+res_j <- regr_jack(sub_data, 1000)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   
   
