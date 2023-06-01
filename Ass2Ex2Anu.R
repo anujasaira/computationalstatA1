@@ -18,6 +18,8 @@ X <- songs[songs$first_auth == "AC/DC","pop"]
 # Extract popularity measurements for Artist Y
 Y <- songs$pop[songs$first_auth == "Kanye West"]
 
+songs[songs$first_auth == "Kanye West"]
+
 
 med_logit_X <-median( logit(X))
 med_logit_Y <-median( logit(Y))
@@ -57,24 +59,33 @@ pop_diff_T <- function(){
 
 pop_diff
 
+pop_diff<- pop_diff_T()
+
+rownames(pop_diff) <- u_art
+colnames(pop_diff) <- u_art
+
 
 p_test<- data.frame(
-  Artistx<- rep(1),
-  Artisty<- rep(1),
+  Artistx<- u_art,
+  Artisty<- u_art,
   pop_diff<- as.vector(pop_diff_T())
 )
 
 
+
+
 ##########################################################################################################
 
-
+library(reshape2)
 
 
 max(pop_diff)
 
-ggplot(p_test,aes(x=Artistx,y=Artisty,fill=pop_diff))+
-  geom_tile() +
-  scale_fill_gradient(low = "white", high = "red")
+ggplot(melt(pop_diff),aes(Var1,Var2))+
+         geom_tile(aes(fill = value), colour = "white")  +
+  scale_fill_gradient(low = "white", high = "red")+
+  theme(axis.text.x = element_text(angle=90,hjust = 1,siz=5),
+        axis.text.y = element_text(hjust = 1,siz=5))
 
 
 
@@ -175,16 +186,19 @@ for (i in 1:length(u_art)){
 p_test <- function(){
   res<-sapply(1:40, function(x) {
     sapply(1:40, function(y) {
+      if(x>=y){
       X <- data[data$first_auth ==  u_art[x],"pop"]
       Y <- data[data$first_auth ==  u_art[y],"pop"]
       observed_stat=popdiff(x,y)
+      combined<- union_all(X,Y)
       
       
       
-      num_perm<- 1000
+      num_perm<- 10000
       permutation_stat<- numeric(num_perm)
       for (k in 1:num_perm){
-        combined<- union_all(X,Y)
+        if(i>=j){
+        
         combined$pop <- sample(combined$pop,nrow(combined),replace = F)
         perm_X<- combined$pop[1:length(X$pop)]
         perm_Y<-combined$pop[(length(X$pop)+1):(length(X$pop)+length(Y$pop))]
@@ -195,12 +209,15 @@ p_test <- function(){
       p_value <- mean(permutation_stat>=observed_stat)
       
       p_values[x,y]<- p_value
+      p_values[y,x]<- p_value
+      }
+      }
     })
   })
   return(p_values)
 }
 
-
+factorial(22)
 
 ptestval<- p_test()
 
@@ -213,4 +230,25 @@ p_popdiff<- function(ply1,ply2){
   play_pop_diff<- abs(median(logit(songs$pop[songs$first_auth == u_art[ply1]]))-median(logit(songs$pop[songs$first_auth ==  u_art[ply2]])))
   return(play_pop_diff)
 }
+
+
+
+
+
+
+
+
+
+
+
+B = 50000
+perm_stat = numeric(B)
+
+perms_subs = replicate(B, sample(1:100,replace = F))
+
+
+perm_stat = apply(perms_subs,1, function(x) { perm_outcome = D$inc[x]
+t.test(x = perm_outcome[D$lab == "US"],
+       y = perm_outcome[D$lab == "EU"])$stat})
+
 
