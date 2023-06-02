@@ -1,0 +1,165 @@
+---
+title: "ANUJATESTASS2"
+author: "Anuja Saira Abraham"
+date: "2023-06-02"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+library(boot)
+library(tidyverse)
+library(reshape2)
+library(combinat)
+
+```
+
+```{r}
+
+songs <- readRDS("spot (1).RDS")
+head(songs)
+```
+
+```{r}
+boxplot(popularity~first_auth,data=songs)
+```
+
+```{r}
+u_art<- unique(songs$first_auth)
+
+#punto B
+
+X <- songs$pop[songs$first_auth == "AC/DC"]
+
+# Extract popularity measurements for Artist Y
+Y <- songs$pop[songs$first_auth == "Kanye West"]
+
+med_logit_X <-median( logit(X))
+med_logit_Y <-median( logit(Y))
+
+T_XY <- abs(med_logit_X-med_logit_Y)
+
+pop_diff_T <- function(){
+  res<-sapply(1:40, function(x) {
+    sapply(1:40, function(y) {
+      abs(median(logit(songs$pop[songs$first_auth == u_art[x]]))-median(logit(songs$pop[songs$first_auth ==  u_art[y]])))
+    })
+  })
+  return(res)
+}
+
+pop_diff<- pop_diff_T()
+
+rownames(pop_diff) <- u_art
+colnames(pop_diff) <- u_art
+
+ggplot(melt(pop_diff),aes(Var1,Var2))+
+  geom_tile(aes(fill = value), colour = "white")  +
+  scale_fill_gradient(low = "white", high = "red")+
+  theme(axis.text.x = element_text(angle=90,hjust = 1,siz=5),
+        axis.text.y = element_text(hjust = 1,siz=5))
+
+```
+
+```{r}
+#punto c
+data<-songs
+p_values <- matrix(0,nrow = length(u_art),ncol = length(u_art))
+for (i in 1:length(u_art)){
+  for(j in 1:length(u_art)){
+   if(i>=j){
+    
+      X <- data[data$first_auth ==  u_art[i],"pop"]
+      Y <- data[data$first_auth ==  u_art[j],"pop"]
+      observed_stat=abs(median(logit(songs$pop[songs$first_auth == u_art[i]]))-median(logit(songs$pop[songs$first_auth ==  u_art[j]])))
+      
+      
+      
+      num_perm<- 1000
+      permutation_stat<- numeric(num_perm)
+      for (k in 1:num_perm){
+        combined<- union_all(X,Y)
+        combined$pop <- sample(combined$pop,nrow(combined),replace = F)
+        perm_X<- combined$pop[1:length(X$pop)]
+        perm_Y<-combined$pop[(length(X$pop)+1):(length(X$pop)+length(Y$pop))]
+        permutation_stat[k]<- abs(median(logit(perm_X))-median(logit(perm_Y)))
+        
+      }
+      
+      p_value <- mean(permutation_stat>=observed_stat)
+      
+      p_values[i,j]<- p_value
+      p_values[j,i]<- p_value
+      
+      
+    }
+  }
+}
+
+
+p_values
+
+rownames(p_values) <- u_art
+colnames(p_values) <- u_art
+
+ggplot(melt(p_values),aes(Var1,Var2))+
+  geom_tile(aes(fill = value), colour = "white")  +
+  scale_fill_gradient(low = "white", high = "red")+
+  theme(axis.text.x = element_text(angle=90,hjust = 1,siz=5),
+        axis.text.y = element_text(hjust = 1,siz=5))
+
+```
+
+```{r}
+#punto d
+
+boxplot( data$pop ~ data$first_auth,
+         col= cutree( hclust(as.dist(1-p_values)),5))
+```
+
+```{r}
+
+#punto e
+pop_scaled <- scale(data$pop)
+df<- data.frame(Artist = data$first_auth,pop_scaled)
+
+t_test<- function(df,artist){
+  x<- df[df$Artist==artist,"pop_scaled"]
+  t_test<- t.test(x,mu=0,alternative = "greater")
+  return(t_test$p.value)
+}
+
+p_values<- sapply(unique(df$Artist),t_test,df=df)
+
+prob_violation <- sum(p_values<0.10)/length(p_values)
+prob_violation
+
+plot(sort(p_values), type="l",col = "blue", main = "Density Plot of P-values", xlab = "P-values", ylab = "Density", ylim=c(0,2))
+```
+
+```{r}
+
+#punto f
+adjusted_bh <- p.adjust(p_values, method = "BH")
+adjusted_bonferroni <- p.adjust(p_values, method = "bonferroni")
+adjusted_holm <- p.adjust(p_values, method = "holm")
+results <- data.frame(p_values, adjusted_bh, adjusted_bonferroni,adjusted_holm)
+
+# Plotting the p-values and adjusted p-values
+plot(sort(p_values), type="l", col = "blue", xlab = "Observation", ylab = "P-value",
+     main = "Comparison of P-values and Adjusted P-values")
+lines(sort(adjusted_bh), col = "red")
+lines(sort(adjusted_bonferroni),  col = "yellow")
+lines(sort(adjusted_holm), col = "green")
+abline(h = 0.05, lwd = 1, lty = 2)
+legend("bottomright", legend = c("P-values", "Adjusted (BH)", "Adjusted (Bonferroni)","Adjusted (Holm)"),
+       col = c("blue", "red","yellow","green"), lwd=1,)
+
+
+
+```
+
