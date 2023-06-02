@@ -48,14 +48,15 @@ ggplot(melt(pop_diff),aes(Var1,Var2))+
 
 
 #punto c
-
+data<-songs
 p_values <- matrix(0,nrow = length(u_art),ncol = length(u_art))
 for (i in 1:length(u_art)){
   for(j in 1:length(u_art)){
-    if(i>=j){
+   if(i>=j){
+    
       X <- data[data$first_auth ==  u_art[i],"pop"]
       Y <- data[data$first_auth ==  u_art[j],"pop"]
-      observed_stat=popdiff(i,j)
+      observed_stat=abs(median(logit(songs$pop[songs$first_auth == u_art[i]]))-median(logit(songs$pop[songs$first_auth ==  u_art[j]])))
       
       
       
@@ -112,6 +113,7 @@ t_test<- function(df,artist){
 p_values<- sapply(unique(df$Artist),t_test,df=df)
 
 prob_violation <- sum(p_values<0.10)/length(p_values)
+prob_violation
 
 plot(sort(p_values), type="l",col = "blue", main = "Density Plot of P-values", xlab = "P-values", ylab = "Density", ylim=c(0,2))
 
