@@ -197,6 +197,20 @@ coefficient_confidence_intervals <- t(apply(bootstrap_estimates, 2, function(x) 
 coefficient_confidence_intervals
 ```
 ```{r}
+adjusted_r_squared <- numeric(B)
+for (i in 1:B) {
+  # Generate bootstrap sample indices by sampling with replacement
+  bootstrap_indices <- sample(nrow(sub_data), replace = TRUE)
+  
+  # Create bootstrap sample using the selected indices
+  bootstrap_sample <- sub_data[bootstrap_indices, ]
+  
+  # Fit the regression model on the bootstrap sample
+  bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
+  
+  # Calculate the adjusted R-squared for the bootstrap regression model
+  adjusted_r_squared[i] <- 1 - (1 - summary(bootstrap_regression)$r.squared) * ((nrow(bootstrap_sample) - 1) / (nrow(bootstrap_sample) - length(coef(bootstrap_regression)) - 1))
+}
 adjusted_r_squared_CI <- quantile(adjusted_r_squared, c(0.025, 0.975))
 adjusted_r_squared_CI
 
@@ -209,6 +223,61 @@ theta_hat_CI
 ```
 
 ## Point h
+```{r}
+# Jackknife approach
+num_coeffs <- length(coef(regression))
+jackknife_estimates <- matrix(0, nrow = nrow(sub_data), ncol = num_coeffs)
+
+for (i in 1:nrow(sub_data)) {
+  # Create jackknife sample by excluding one observation
+  jackknife_sample <- sub_data[-i, ]
+  
+  # Fit the regression model on the jackknife sample
+  jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
+  
+  # Store the coefficients of the jackknife regression model
+  jackknife_estimates[i, ] <- coef(jackknife_regression)
+}
+
+coefficient_bias_jack <- rowMeans(jackknife_estimates) - coef(regression)
+coefficient_bias_jack
+coefficient_std_error_jack <- sqrt(((nrow(sub_data) - 1) / nrow(sub_data)) * apply((jackknife_estimates - rowMeans(jackknife_estimates))^2, 2, sum))
+coefficient_std_error_jack
+coefficient_confidence_intervals_jack <- t(apply(jackknife_estimates, 2, function(x) {
+  mean_x <- mean(x)
+  se_x <- sqrt(((nrow(sub_data) - 1) / nrow(sub_data)) * sum((x - mean_x)^2))
+  ci_lower <- mean_x - 1.96 * se_x
+  ci_upper <- mean_x + 1.96 * se_x
+  c(ci_lower, ci_upper)
+}))
+coefficient_confidence_intervals_jack
+
+# Calculate adjusted R-squared using the jackknife approach
+adjusted_r_squared_jack <- numeric(nrow(sub_data))
+
+for (i in 1:nrow(sub_data)) {
+  # Create jackknife sample by excluding one observation
+  jackknife_sample <- sub_data[-i, ]
+  
+  # Fit the regression model on the jackknife sample
+  jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
+  
+  # Calculate the adjusted R-squared for the jackknife regression model
+  adjusted_r_squared_jack[i] <- 1 - (1 - summary(jackknife_regression)$r.squared) * ((nrow(sub_data) - 1) / (nrow(sub_data) - length(coef(jackknife_regression)) - 1))
+}
+
+adjusted_r_squared_CI_jack <- quantile(adjusted_r_squared_jack, c(0.025, 0.975))
+
+adjusted_r_squared_CI_jack
+
+# Calculate theta_hat using the jackknife approach
+coeff <- coef(regression)
+theta_hat_jack <- apply(jackknife_estimates, 1, function(x) max(((coeff[5] - coeff[6]) / (coeff[3] + coeff[2])), 0))
+
+theta_hat_CI_jack <- quantile(theta_hat_jack, c(0.025, 0.975))
+theta_hat_CI_jack
+
+```
 
 
 
