@@ -1,5 +1,5 @@
 ---
-title: "ANUJATESTASS2"
+title: "Assignment II"
 author: "Anuja Saira Abraham"
 date: "2023-06-02"
 output: pdf_document
@@ -7,8 +7,212 @@ editor_options:
   markdown: 
     wrap: sentence
 ---
+# EXERCISE 1 - RISIKO! is back, with friends
+```{r}
+library(ggplot2)
+```
 
-## EXERCISE 2- WE NEED SOME MUSIC!
+
+## Point a 
+```{r}
+games <- readRDS("games_preprocessed.RDS")
+```
+The dataset *game* contains data about around 25000 board games.The variables that describe each game are eight. They are the year in which it has been published (*yearpublished*), the minimum and the maximum number of players that can play the game (*minplayers*, *maxplayers*) and the minimun age to play (*minage*). Then there is the *average_rating*, *total_owners* and *average_weight*.
+```{r}
+ggplot(games, aes(x = total_owners, y = average_rating)) +
+  geom_point() +
+  xlab("Total Owners") +
+  ylab("Average Rating") +
+  ggtitle("Relationship Between Owners and Ratings")
+```
+Considering, for example, the two variable *average_rating* and *total_owners*, the plot above make us see which is the relationship between them.
+
+##Point b
+```{r}
+games <- games[,-c(1,2)]
+games <- scale(games)
+```
+
+```{r}
+cov_matrix <- cov(games)
+heatmap(cov_matrix)
+```
+```{r}
+cor_matrix <- cor(games)
+plot(cov_matrix, cor_matrix, 
+     xlab = "Variance-Covariance Matrix",
+     ylab = "Correlation Matrix")
+abline(0,1,col = "red")
+
+```
+
+## Point c
+```{r}
+set.seed(12345)
+
+B <- 1000
+boot <- function(B, games){
+  
+  results <- matrix(NA, nrow = B, ncol = ncol(games)^2)
+  bootstrap <- replicate(B, {
+    
+    bootSample <- games[sample(nrow(games), replace = T),]
+    bootCov <- cov(bootSample)
+    i <- seq_len(B)
+    results[i,] <- as.vector(bootCov)
+  })
+  return(bootstrap)
+}
+
+boot <- boot(1000,games)
+
+standard_errors <- apply(boot, 1, sd)
+means <- apply(boot, 1, mean)
+
+
+qnt_CI <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975)))
+)
+clt_CI <- means + c(-1,1)*1.96*standard_errors
+
+rbind(clt_CI, qnt_CI)
+```
+
+```{r}
+plot_CI <- function(ci, method) {
+  plot(1:length(ci), ci[, 1], type = "l", ylim = range(c(qnt_CI, clt_CI)), 
+       xlab = "Bootstrap Iterations", ylab = "Estimate", main = method)
+  lines(1:length(ci), ci[, 2], type = "l", col = "red")
+  legend("topright", legend = c("Lower CI", "Upper CI"), col = c("black", "red"), lty = 1)
+}
+
+# Plot quantile-based confidence intervals
+plot_CI(qnt_CI, "Quantile-Based CI")
+
+# Plot CLT-based confidence intervals
+plot_CI(clt_CI, "CLT-Based CI")
+```
+????????????
+
+```{r}
+# Plot histogram of bootstrap estimates
+hist(means, breaks = "FD", xlab = "Estimate", ylab = "Frequency", 
+     main = "Distribution of Bootstrap Estimates")
+```
+```{r}
+plot(1:length(standard_errors), standard_errors, type = "l", 
+     xlab = "Bootstrap Iterations", ylab = "Standard Error", 
+     main = "Standard Errors of Bootstrap Estimates")
+```
+
+## Point d
+
+```{r}
+eigen_values <- eigen(cov_matrix)$values
+theta <- cumsum(eigen_values) / sum(eigen_values)
+theta
+```
+```{r}
+jstar <- min(which(theta > 0.76))
+jstar
+```
+
+## Point e
+```{r}
+boot_theta <- matrix(0, nrow = B, ncol = length(theta))
+boot_jstar <- numeric(B)
+
+for (i in 1:B) {
+  # Generate bootstrap sample by resampling from the original df
+  boot_sample <- games[sample(nrow(games), replace= TRUE),]
+  
+  # Calculate covariance matrix and eigenvalues for the bootstrap
+  cov_boot <- cov(boot_sample)
+  eigen_boot <- eigen(cov_boot)$values
+  
+  #Compute theta for the bootstrap sample
+  boot_theta[i,] <- cumsum(eigen_boot) / sum(eigen_boot)
+  
+  #Compute jstar for the bootstrap sample
+  boot_jstar[i] <- min(which(boot_theta[i,] > 0.76))
+  
+}
+```
+
+```{r}
+bias <- colMeans(boot_theta)-theta
+se <- apply(boot_theta, 2, sd)
+bias
+se
+```
+```{r}
+bias_jstar <- mean(boot_jstar) - jstar
+se_jstar <- sd(boot_jstar)
+bias_jstar
+se_jstar
+```
+```{r}
+p_jstar <- mean(boot_jstar==5)
+p_jstar
+```
+## Point f
+```{r}
+set.seed(abs(636-555-3226))
+ind <- sample(1:nrow(games),5000,FALSE)
+sub_data <- games[ind,]
+
+sub_data <- as.data.frame(sub_data)
+regression <- lm(sub_data$average_rating~., data = sub_data)
+summary(regression)  
+```
+## Point g
+```{r}
+#PAIRED BOOTSTRAP
+num_coeffs <- length(coef(regression))
+bootstrap_estimates <- matrix(0, nrow = B, ncol = num_coeffs)
+
+
+for (i in 1:B) {
+  # Generate bootstrap sample indices by sampling with replacement
+  bootstrap_indices <- sample(nrow(sub_data), replace = TRUE)
+  
+  # Create bootstrap sample using the selected indices
+  bootstrap_sample <- sub_data[bootstrap_indices, ]
+  
+  # Fit the regression model on the bootstrap sample
+  bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
+  
+  # Store the coefficients of the bootstrap regression model
+  bootstrap_estimates[i, ] <- coef(bootstrap_regression)
+}
+
+coefficient_bias <- apply(bootstrap_estimates, 2, mean) - coef(regression)
+coefficient_bias
+```
+```{r}
+coefficient_std_error <- apply(bootstrap_estimates, 2, sd)
+coefficient_std_error
+```
+```{r}
+coefficient_confidence_intervals <- t(apply(bootstrap_estimates, 2, function(x) quantile(x, c(0.025, 0.975))))
+coefficient_confidence_intervals
+```
+```{r}
+adjusted_r_squared_CI <- quantile(adjusted_r_squared, c(0.025, 0.975))
+adjusted_r_squared_CI
+
+```
+```{r}
+coeff <- coef(regression)
+theta_hat <- apply(bootstrap_estimates, 2, function(x) max(((coeff[5]-coeff[6])/(coeff[3]+coeff[2])), 0))
+theta_hat_CI <- quantile(theta_hat, c(0.025, 0.975))
+theta_hat_CI
+```
+
+## Point h
+
+
+
+# EXERCISE 2- WE NEED SOME MUSIC!
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -238,4 +442,10 @@ legend("bottomright", legend = c("P-values", "Adjusted (BH)", "Adjusted (Bonferr
 
 ```
 
-Holm procedure (will do is soon!!!!!!!!!!!!!!!!!!!!!!!)
+## HOLM'S PROCEDURE
+
+When the n hypotheses are tested seperately using tests with the level $$\frac{\alpha}{n}$$ it follows immediately from the Boole inequality that the probability of rejecting any true hypothesis is smaller then or equal to alpha. This constitutes a multiple test procedure with the multiple level of signficance alpha for free combination, the classical Bonferroni mupltiple test procedure. 
+
+As written in the paper "A simple sequentially rejective multiple test procedure" of Sture Holm, the sequentially rejective Bonferroni test the obtained levels are compared to the numbers $$\frac{\alpha}{n}, \frac{\alpha}{n-1}, \ldots, \frac{\alpha}{1}$$, whereas in the classical Bonferroni test they are compared to $$\frac{\alpha}{n}$$. 
+This means that the probability of rejecting any set of (false) hypotheses using the CLASSICAL Bonferroni test is SMALLER than or equal to the same probability using the sequantially rejective Bonferroni test based on the same test statistics. So the classical Bonferroni tesst can be replaced by the corresponding sequentially rejective Bonferroni test without loosing any probability of rejecting false hypotheses. 
+The power gain obtained by using a sequentially rejective Bonferroni test dependes veru much upon the alternative. The power of a hypothesis test is the probability of rejecting the null hypothesis when the alternative hypothesis is the hypothesis that is true. As a consequence, the power gain is small if all the hypothese are "almost true". It may be considerable if a number of hypotheses are "completely wrong". 

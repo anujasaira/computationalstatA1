@@ -42,7 +42,7 @@ clt_CI <- means + c(-1,1)*1.96*standard_errors
 rbind(clt_CI, qnt_CI)
 
 
-##Non va la plot
+
 plot_results <- function(clt_CI, qnt_CI) {
   n <- length(clt_CI)
   plot(1:n, clt_CI[, 1], type = "l", ylim = range(c(clt_CI, qnt_CI)), 
