@@ -4,6 +4,7 @@ library(boot)
 library(tidyverse)
 library(reshape2)
 library(combinat)
+library(ggplot2)
 
 
 
@@ -98,6 +99,10 @@ ggplot(melt(p_values),aes(Var1,Var2))+
 
 boxplot( data$pop ~ data$first_auth,
          col= cutree( hclust(as.dist(1-p_values)),5))
+
+
+#the cutree() cut a hierarchical clustering tree into a 5 clusters. The clustering is performed on a distance matrix derived from the p-value matrix, pval_mat, by subtracting each value from 1 and converting it to a distance using as.dist(). 
+#The resulting clusters are used to assign colors to the boxes in the boxplot.
 
 
 #punto e
