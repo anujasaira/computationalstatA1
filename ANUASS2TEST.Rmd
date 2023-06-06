@@ -234,9 +234,37 @@ for (i in 1:B) {
 
 ```{r}
 coeff <- coef(regression)
-theta_hat <- apply(bootstrap_estimates, 2, function(x) max(((coeff[5]-coeff[6])/(coeff[3]+coeff[2])), 0))
-theta_hat_CI <- quantile(theta_hat, c(0.025, 0.975))
-theta_hat_CI
+theta_estimates <- numeric(B)
+
+# Perform the paired bootstrap
+for (i in 1:B) {
+  # Sample with replacement
+  boot_sample <- sub_data[sample(nrow(sub_data), replace = TRUE), ]
+  
+  # Fit the regression model on the bootstrap sample
+  regression_boot <- lm(average_rating ~ ., data = boot_sample)
+  
+  # Extract the coefficient estimates
+  coeff_boot <- coef(regression_boot)
+  
+  # Calculate theta for the bootstrap sample
+  theta_boot <- max(((coeff_boot[5] - coeff_boot[6])/(coeff_boot[3]+coeff_boot[2])), 0)
+  # Store the estimate in the vector
+  theta_estimates[i] <- theta_boot
+}
+# Calculate the bias
+bias <- mean(theta_estimates) - (coeff[5] - coeff[6])/(coeff[3]+coeff[2])
+bias
+```
+```{r}
+# Calculate the standard error
+se <- sd(theta_estimates)
+se
+```
+```{r}
+# Calculate the confidence intervals
+ci <- quantile(theta_estimates, probs = c(0.025, 0.975))
+ci
 ```
 
 ## Point h
