@@ -7,18 +7,24 @@ editor_options:
   markdown: 
     wrap: sentence
 ---
+
 # EXERCISE 1 - RISIKO! is back, with friends
+
 ```{r}
 library(ggplot2)
 library(ggcorrplot)
 ```
 
+## Point a
 
-## Point a 
 ```{r}
 games <- readRDS("games_preprocessed.RDS")
 ```
-The dataset *game* contains data about around 25000 board games.The variables that describe each game are eight. They are the year in which it has been published (*yearpublished*), the minimum and the maximum number of players that can play the game (*minplayers*, *maxplayers*) and the minimun age to play (*minage*). Then there is the *average_rating*, *total_owners* and *average_weight*.All are quantitative variables except for the first (*id*) and second (*name*) ones that we are not going to consider for our exercise.  
+
+The dataset *game* contains data about around 25000 board games.The variables that describe each game are eight.
+They are the year in which it has been published (*yearpublished*), the minimum and the maximum number of players that can play the game (*minplayers*, *maxplayers*) and the minimun age to play (*minage*).
+Then there is the *average_rating*, *total_owners* and *average_weight*.All are quantitative variables except for the first (*id*) and second (*name*) ones that we are not going to consider for our exercise.
+
 ```{r}
 ggplot(games, aes(x = total_owners, y = average_rating)) +
   geom_point() +
@@ -26,9 +32,11 @@ ggplot(games, aes(x = total_owners, y = average_rating)) +
   ylab("Average Rating") +
   ggtitle("Relationship Between Owners and Ratings")
 ```
+
 Considering, for example, the two variable *average_rating* and *total_owners*, the plot above make us see which is the relationship between them.
 
 ##Point b
+
 ```{r}
 games <- games[,-c(1,2)]
 games <- scale(games)
@@ -39,7 +47,9 @@ cov_matrix <- cov(games)
 ggcorrplot(cov_matrix)
 cov_matrix
 ```
+
 From the plot and the variance-covariance matrix values we can see that the variables don't have a strong relationship in general.
+
 ```{r}
 cor_matrix <- cor(games)
 plot(cov_matrix, cor_matrix, 
@@ -47,9 +57,10 @@ plot(cov_matrix, cor_matrix,
      ylab = "Correlation Matrix")
 abline(0,1,col = "red")
 ```
+
 The correlation matrix is the same as the variance-covariance matrix because our dataset has been scaled, resulting in equivalent covariance and correlation values.
-## Point c
-Now we perform nonparametric bootstrap to obtain standard error estimates for each of the entries of the variance-covariance matrix.
+## Point c Now we perform nonparametric bootstrap to obtain standard error estimates for each of the entries of the variance-covariance matrix.
+
 ```{r}
 set.seed(12345)
 
@@ -72,7 +83,9 @@ boot <- boot(1000,games)
 standard_errors <- apply(boot, 1, sd)
 standard_errors
 ```
-Bootstrap confidence intervals 
+
+Bootstrap confidence intervals
+
 ```{r}
 means <- apply(boot, 1, mean)
 qnt_CI[] <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975)))
@@ -81,7 +94,6 @@ clt_CI[] <- means + c(-1,1)*1.96*standard_errors
 
 rbind(clt_CI, qnt_CI)
 ```
-
 
 ```{r}
 cov_hat <- as.vector(cov_matrix)
@@ -95,12 +107,12 @@ plot(y, pch = 19, cex = 0.5,ylim = range(c(y_lower, y_upper)), ylab = "Var/Cov",
 segments(x, y_lower, x, y_upper, lwd = 1.5,col = "blue")
 
 ```
+
 CLT
+
 ```{r}
 
 ```
-
-
 
 ```{r}
 plot(1:length(standard_errors), standard_errors, type = "l", 
@@ -115,12 +127,14 @@ eigen_values <- eigen(cov_matrix)$values
 theta <- cumsum(eigen_values) / sum(eigen_values)
 theta
 ```
+
 ```{r}
 jstar <- min(which(theta > 0.76))
 jstar
 ```
 
 ## Point e
+
 ```{r}
 boot_theta <- matrix(0, nrow = B, ncol = length(theta))
 boot_jstar <- numeric(B)
@@ -148,17 +162,21 @@ se <- apply(boot_theta, 2, sd)
 bias
 se
 ```
+
 ```{r}
 bias_jstar <- mean(boot_jstar) - jstar
 se_jstar <- sd(boot_jstar)
 bias_jstar
 se_jstar
 ```
+
 ```{r}
 p_jstar <- mean(boot_jstar==5)
 p_jstar
 ```
+
 ## Point f
+
 ```{r}
 set.seed(abs(636-555-3226))
 ind <- sample(1:nrow(games),5000,FALSE)
@@ -168,13 +186,19 @@ sub_data <- as.data.frame(sub_data)
 regression <- lm(sub_data$average_rating~., data = sub_data)
 summary(regression)  
 ```
-The intercept is equal to 0.008392. It corresponds to the expected average rate of a board game when the other variables are equal to zero. And so it is not interpretable in this problem because we are talking about the average rating of a board game that does not exist.   
-## Point g
+
+The intercept is equal to 0.008392.
+It corresponds to the expected average rate of a board game when the other variables are equal to zero.
+And so it is not interpretable in this problem because we are talking about the average rating of a board game that does not exist.\
+\## Point g
+
 ```{r}
 plot(fitted(regression), resid(regression))
 ```
 
-Above we used the paired bootstrap method to provide bias, standard error and confidence intervals for regression coefficients, adjusted $R^2$ index and our $\hat{\theta}$. In particular, we chose this method because NO THE ONE OF ERRORS BECAUSE OF THE PLOT .
+Above we used the paired bootstrap method to provide bias, standard error and confidence intervals for regression coefficients, adjusted $R^2$ index and our $\hat{\theta}$.
+In particular, we chose this method because NO THE ONE OF ERRORS BECAUSE OF THE PLOT .
+
 ```{r}
 perform_paired_bootstrap <- function(data, B) {
   num_coeffs <- length(coef(regression))
@@ -236,7 +260,6 @@ results <- perform_paired_bootstrap(sub_data, B)
 results
 ```
 
-
 ## Point h
 
 ```{r}
@@ -297,8 +320,6 @@ results_jackknife <- perform_jackknife(sub_data)
 results_jackknife
 ```
 
-
-
 # EXERCISE 2- WE NEED SOME MUSIC!
 
 ```{r setup, include=FALSE}
@@ -313,6 +334,7 @@ library(reshape2)
 library(combinat)
 
 ```
+## Point a
 
 DESCRIPTION OF THE VARIABLES AND EXPLORATORY ANALYSIS: Considering the data saved in spot.RDS, a description of the variables can be found on Kaggle:
 
@@ -375,6 +397,7 @@ head(songs)
 ```{r}
 boxplot(popularity~first_auth,data=songs)
 ```
+## Point b
 
 Focusing on "pop" and given two artists, we want to measure their different in popularity.
 Let X and Y denote the vectors of popularity measurements of the songs of two given artists.
@@ -382,7 +405,8 @@ We measure their difference with:
 
 $$
 T(X, Y) = \left| \text{median}(\text{logit}(X)) - \text{median}(\text{logit}(Y)) \right|
-$$ After implementing this estimator to compare the popularity of AC/DC and Kanye West, we provide a a matrix with all pairwise comparisons.
+$$ 
+After implementing this estimator to compare the popularity of AC/DC and Kanye West, we provide a a matrix with all pairwise comparisons.
 
 ```{r}
 u_art<- unique(songs$first_auth)
@@ -419,6 +443,7 @@ ggplot(melt(pop_diff),aes(Var1,Var2))+
         axis.text.y = element_text(hjust = 1,siz=5))
 
 ```
+##Point C
 
 Now we perform a hypothesis testing to assess the absence of difference between the popularity of two artists measured via T(X,Y) and perform a sequence of pairwise permutation tests reporting the estimated p-values.
 
@@ -470,12 +495,15 @@ ggplot(melt(p_values),aes(Var1,Var2))+
 
 ```
 
-????????????????????????????????????????????
+##Point D
+The cutree() cut a hierarchical clustering tree into a 5 clusters. The clustering is performed on a distance matrix derived from the p-value matrix, pval_mat, by subtracting each value from 1 and converting it to a distance using as.dist(). The resulting clusters are used to assign colors to the boxes in the boxplot.
+
 
 ```{r}
 boxplot( data$pop ~ data$first_auth,
          col= cutree( hclust(as.dist(1-p_values)),5))
 ```
+##Point E
 
 Now, we apply the scale() function to "pop" and perform, for each artist, a single-sample t-test to assess:
 
@@ -502,9 +530,14 @@ p_values<- sapply(unique(df$Artist),t_test,df=df)
 
 prob_violation <- sum(p_values<0.10)/length(p_values)
 prob_violation #probability of the global null to be violated
+```
+The plot below shows that the lies in the two extremes of probability ie. 0 and 1. The ones with smaller values indicates a higher popularity index that the others. 
+
+```{r}
 
 plot(sort(p_values), type="l",col = "blue", main = "Density Plot of P-values", xlab = "P-values", ylab = "Density", ylim=c(0,2))
 ```
+##Point f
 
 The p.adjust function is used to adjust p-values for multiple comparisons.
 When conducting multiple statistical tests or comparing multiple groups, the probability of obtaining a significant result by chance increases.
@@ -531,8 +564,13 @@ legend("bottomright", legend = c("P-values", "Adjusted (BH)", "Adjusted (Bonferr
 
 ## HOLM'S PROCEDURE
 
-When the n hypotheses are tested seperately using tests with the level $$\frac{\alpha}{n}$$ it follows immediately from the Boole inequality that the probability of rejecting any true hypothesis is smaller then or equal to alpha. This constitutes a multiple test procedure with the multiple level of signficance alpha for free combination, the classical Bonferroni mupltiple test procedure. 
+When the n hypotheses are tested seperately using tests with the level $$\frac{\alpha}{n}$$ it follows immediately from the Boole inequality that the probability of rejecting any true hypothesis is smaller then or equal to alpha.
+This constitutes a multiple test procedure with the multiple level of signficance alpha for free combination, the classical Bonferroni mupltiple test procedure.
 
-As written in the paper "A simple sequentially rejective multiple test procedure" of Sture Holm, the sequentially rejective Bonferroni test the obtained levels are compared to the numbers $$\frac{\alpha}{n}, \frac{\alpha}{n-1}, \ldots, \frac{\alpha}{1}$$, whereas in the classical Bonferroni test they are compared to $$\frac{\alpha}{n}$$. 
-This means that the probability of rejecting any set of (false) hypotheses using the CLASSICAL Bonferroni test is SMALLER than or equal to the same probability using the sequantially rejective Bonferroni test based on the same test statistics. So the classical Bonferroni tesst can be replaced by the corresponding sequentially rejective Bonferroni test without loosing any probability of rejecting false hypotheses. 
-The power gain obtained by using a sequentially rejective Bonferroni test dependes veru much upon the alternative. The power of a hypothesis test is the probability of rejecting the null hypothesis when the alternative hypothesis is the hypothesis that is true. As a consequence, the power gain is small if all the hypothese are "almost true". It may be considerable if a number of hypotheses are "completely wrong". 
+As written in the paper "A simple sequentially rejective multiple test procedure" of Sture Holm, the sequentially rejective Bonferroni test the obtained levels are compared to the numbers $$\frac{\alpha}{n}, \frac{\alpha}{n-1}, \ldots, \frac{\alpha}{1}$$, whereas in the classical Bonferroni test they are compared to $$\frac{\alpha}{n}$$.
+This means that the probability of rejecting any set of (false) hypotheses using the CLASSICAL Bonferroni test is SMALLER than or equal to the same probability using the sequantially rejective Bonferroni test based on the same test statistics.
+So the classical Bonferroni tesst can be replaced by the corresponding sequentially rejective Bonferroni test without loosing any probability of rejecting false hypotheses.
+The power gain obtained by using a sequentially rejective Bonferroni test dependes veru much upon the alternative.
+The power of a hypothesis test is the probability of rejecting the null hypothesis when the alternative hypothesis is the hypothesis that is true.
+As a consequence, the power gain is small if all the hypothese are "almost true".
+It may be considerable if a number of hypotheses are "completely wrong".
