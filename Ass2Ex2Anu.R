@@ -112,7 +112,7 @@ boxplot( data$pop ~ data$first_auth,
 
 #punto e
 
-#The plot below shows that the lies in the two extremes. 0 and 1
+#The plot below shows that the lies in the two extremes of probability ie. 0 and 1. The ones with smaller values indicates a higher popularity index that the others 
 
 pop_scaled <- scale(data$pop)
 df<- data.frame(Artist = data$first_auth,pop_scaled)
@@ -139,6 +139,8 @@ adjusted_bh <- p.adjust(p_values, method = "BH")
 adjusted_bonferroni <- p.adjust(p_values, method = "bonferroni")
 adjusted_holm <- p.adjust(p_values, method = "holm")
 results <- data.frame(p_values, adjusted_bh, adjusted_bonferroni,adjusted_holm)
+
+
 
 # Plotting the p-values and adjusted p-values
 plot(sort(p_values), type="l", col = "blue", xlab = "Observation", ylab = "P-value",
