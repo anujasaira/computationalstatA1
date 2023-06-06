@@ -49,6 +49,9 @@ ggplot(melt(pop_diff),aes(Var1,Var2))+
 
 
 #punto c
+
+# the null hypothesis states that samples come from the same distribution ie. the two playlist are similar.
+#alternative hypothesis stated that the samples are different. ie. the the two playlise are not similar.
 data<-songs
 p_values <- matrix(0,nrow = length(u_art),ncol = length(u_art))
 for (i in 1:length(u_art)){
@@ -83,6 +86,8 @@ for (i in 1:length(u_art)){
 }
 
 
+
+
 p_values
 
 rownames(p_values) <- u_art
@@ -102,10 +107,13 @@ boxplot( data$pop ~ data$first_auth,
 
 
 #the cutree() cut a hierarchical clustering tree into a 5 clusters. The clustering is performed on a distance matrix derived from the p-value matrix, pval_mat, by subtracting each value from 1 and converting it to a distance using as.dist(). 
-#The resulting clusters are used to assign colors to the boxes in the boxplot.
+#The resulting.' clusters are used to assign colors to the boxes in the boxplot.
 
 
 #punto e
+
+#The plot below shows that the lies in the two extremes. 0 and 1
+
 pop_scaled <- scale(data$pop)
 df<- data.frame(Artist = data$first_auth,pop_scaled)
 
@@ -115,12 +123,15 @@ t_test<- function(df,artist){
   return(t_test$p.value)
 }
 
-p_values<- sapply(unique(df$Artist),t_test,df=df)
+new_p_values<- sapply(unique(df$Artist),t_test,df=df)
 
-prob_violation <- sum(p_values<0.10)/length(p_values)
+
+#What is the probability of the global null to be violated in this case?
+
+prob_violation <- sum(p_values<0.10)/length(new_p_values)
 prob_violation
 
-plot(sort(p_values), type="l",col = "blue", main = "Density Plot of P-values", xlab = "P-values", ylab = "Density", ylim=c(0,2))
+plot(sort(new_p_values), type="l",col = "blue", main = "Probability (P-value)", xlab = "Counts", ylab = "Probability", ylim=c(0,2))
 
 
 #punto f
