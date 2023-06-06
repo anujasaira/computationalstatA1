@@ -10,6 +10,7 @@ editor_options:
 # EXERCISE 1 - RISIKO! is back, with friends
 ```{r}
 library(ggplot2)
+library(ggcorrplot)
 ```
 
 
@@ -17,7 +18,7 @@ library(ggplot2)
 ```{r}
 games <- readRDS("games_preprocessed.RDS")
 ```
-The dataset *game* contains data about around 25000 board games.The variables that describe each game are eight. They are the year in which it has been published (*yearpublished*), the minimum and the maximum number of players that can play the game (*minplayers*, *maxplayers*) and the minimun age to play (*minage*). Then there is the *average_rating*, *total_owners* and *average_weight*.
+The dataset *game* contains data about around 25000 board games.The variables that describe each game are eight. They are the year in which it has been published (*yearpublished*), the minimum and the maximum number of players that can play the game (*minplayers*, *maxplayers*) and the minimun age to play (*minage*). Then there is the *average_rating*, *total_owners* and *average_weight*.All are quantitative variables except for the first (*id*) and second (*name*) ones that we are not going to consider for our exercise.  
 ```{r}
 ggplot(games, aes(x = total_owners, y = average_rating)) +
   geom_point() +
@@ -35,7 +36,7 @@ games <- scale(games)
 
 ```{r}
 cov_matrix <- cov(games)
-heatmap(cov_matrix, margins = c(9,9))
+ggcorrplot(cov_matrix)
 cov_matrix
 ```
 From the plot and the variance-covariance matrix values we can see that the variables don't have a strong relationship in general.
@@ -71,37 +72,36 @@ boot <- boot(1000,games)
 standard_errors <- apply(boot, 1, sd)
 standard_errors
 ```
+Bootstrap confidence intervals 
 ```{r}
 means <- apply(boot, 1, mean)
-qnt_CI <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975)))
+qnt_CI[] <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975)))
 )
-clt_CI <- means + c(-1,1)*1.96*standard_errors
+clt_CI[] <- means + c(-1,1)*1.96*standard_errors
 
 rbind(clt_CI, qnt_CI)
 ```
 
 
 ```{r}
-plot_CI <- function(ci, method) {
-  plot(1:length(ci), ci[, 1], type = "l", ylim = range(c(qnt_CI, clt_CI)), 
-       xlab = "Bootstrap Iterations", ylab = "Estimate", main = method)
-  lines(1:length(ci), ci[, 2], type = "l", col = "red")
-  legend("topright", legend = c("Lower CI", "Upper CI"), col = c("black", "red"), lty = 1)
-}
+cov_hat <- as.vector(cov_matrix)
 
-# Plot quantile-based confidence intervals
-plot_CI(qnt_CI, "Quantile-Based CI")
+x <- seq(length(cov_hat))
+y <- cov_hat
+y_upper <- unlist(qnt_CI[,2])
+y_lower <- unlist(qnt_CI[,1])
+plot(y, pch = 19, cex = 0.5,ylim = range(c(y_lower, y_upper)), ylab = "Var/Cov", xlab = "Index",
+     main = "Percentile Approach Confidence Intervals")
+segments(x, y_lower, x, y_upper, lwd = 1.5,col = "blue")
 
-# Plot CLT-based confidence intervals
-plot_CI(clt_CI, "CLT-Based CI")
 ```
-????????????
-
+CLT
 ```{r}
-# Plot histogram of bootstrap estimates
-hist(means, breaks = "FD", xlab = "Estimate", ylab = "Frequency", 
-     main = "Distribution of Bootstrap Estimates")
+
 ```
+
+
+
 ```{r}
 plot(1:length(standard_errors), standard_errors, type = "l", 
      xlab = "Bootstrap Iterations", ylab = "Standard Error", 
@@ -170,158 +170,131 @@ summary(regression)
 ```
 The intercept is equal to 0.008392. It corresponds to the expected average rate of a board game when the other variables are equal to zero. And so it is not interpretable in this problem because we are talking about the average rating of a board game that does not exist.   
 ## Point g
-Above we used the paired bootstrap method to provide bias, standard error and confidence intervals for regression coefficients, adjusted $R^2$ index and our $\hat{\theta}$. In particular, we chose this method because __________ .
 ```{r}
-num_coeffs <- length(coef(regression))
-bootstrap_estimates <- matrix(0, nrow = B, ncol = num_coeffs)
+plot(fitted(regression), resid(regression))
+```
 
-
-for (i in 1:B) {
-  bootstrap_indices <- sample(nrow(sub_data), replace = TRUE)
+Above we used the paired bootstrap method to provide bias, standard error and confidence intervals for regression coefficients, adjusted $R^2$ index and our $\hat{\theta}$. In particular, we chose this method because NO THE ONE OF ERRORS BECAUSE OF THE PLOT .
+```{r}
+perform_paired_bootstrap <- function(data, B) {
+  num_coeffs <- length(coef(regression))
+  bootstrap_estimates <- matrix(0, nrow = B, ncol = num_coeffs)
   
-  bootstrap_sample <- sub_data[bootstrap_indices, ]
+  for (i in 1:B) {
+    bootstrap_indices <- sample(nrow(data), replace = TRUE)
+    bootstrap_sample <- data[bootstrap_indices, ]
+    bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
+    bootstrap_estimates[i, ] <- coef(bootstrap_regression)
+  }
   
-  bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
+  coefficient_bias <- apply(bootstrap_estimates, 2, mean) - coef(regression)
+  coefficient_std_error <- apply(bootstrap_estimates, 2, sd)
+  coefficient_confidence_intervals <- t(apply(bootstrap_estimates, 2, function(x) quantile(x, c(0.025, 0.975))))
   
-  bootstrap_estimates[i, ] <- coef(bootstrap_regression)
+  adjusted_r_squared <- numeric(B)
+  for (i in 1:B) {
+    bootstrap_indices <- sample(nrow(data), replace = TRUE)
+    bootstrap_sample <- data[bootstrap_indices, ]
+    bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
+    adjusted_r_squared[i] <- 1 - (1 - summary(bootstrap_regression)$r.squared) * ((nrow(bootstrap_sample) - 1) / (nrow(bootstrap_sample) - length(coef(bootstrap_regression)) - 1))
+  }
+  adjusted_r_squared_bias <- mean(adjusted_r_squared) - summary(regression)$adj.r.squared
+  adjusted_r_squared_std_error <- sd(adjusted_r_squared)
+  adjusted_r_squared_confidence_interval <- quantile(adjusted_r_squared, c(0.025, 0.975))
+  
+  theta_estimates <- numeric(B)
+  coeff <- coef(regression)
+  
+  for (i in 1:B) {
+    boot_sample <- data[sample(nrow(data), replace = TRUE), ]
+    regression_boot <- lm(average_rating ~ ., data = boot_sample)
+    coeff_boot <- coef(regression_boot)
+    theta_boot <- max(((coeff_boot[5] - coeff_boot[6])/(coeff_boot[3]+coeff_boot[2])), 0)
+    theta_estimates[i] <- theta_boot
+  }
+  
+  bias <- mean(theta_estimates) - (coeff[5] - coeff[6])/(coeff[3]+coeff[2])
+  se <- sd(theta_estimates)
+  ci <- quantile(theta_estimates, probs = c(0.025, 0.975))
+  
+  results <- list(
+    coefficient_bias = coefficient_bias,
+    coefficient_std_error = coefficient_std_error,
+    coefficient_confidence_intervals = coefficient_confidence_intervals,
+    adjusted_r_squared_bias = adjusted_r_squared_bias,
+    adjusted_r_squared_std_error = adjusted_r_squared_std_error,
+    adjusted_r_squared_confidence_interval = adjusted_r_squared_confidence_interval,
+    theta_bias = bias,
+    theta_std_error = se,
+    theta_confidence_interval = ci
+  )
+  
+  return(results)
 }
 
-coefficient_bias <- apply(bootstrap_estimates, 2, mean) - coef(regression)
-coefficient_bias
-```
-```{r}
-coefficient_std_error <- apply(bootstrap_estimates, 2, sd)
-coefficient_std_error
-```
-```{r}
-coefficient_confidence_intervals <- t(apply(bootstrap_estimates, 2, function(x) quantile(x, c(0.025, 0.975))))
-coefficient_confidence_intervals
-```
-```{r}
-adjusted_r_squared <- numeric(B)
-for (i in 1:B) {
-  
-  bootstrap_indices <- sample(nrow(sub_data), replace = TRUE)
-  
-  bootstrap_sample <- sub_data[bootstrap_indices, ]
-  
-  bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
-  
-  adjusted_r_squared[i] <- 1 - (1 - summary(bootstrap_regression)$r.squared) * ((nrow(bootstrap_sample) - 1) / (nrow(bootstrap_sample) - length(coef(bootstrap_regression)) - 1))
-}
-adjusted_r_squared_bias <- mean(adjusted_r_squared) - summary(regression)$adj.r.squared
-adjusted_r_squared_bias
-```
-```{r}
-adjusted_r_squared_std_error <- sd(adjusted_r_squared)
-adjusted_r_squared_std_error
-```
-```{r}
-adjusted_r_squared_confidence_interval <- quantile(adjusted_r_squared, c(0.025, 0.975))
-adjusted_r_squared_confidence_interval
-```
-```{r}
-for (i in 1:B) {
-  bootstrap_indices <- sample(nrow(sub_data), replace = TRUE)
-  
-  bootstrap_sample <- sub_data[bootstrap_indices, ]
-  
-  bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
-  
-  bootstrap_estimates[i, ] <- coef(bootstrap_regression)
-}
+results <- perform_paired_bootstrap(sub_data, B)
+results
 ```
 
-```{r}
-coeff <- coef(regression)
-theta_estimates <- numeric(B)
-
-# Perform the paired bootstrap
-for (i in 1:B) {
-  # Sample with replacement
-  boot_sample <- sub_data[sample(nrow(sub_data), replace = TRUE), ]
-  
-  # Fit the regression model on the bootstrap sample
-  regression_boot <- lm(average_rating ~ ., data = boot_sample)
-  
-  # Extract the coefficient estimates
-  coeff_boot <- coef(regression_boot)
-  
-  # Calculate theta for the bootstrap sample
-  theta_boot <- max(((coeff_boot[5] - coeff_boot[6])/(coeff_boot[3]+coeff_boot[2])), 0)
-  # Store the estimate in the vector
-  theta_estimates[i] <- theta_boot
-}
-# Calculate the bias
-bias <- mean(theta_estimates) - (coeff[5] - coeff[6])/(coeff[3]+coeff[2])
-bias
-```
-```{r}
-# Calculate the standard error
-se <- sd(theta_estimates)
-se
-```
-```{r}
-# Calculate the confidence intervals
-ci <- quantile(theta_estimates, probs = c(0.025, 0.975))
-ci
-```
 
 ## Point h
+
 ```{r}
-# Jackknife approach
-num_coeffs <- length(coef(regression))
-jackknife_estimates <- matrix(0, nrow = nrow(sub_data), ncol = num_coeffs)
-
-for (i in 1:nrow(sub_data)) {
-  # Create jackknife sample by excluding one observation
-  jackknife_sample <- sub_data[-i, ]
+perform_jackknife <- function(data) {
+  num_coeffs <- length(coef(regression))
+  num_samples <- nrow(data)
+  jackknife_estimates <- matrix(0, nrow = num_samples, ncol = num_coeffs)
   
-  # Fit the regression model on the jackknife sample
-  jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
+  for (i in 1:num_samples) {
+    jackknife_sample <- data[-i, ]  # Leave out the i-th observation
+    jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
+    jackknife_estimates[i, ] <- coef(jackknife_regression)
+  }
   
-  # Store the coefficients of the jackknife regression model
-  jackknife_estimates[i, ] <- coef(jackknife_regression)
+  coefficient_bias <- num_samples * (colMeans(jackknife_estimates) - coef(regression)) / (num_samples - 1)
+  coefficient_std_error <- sqrt(num_samples * (colMeans(jackknife_estimates^2) - (colMeans(jackknife_estimates))^2) / (num_samples - 1))
+  coefficient_confidence_intervals <- t(apply(jackknife_estimates, 2, function(x) quantile(x, c(0.025, 0.975))))
+  
+  adjusted_r_squared <- numeric(num_samples)
+  for (i in 1:num_samples) {
+    jackknife_sample <- data[-i, ]
+    jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
+    adjusted_r_squared[i] <- 1 - (1 - summary(jackknife_regression)$r.squared) * ((nrow(jackknife_sample) - 1) / (nrow(jackknife_sample) - length(coef(jackknife_regression)) - 1))
+  }
+  adjusted_r_squared_bias <- num_samples * (mean(adjusted_r_squared) - summary(regression)$adj.r.squared) / (num_samples - 1)
+  adjusted_r_squared_std_error <- sqrt(num_samples * (mean(adjusted_r_squared^2) - (mean(adjusted_r_squared))^2) / (num_samples - 1))
+  adjusted_r_squared_confidence_interval <- quantile(adjusted_r_squared, c(0.025, 0.975))
+  
+  theta_estimates <- numeric(num_samples)
+  coeff <- coef(regression)
+  
+  for (i in 1:num_samples) {
+    jackknife_sample <- data[-i, ]
+    jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
+    coeff_boot <- coef(jackknife_regression)
+    theta_estimates[i] <- max(((coeff_boot[5] - coeff_boot[6])/(coeff_boot[3] + coeff_boot[2])), 0)
+  }
+  
+  theta_bias <- num_samples * (mean(theta_estimates) - (coeff[5] - coeff[6])/(coeff[3] + coeff[2])) / (num_samples - 1)
+  theta_std_error <- sqrt(num_samples * (mean(theta_estimates^2) - (mean(theta_estimates))^2) / (num_samples - 1))
+  theta_confidence_interval <- quantile(theta_estimates, probs = c(0.025, 0.975))
+  
+  results <- list(
+    coefficient_bias = coefficient_bias,
+    coefficient_std_error = coefficient_std_error,
+    coefficient_confidence_intervals = coefficient_confidence_intervals,
+    adjusted_r_squared_bias = adjusted_r_squared_bias,
+    adjusted_r_squared_std_error = adjusted_r_squared_std_error,
+    adjusted_r_squared_confidence_interval = adjusted_r_squared_confidence_interval,
+    theta_bias = theta_bias,
+    theta_std_error = theta_std_error,
+    theta_confidence_interval = theta_confidence_interval
+  )
+  
+  return(results)
 }
-
-coefficient_bias_jack <- rowMeans(jackknife_estimates) - coef(regression)
-coefficient_bias_jack
-coefficient_std_error_jack <- sqrt(((nrow(sub_data) - 1) / nrow(sub_data)) * apply((jackknife_estimates - rowMeans(jackknife_estimates))^2, 2, sum))
-coefficient_std_error_jack
-coefficient_confidence_intervals_jack <- t(apply(jackknife_estimates, 2, function(x) {
-  mean_x <- mean(x)
-  se_x <- sqrt(((nrow(sub_data) - 1) / nrow(sub_data)) * sum((x - mean_x)^2))
-  ci_lower <- mean_x - 1.96 * se_x
-  ci_upper <- mean_x + 1.96 * se_x
-  c(ci_lower, ci_upper)
-}))
-coefficient_confidence_intervals_jack
-
-# Calculate adjusted R-squared using the jackknife approach
-adjusted_r_squared_jack <- numeric(nrow(sub_data))
-
-for (i in 1:nrow(sub_data)) {
-  # Create jackknife sample by excluding one observation
-  jackknife_sample <- sub_data[-i, ]
-  
-  # Fit the regression model on the jackknife sample
-  jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
-  
-  # Calculate the adjusted R-squared for the jackknife regression model
-  adjusted_r_squared_jack[i] <- 1 - (1 - summary(jackknife_regression)$r.squared) * ((nrow(sub_data) - 1) / (nrow(sub_data) - length(coef(jackknife_regression)) - 1))
-}
-
-adjusted_r_squared_CI_jack <- quantile(adjusted_r_squared_jack, c(0.025, 0.975))
-
-adjusted_r_squared_CI_jack
-
-# Calculate theta_hat using the jackknife approach
-coeff <- coef(regression)
-theta_hat_jack <- apply(jackknife_estimates, 1, function(x) max(((coeff[5] - coeff[6]) / (coeff[3] + coeff[2])), 0))
-
-theta_hat_CI_jack <- quantile(theta_hat_jack, c(0.025, 0.975))
-theta_hat_CI_jack
-
+results_jackknife <- perform_jackknife(sub_data)
+results_jackknife
 ```
 
 
