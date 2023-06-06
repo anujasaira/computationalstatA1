@@ -1,0 +1,16 @@
+---
+title: "alessia_project"
+author: "Alessia"
+date: "2023-06-06"
+output: html_document
+---
+
+# BAGGING PREDICTORS, LEO BRAIMAN
+
+## WHY BAGGING WORKS
+
+**Numeric Prediction**
+
+Let each (y,**x**) case in *L* be independently drawn from the probability distribution P. Suppose y is numerical and $\Phi(\mathbf{x},L)$ the predictor. Then the aggregated predictor is the average over *L* of $\Phi(\mathbf{x},L)$, i.e. $\Phi_A(\mathbf{x})= E_{L}[\Phi(\mathbf{x},L)]$. Take x to be a fixed input value and y an output value. Applying the inequality $E(Z^2) \geq (E(Z))^2$ then $E_{L}[(y - \Phi(\mathbf{x}, L)^2] \geq (y - \Phi_{A}(x))^2$. Integrating both sides over the joint y,**x** output-input distribution, we get that the mean_squared error of $\Phi_A(\mathbf{x})$ is lower than the mean-squared error averaged over L of $\Phi(\mathbf{x},L)$. How much lower depends on how unequal the two sides of $[E_{L}\delta (\mathbf{x}, L)]^2 \leq E_{L}\delta^2(\mathbf{x}, L)$ are. The effect of instability is clear. If $\delta (\mathbf{x}, L)$ does not change too much with replicate *L* the two sides will be nearly equal, and aggregation with not help. The more highly variable the $\delta (\mathbf{x}, L)$ are, the more improvement aggregation may produce. But $\delta_A$ always improves on $\delta$.
+
+Instability is important in bootstrap aggregating because it helps improve the performance of the ensemble model by reducing variance and increasing accuracy. Bagging is a technique that combines multiple models (often decision trees) trained on different bootstrap samples of the dataset to make predictions. The key idea behind bagging is to introduce diversity among the base models by using different subsets of the training data. This diversity is achieved through the bootstrap sampling process, where each base model is trained on a randomly selected subset of the original data, allowing for variations in the training sets. If the base models used in bagging are stable, meaning they produce similar predictions when trained on slightly different datasets, the ensemble model's performance may not significantly improve. This is because the models will produce similar predictions and will not provide enough diversity to effectively reduce variance. On the other hand, if the base models are unstable, meaning they are sensitive to small changes in the training data, the ensemble model will benefit from the aggregation of these diverse models. The variations among the models can help to capture different aspects of the data and lead to improved generalization and prediction accuracy. Therefore, instability, or the ability of the base models to exhibit different behaviors with different training data, is important in bagging as it contributes to increased diversity and better performance of the ensemble model.
