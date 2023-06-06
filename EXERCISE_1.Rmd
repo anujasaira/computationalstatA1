@@ -2,7 +2,9 @@
 title: "EXERCISE 1"
 author: "Miriam Mercuri 5207057"
 date: "2023-06-06"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -48,7 +50,6 @@ games <- scale(games)
 ```{r}
 cov_matrix <- cov(games)
 ggcorrplot(cov_matrix)
-cov_matrix
 ```
 
 From the plot and the variance-covariance matrix values we can see that the variables don't have a strong relationship in general.
@@ -96,8 +97,6 @@ means <- apply(boot, 1, mean)
 qnt_CI <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975)))
 )
 clt_CI <- means + c(-1,1)*1.96*standard_errors
-
-rbind(clt_CI, qnt_CI)
 ```
 
 ```{r}
@@ -112,7 +111,7 @@ plot(y, pch = 19, cex = 0.5,ylim = range(c(y_lower, y_upper)), ylab = "Var/Cov",
 segments(x, y_lower, x, y_upper, lwd = 1.5,col = "blue")
 
 ```
-Above there is the plot of the confidence intervals of each entry of the variance-covariance matrix (Index) usign the percentile approach. 
+Above there is the plot of the confidence intervals of each entry of the variance-covariance matrix (Index) using the percentile approach. 
 
 ```{r}
 plot(1:length(standard_errors), standard_errors, type = "l", 
@@ -241,7 +240,7 @@ perform_paired_bootstrap <- function(data, B) {
     theta_estimates[i] <- theta_boot
   }
   
-  bias <- mean(theta_estimates) - (coeff[5] - coeff[6])/(coeff[3]+coeff[2])
+  bias <- mean(theta_estimates) - ((coeff[5] - coeff[6])/(coeff[3]+coeff[2]))
   se <- sd(theta_estimates)
   ci <- quantile(theta_estimates, probs = c(0.025, 0.975))
   

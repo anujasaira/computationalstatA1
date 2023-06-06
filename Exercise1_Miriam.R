@@ -298,7 +298,6 @@ theta_hat_CI_jack
 
 ```
 
-
   
   
   
