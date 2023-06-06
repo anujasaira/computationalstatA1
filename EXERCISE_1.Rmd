@@ -62,6 +62,7 @@ abline(0,1,col = "red")
 ```
 
 The correlation matrix is the same as the variance-covariance matrix because our dataset has been scaled, resulting in equivalent covariance and correlation values.
+
 ## Point c 
 Now we perform nonparametric bootstrap to obtain standard error estimates for each of the entries of the variance-covariance matrix.
 
@@ -88,13 +89,13 @@ standard_errors <- apply(boot, 1, sd)
 standard_errors
 ```
 
-Bootstrap confidence intervals
+Now we obtain confidence intervals of the bootstrap distribution using the percentile approach and the central limit theorem (CLT).
 
 ```{r}
 means <- apply(boot, 1, mean)
-qnt_CI[] <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975)))
+qnt_CI <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975)))
 )
-clt_CI[] <- means + c(-1,1)*1.96*standard_errors
+clt_CI <- means + c(-1,1)*1.96*standard_errors
 
 rbind(clt_CI, qnt_CI)
 ```
@@ -111,12 +112,7 @@ plot(y, pch = 19, cex = 0.5,ylim = range(c(y_lower, y_upper)), ylab = "Var/Cov",
 segments(x, y_lower, x, y_upper, lwd = 1.5,col = "blue")
 
 ```
-
-CLT
-
-```{r}
-
-```
+Above there is the plot of the confidence intervals of each entry of the variance-covariance matrix (Index) usign the percentile approach. 
 
 ```{r}
 plot(1:length(standard_errors), standard_errors, type = "l", 
@@ -126,6 +122,7 @@ plot(1:length(standard_errors), standard_errors, type = "l",
 
 ## Point d
 
+Show the behavior of the values $\{\theta_j\}_{j=1}^p$ and estimate $j^*$.
 ```{r}
 eigen_values <- eigen(cov_matrix)$values
 theta <- cumsum(eigen_values) / sum(eigen_values)
@@ -138,23 +135,21 @@ jstar
 ```
 
 ## Point e
+Performe bootstrap to estimate the bias and standard error of the estimators for the parameters in the sequence $\{\theta_j\}_{j=1}^p$.
 
 ```{r}
 boot_theta <- matrix(0, nrow = B, ncol = length(theta))
 boot_jstar <- numeric(B)
 
 for (i in 1:B) {
-  # Generate bootstrap sample by resampling from the original df
+
   boot_sample <- games[sample(nrow(games), replace= TRUE),]
   
-  # Calculate covariance matrix and eigenvalues for the bootstrap
   cov_boot <- cov(boot_sample)
   eigen_boot <- eigen(cov_boot)$values
   
-  #Compute theta for the bootstrap sample
   boot_theta[i,] <- cumsum(eigen_boot) / sum(eigen_boot)
   
-  #Compute jstar for the bootstrap sample
   boot_jstar[i] <- min(which(boot_theta[i,] > 0.76))
   
 }
@@ -166,6 +161,7 @@ se <- apply(boot_theta, 2, sd)
 bias
 se
 ```
+Also report the bootstrap estimates and standard errors for the estimator of $j^*$.
 
 ```{r}
 bias_jstar <- mean(boot_jstar) - jstar
@@ -173,14 +169,14 @@ se_jstar <- sd(boot_jstar)
 bias_jstar
 se_jstar
 ```
-
+Finally, give an estimate for $P(\hat{j^*=5})$.
 ```{r}
 p_jstar <- mean(boot_jstar==5)
 p_jstar
 ```
 
 ## Point f
-
+Run a linear regression with average_rating as target variable, regressed over all the other variables.
 ```{r}
 set.seed(abs(636-555-3226))
 ind <- sample(1:nrow(games),5000,FALSE)
@@ -193,17 +189,21 @@ summary(regression)
 
 The intercept is equal to 0.008392.
 It corresponds to the expected average rate of a board game when the other variables are equal to zero.
-And so it is not interpretable in this problem because we are talking about the average rating of a board game that does not exist.\
-\## Point g
+And so it is not interpretable in this problem because we are talking about the average rating of a board game that does not exist.
+We can use the $R^2$ to assess the goodness of fit of our linear regression model, that is equal to 0.151. It means that only 15,1% of the the variation in *average_rating* is explained by the regressors.
+
+## Point g
 
 ```{r}
 plot(fitted(regression), resid(regression))
+abline(0,0,col = "red")
 ```
 
-Above we used the paired bootstrap method to provide bias, standard error and confidence intervals for regression coefficients, adjusted $R^2$ index and our $\hat{\theta}$.
-In particular, we chose this method because NO THE ONE OF ERRORS BECAUSE OF THE PLOT .
+Below we used the paired bootstrap method to provide bias, standard error and confidence intervals for regression coefficients, adjusted $R^2$ index and our $\hat{\theta}$.
+In particular, we chose this method and, for example, not the bootstrap of the errors because in the plot above it is possible to see that the residuals seem to not have constant variance.
 
 ```{r}
+set.seed(abs(636-555-3226))
 perform_paired_bootstrap <- function(data, B) {
   num_coeffs <- length(coef(regression))
   bootstrap_estimates <- matrix(0, nrow = B, ncol = num_coeffs)
@@ -267,13 +267,14 @@ results
 ## Point h
 
 ```{r}
+set.seed(abs(636-555-3226))
 perform_jackknife <- function(data) {
   num_coeffs <- length(coef(regression))
   num_samples <- nrow(data)
   jackknife_estimates <- matrix(0, nrow = num_samples, ncol = num_coeffs)
   
   for (i in 1:num_samples) {
-    jackknife_sample <- data[-i, ]  # Leave out the i-th observation
+    jackknife_sample <- data[-i, ] 
     jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
     jackknife_estimates[i, ] <- coef(jackknife_regression)
   }
@@ -323,3 +324,7 @@ perform_jackknife <- function(data) {
 results_jackknife <- perform_jackknife(sub_data)
 results_jackknife
 ```
+The differences between the results of the paired bootstrap and the jackknife methods can be attributed to their different resampling techniques. The paired bootstrap randomly samples with replacement, while the jackknife systematically leaves out observations. They also have different statistical properties. The paired bootstrap provides an estimate of the distribution of the coefficients, while the jackknife estimates the variance of the coefficients. This leads to variations in the results. 
+
+
+
