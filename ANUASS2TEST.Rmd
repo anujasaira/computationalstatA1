@@ -35,18 +35,20 @@ games <- scale(games)
 
 ```{r}
 cov_matrix <- cov(games)
-heatmap(cov_matrix)
+heatmap(cov_matrix, margins = c(9,9))
+cov_matrix
 ```
+From the plot and the variance-covariance matrix values we can see that the variables don't have a strong relationship in general.
 ```{r}
 cor_matrix <- cor(games)
 plot(cov_matrix, cor_matrix, 
      xlab = "Variance-Covariance Matrix",
      ylab = "Correlation Matrix")
 abline(0,1,col = "red")
-
 ```
-
+The correlation matrix is the same as the variance-covariance matrix because our dataset has been scaled, resulting in equivalent covariance and correlation values.
 ## Point c
+Now we perform nonparametric bootstrap to obtain standard error estimates for each of the entries of the variance-covariance matrix.
 ```{r}
 set.seed(12345)
 
@@ -67,15 +69,17 @@ boot <- function(B, games){
 boot <- boot(1000,games)
 
 standard_errors <- apply(boot, 1, sd)
+standard_errors
+```
+```{r}
 means <- apply(boot, 1, mean)
-
-
 qnt_CI <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975)))
 )
 clt_CI <- means + c(-1,1)*1.96*standard_errors
 
 rbind(clt_CI, qnt_CI)
 ```
+
 
 ```{r}
 plot_CI <- function(ci, method) {
@@ -164,24 +168,21 @@ sub_data <- as.data.frame(sub_data)
 regression <- lm(sub_data$average_rating~., data = sub_data)
 summary(regression)  
 ```
+The intercept is equal to 0.008392. It corresponds to the expected average rate of a board game when the other variables are equal to zero. And so it is not interpretable in this problem because we are talking about the average rating of a board game that does not exist.   
 ## Point g
+Above we used the paired bootstrap method to provide bias, standard error and confidence intervals for regression coefficients, adjusted $R^2$ index and our $\hat{\theta}$. In particular, we chose this method because __________ .
 ```{r}
-#PAIRED BOOTSTRAP
 num_coeffs <- length(coef(regression))
 bootstrap_estimates <- matrix(0, nrow = B, ncol = num_coeffs)
 
 
 for (i in 1:B) {
-  # Generate bootstrap sample indices by sampling with replacement
   bootstrap_indices <- sample(nrow(sub_data), replace = TRUE)
   
-  # Create bootstrap sample using the selected indices
   bootstrap_sample <- sub_data[bootstrap_indices, ]
   
-  # Fit the regression model on the bootstrap sample
   bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
   
-  # Store the coefficients of the bootstrap regression model
   bootstrap_estimates[i, ] <- coef(bootstrap_regression)
 }
 
@@ -199,22 +200,38 @@ coefficient_confidence_intervals
 ```{r}
 adjusted_r_squared <- numeric(B)
 for (i in 1:B) {
-  # Generate bootstrap sample indices by sampling with replacement
+  
   bootstrap_indices <- sample(nrow(sub_data), replace = TRUE)
   
-  # Create bootstrap sample using the selected indices
   bootstrap_sample <- sub_data[bootstrap_indices, ]
   
-  # Fit the regression model on the bootstrap sample
   bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
   
-  # Calculate the adjusted R-squared for the bootstrap regression model
   adjusted_r_squared[i] <- 1 - (1 - summary(bootstrap_regression)$r.squared) * ((nrow(bootstrap_sample) - 1) / (nrow(bootstrap_sample) - length(coef(bootstrap_regression)) - 1))
 }
-adjusted_r_squared_CI <- quantile(adjusted_r_squared, c(0.025, 0.975))
-adjusted_r_squared_CI
-
+adjusted_r_squared_bias <- mean(adjusted_r_squared) - summary(regression)$adj.r.squared
+adjusted_r_squared_bias
 ```
+```{r}
+adjusted_r_squared_std_error <- sd(adjusted_r_squared)
+adjusted_r_squared_std_error
+```
+```{r}
+adjusted_r_squared_confidence_interval <- quantile(adjusted_r_squared, c(0.025, 0.975))
+adjusted_r_squared_confidence_interval
+```
+```{r}
+for (i in 1:B) {
+  bootstrap_indices <- sample(nrow(sub_data), replace = TRUE)
+  
+  bootstrap_sample <- sub_data[bootstrap_indices, ]
+  
+  bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
+  
+  bootstrap_estimates[i, ] <- coef(bootstrap_regression)
+}
+```
+
 ```{r}
 coeff <- coef(regression)
 theta_hat <- apply(bootstrap_estimates, 2, function(x) max(((coeff[5]-coeff[6])/(coeff[3]+coeff[2])), 0))
