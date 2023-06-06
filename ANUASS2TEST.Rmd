@@ -1,13 +1,12 @@
 ---
 title: "Assignment II"
-author: "Anuja Saira Abraham"
+author: "Aldo Giovanni e Giacomo"
 date: "2023-06-02"
 output: pdf_document
 editor_options: 
   markdown: 
     wrap: sentence
 ---
-
 
 # EXERCISE 2- WE NEED SOME MUSIC!
 
@@ -23,9 +22,10 @@ library(reshape2)
 library(combinat)
 
 ```
+
 ## Point a
 
-DESCRIPTION OF THE VARIABLES AND EXPLORATORY ANALYSIS: Considering the data saved in spot.RDS, a description of the variables can be found on Kaggle:
+*DESCRIPTION OF THE VARIABLES AND EXPLORATORY ANALYSIS*: Considering the data saved in spot.RDS, a description of the variables can be found on Kaggle:
 
 \- Acousticness: a confidence measure from 0.0 to 1.0 of whether the track is acoustic.
 1.0 represents high confidence the track is acoustic.
@@ -66,7 +66,7 @@ Artist and album popularity is derived mathematically from track popularity.
 \- Speechiness: speechiness detects the presence of spoken words in a track.
 The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value.Values below 0.33 most likely represent music and other non-speech-like tracks.
 
-\- Tempo:the overall estimated tempo of a track in beats per minute (BPM).
+\- Tempo: the overall estimated tempo of a track in beats per minute (BPM).
 In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration.
 
 \- Valence: a measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track.
@@ -86,6 +86,7 @@ head(songs)
 ```{r}
 boxplot(popularity~first_auth,data=songs)
 ```
+
 ## Point b
 
 Focusing on "pop" and given two artists, we want to measure their different in popularity.
@@ -94,8 +95,9 @@ We measure their difference with:
 
 $$
 T(X, Y) = \left| \text{median}(\text{logit}(X)) - \text{median}(\text{logit}(Y)) \right|
-$$ 
-After implementing this estimator to compare the popularity of AC/DC and Kanye West, we provide a a matrix with all pairwise comparisons.
+$$
+
+After implementing this estimator to compare the popularity of AC/DC and Kanye West, we provide a matrix with all pairwise comparisons.
 
 ```{r}
 u_art<- unique(songs$first_auth)
@@ -132,9 +134,12 @@ ggplot(melt(pop_diff),aes(Var1,Var2))+
         axis.text.y = element_text(hjust = 1,siz=5))
 
 ```
-##Point C
+
+## Point c
 
 Now we perform a hypothesis testing to assess the absence of difference between the popularity of two artists measured via T(X,Y) and perform a sequence of pairwise permutation tests reporting the estimated p-values.
+The null hypothesis states that samples come from the same distribution i.e. the two playlist are similar.
+The alternative hypothesis stated that the samples are different, i.e. that the two playlist are not similar.
 
 ```{r}
 data<-songs
@@ -184,15 +189,18 @@ ggplot(melt(p_values),aes(Var1,Var2))+
 
 ```
 
-##Point D
-The cutree() cut a hierarchical clustering tree into a 5 clusters. The clustering is performed on a distance matrix derived from the p-value matrix, pval_mat, by subtracting each value from 1 and converting it to a distance using as.dist(). The resulting clusters are used to assign colors to the boxes in the boxplot.
+## Point d
 
+The cutree() cut a hierarchical clustering tree into a 5 clusters.
+The clustering is performed on a distance matrix derived from the p-value matrix, pval_mat, by subtracting each value from 1 and converting it to a distance using as.dist().
+The resulting clusters are used to assign colors to the boxes in the boxplot.
 
 ```{r}
 boxplot( data$pop ~ data$first_auth,
          col= cutree( hclust(as.dist(1-p_values)),5))
 ```
-##Point E
+
+## Point e
 
 Now, we apply the scale() function to "pop" and perform, for each artist, a single-sample t-test to assess:
 
@@ -205,9 +213,9 @@ H_1: \mu > 0
 $$
 
 ```{r}
-
 pop_scaled <- scale(data$pop)
 df<- data.frame(Artist = data$first_auth,pop_scaled)
+
 
 t_test<- function(df,artist){
   x<- df[df$Artist==artist,"pop_scaled"]
@@ -220,13 +228,16 @@ p_values<- sapply(unique(df$Artist),t_test,df=df)
 prob_violation <- sum(p_values<0.10)/length(p_values)
 prob_violation #probability of the global null to be violated
 ```
-The plot below shows that the lies in the two extremes of probability ie. 0 and 1. The ones with smaller values indicates a higher popularity index that the others. 
+
+The plot below shows that the lies in the two extremes of probability i.e. 0 and 1.
+The ones with smaller values indicates a higher popularity index than the others.
 
 ```{r}
 
 plot(sort(p_values), type="l",col = "blue", main = "Density Plot of P-values", xlab = "P-values", ylab = "Density", ylim=c(0,2))
 ```
-##Point f
+
+## Point f
 
 The p.adjust function is used to adjust p-values for multiple comparisons.
 When conducting multiple statistical tests or comparing multiple groups, the probability of obtaining a significant result by chance increases.
@@ -251,15 +262,17 @@ legend("bottomright", legend = c("P-values", "Adjusted (BH)", "Adjusted (Bonferr
 
 ```
 
-## HOLM'S PROCEDURE
+## Point g
+
+*Holm's procedure*
 
 When the n hypotheses are tested seperately using tests with the level $$\frac{\alpha}{n}$$ it follows immediately from the Boole inequality that the probability of rejecting any true hypothesis is smaller then or equal to alpha.
 This constitutes a multiple test procedure with the multiple level of signficance alpha for free combination, the classical Bonferroni mupltiple test procedure.
 
 As written in the paper "A simple sequentially rejective multiple test procedure" of Sture Holm, the sequentially rejective Bonferroni test the obtained levels are compared to the numbers $$\frac{\alpha}{n}, \frac{\alpha}{n-1}, \ldots, \frac{\alpha}{1}$$, whereas in the classical Bonferroni test they are compared to $$\frac{\alpha}{n}$$.
 This means that the probability of rejecting any set of (false) hypotheses using the CLASSICAL Bonferroni test is SMALLER than or equal to the same probability using the sequantially rejective Bonferroni test based on the same test statistics.
-So the classical Bonferroni tesst can be replaced by the corresponding sequentially rejective Bonferroni test without loosing any probability of rejecting false hypotheses.
-The power gain obtained by using a sequentially rejective Bonferroni test dependes veru much upon the alternative.
+So the classical Bonferroni test can be replaced by the corresponding sequentially rejective Bonferroni test without loosing any probability of rejecting false hypotheses.
+The power gain obtained by using a sequentially rejective Bonferroni test dependes very much upon the alternative.
 The power of a hypothesis test is the probability of rejecting the null hypothesis when the alternative hypothesis is the hypothesis that is true.
 As a consequence, the power gain is small if all the hypothese are "almost true".
 It may be considerable if a number of hypotheses are "completely wrong".
