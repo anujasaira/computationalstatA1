@@ -6,26 +6,19 @@ output:
   pdf_document: default
   html_document: default
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-
-
 # EXERCISE 1 - RISIKO! is back, with friends
 
 ```{r}
 library(ggplot2)
 library(ggcorrplot)
 ```
-
 ## Point a
-
 ```{r}
 games <- readRDS("games_preprocessed.RDS")
 ```
-
 The dataset *game* contains data about around 25000 board games.The variables that describe each game are eight.
 They are the year in which it has been published (*yearpublished*), the minimum and the maximum number of players that can play the game (*minplayers*, *maxplayers*) and the minimun age to play (*minage*).
 Then there is the *average_rating*, *total_owners* and *average_weight*.All are quantitative variables except for the first (*id*) and second (*name*) ones that we are not going to consider for our exercise.
@@ -39,9 +32,7 @@ ggplot(games, aes(x = total_owners, y = average_rating)) +
 ```
 
 Considering, for example, the two variable *average_rating* and *total_owners*, the plot above make us see which is the relationship between them.
-
 ##Point b
-
 ```{r}
 games <- games[,-c(1,2)]
 games <- scale(games)
@@ -94,14 +85,9 @@ Now we obtain confidence intervals of the bootstrap distribution using the perce
 
 ```{r}
 means <- apply(boot, 1, mean)
-qnt_CI <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975)))
-)
+qnt_CI <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975))))
 clt_CI <- means + c(-1,1)*1.96*standard_errors
-```
-
-```{r}
 cov_hat <- as.vector(cov_matrix)
-
 x <- seq(length(cov_hat))
 y <- cov_hat
 y_upper <- unlist(qnt_CI[,2])
@@ -118,9 +104,7 @@ plot(1:length(standard_errors), standard_errors, type = "l",
      xlab = "Bootstrap Iterations", ylab = "Standard Error", 
      main = "Standard Errors of Bootstrap Estimates")
 ```
-
 ## Point d
-
 Show the behavior of the values $\{\theta_j\}_{j=1}^p$ and estimate $j^*$.
 ```{r}
 eigen_values <- eigen(cov_matrix)$values
@@ -139,18 +123,12 @@ Performe bootstrap to estimate the bias and standard error of the estimators for
 ```{r}
 boot_theta <- matrix(0, nrow = B, ncol = length(theta))
 boot_jstar <- numeric(B)
-
 for (i in 1:B) {
-
   boot_sample <- games[sample(nrow(games), replace= TRUE),]
-  
   cov_boot <- cov(boot_sample)
   eigen_boot <- eigen(cov_boot)$values
-  
   boot_theta[i,] <- cumsum(eigen_boot) / sum(eigen_boot)
-  
   boot_jstar[i] <- min(which(boot_theta[i,] > 0.76))
-  
 }
 ```
 

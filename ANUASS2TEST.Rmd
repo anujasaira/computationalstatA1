@@ -7,7 +7,6 @@ editor_options:
   markdown: 
     wrap: sentence
 ---
-
 # EXERCISE 2- WE NEED SOME MUSIC!
 
 ```{r setup, include=FALSE}
@@ -15,16 +14,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-
 library(boot)
 library(tidyverse)
 library(reshape2)
 library(combinat)
-
 ```
-
 ## Point a
-
 *DESCRIPTION OF THE VARIABLES AND EXPLORATORY ANALYSIS*: Considering the data saved in spot.RDS, a description of the variables can be found on Kaggle:
 
 \- Acousticness: a confidence measure from 0.0 to 1.0 of whether the track is acoustic.
@@ -86,7 +81,6 @@ head(songs)
 ```{r}
 boxplot(popularity~first_auth,data=songs)
 ```
-
 ## Point b
 
 Focusing on "pop" and given two artists, we want to measure their different in popularity.
@@ -96,7 +90,6 @@ We measure their difference with:
 $$
 T(X, Y) = \left| \text{median}(\text{logit}(X)) - \text{median}(\text{logit}(Y)) \right|
 $$
-
 After implementing this estimator to compare the popularity of AC/DC and Kanye West, we provide a matrix with all pairwise comparisons.
 
 ```{r}
@@ -132,9 +125,7 @@ ggplot(melt(pop_diff),aes(Var1,Var2))+
   scale_fill_gradient(low = "white", high = "red")+
   theme(axis.text.x = element_text(angle=90,hjust = 1,siz=5),
         axis.text.y = element_text(hjust = 1,siz=5))
-
 ```
-
 ## Point c
 
 Now we perform a hypothesis testing to assess the absence of difference between the popularity of two artists measured via T(X,Y) and perform a sequence of pairwise permutation tests reporting the estimated p-values.
@@ -169,14 +160,9 @@ for (i in 1:length(u_art)){
       
       p_values[i,j]<- p_value
       p_values[j,i]<- p_value
-      
-      
     }
   }
 }
-
-
-p_values
 
 rownames(p_values) <- u_art
 colnames(p_values) <- u_art
@@ -188,7 +174,6 @@ ggplot(melt(p_values),aes(Var1,Var2))+
         axis.text.y = element_text(hjust = 1,siz=5))
 
 ```
-
 ## Point d
 
 The cutree() cut a hierarchical clustering tree into a 5 clusters.
@@ -199,9 +184,7 @@ The resulting clusters are used to assign colors to the boxes in the boxplot.
 boxplot( data$pop ~ data$first_auth,
          col= cutree( hclust(as.dist(1-p_values)),5))
 ```
-
 ## Point e
-
 Now, we apply the scale() function to "pop" and perform, for each artist, a single-sample t-test to assess:
 
 $$
@@ -236,9 +219,7 @@ The ones with smaller values indicates a higher popularity index than the others
 
 plot(sort(p_values), type="l",col = "blue", main = "Density Plot of P-values", xlab = "P-values", ylab = "Density", ylim=c(0,2))
 ```
-
 ## Point f
-
 The p.adjust function is used to adjust p-values for multiple comparisons.
 When conducting multiple statistical tests or comparing multiple groups, the probability of obtaining a significant result by chance increases.
 Multiple comparison procedures, such as adjusting p-values, are used to control for this increased risk of false positives (Type I errors).The p.adjust function takes a vector of p-values as input and applies various methods to adjust these p-values: Bonferroni adjustment,Benjamini-Hochberg and Holm.
@@ -263,9 +244,7 @@ legend("bottomright", legend = c("P-values", "Adjusted (BH)", "Adjusted (Bonferr
 ```
 
 ## Point g
-
 *Holm's procedure*
-
 When the n hypotheses are tested seperately using tests with the level $$\frac{\alpha}{n}$$ it follows immediately from the Boole inequality that the probability of rejecting any true hypothesis is smaller then or equal to alpha.
 This constitutes a multiple test procedure with the multiple level of signficance alpha for free combination, the classical Bonferroni mupltiple test procedure.
 
