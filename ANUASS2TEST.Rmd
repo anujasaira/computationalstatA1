@@ -7,6 +7,323 @@ editor_options:
   markdown: 
     wrap: sentence
 ---
+
+# EXERCISE 1 - RISIKO! is back, with friends
+
+```{r}
+library(ggplot2)
+library(ggcorrplot)
+```
+
+## Point a
+
+```{r}
+games <- readRDS("games_preprocessed.RDS")
+```
+
+The dataset *game* contains data about around 25000 board games.The variables that describe each game are eight.
+They are the year in which it has been published (*yearpublished*), the minimum and the maximum number of players that can play the game (*minplayers*, *maxplayers*) and the minimun age to play (*minage*).
+Then there is the *average_rating*, *total_owners* and *average_weight*.All are quantitative variables except for the first (*id*) and second (*name*) ones that we are not going to consider for our exercise.
+
+```{r}
+ggplot(games, aes(x = total_owners, y = average_rating)) +
+  geom_point() +
+  xlab("Total Owners") +
+  ylab("Average Rating") +
+  ggtitle("Relationship Between Owners and Ratings")
+```
+
+Considering, for example, the two variable *average_rating* and *total_owners*, the plot above make us see which is the relationship between them.
+
+## Point b
+
+```{r}
+games <- games[,-c(1,2)]
+games <- scale(games)
+```
+
+```{r}
+cov_matrix <- cov(games)
+ggcorrplot(cov_matrix)
+```
+
+From the plot and the variance-covariance matrix values we can see that the variables don't have a strong relationship in general.
+
+```{r}
+cor_matrix <- cor(games)
+plot(cov_matrix, cor_matrix, 
+     xlab = "Variance-Covariance Matrix",
+     ylab = "Correlation Matrix")
+abline(0,1,col = "red")
+```
+
+The correlation matrix is the same as the variance-covariance matrix because our dataset has been scaled, resulting in equivalent covariance and correlation values.
+
+## Point c
+
+Now we perform nonparametric bootstrap to obtain standard error estimates for each of the entries of the variance-covariance matrix.
+
+```{r}
+set.seed(12345)
+
+B <- 1000
+boot <- function(B, games){
+  
+  results <- matrix(NA, nrow = B, ncol = ncol(games)^2)
+  bootstrap <- replicate(B, {
+    
+    bootSample <- games[sample(nrow(games), replace = T),]
+    bootCov <- cov(bootSample)
+    i <- seq_len(B)
+    results[i,] <- as.vector(bootCov)
+  })
+  return(bootstrap)
+}
+
+boot <- boot(1000,games)
+
+standard_errors <- apply(boot, 1, sd)
+standard_errors
+```
+
+Now we obtain confidence intervals of the bootstrap distribution using the percentile approach and the central limit theorem (CLT).
+
+```{r}
+means <- apply(boot, 1, mean)
+qnt_CI <- t(apply(boot, 1, function(z) quantile(z, probs = c(0.025,0.975))))
+clt_CI <- means + c(-1,1)*1.96*standard_errors
+cov_hat <- as.vector(cov_matrix)
+x <- seq(length(cov_hat))
+y <- cov_hat
+y_upper <- unlist(qnt_CI[,2])
+y_lower <- unlist(qnt_CI[,1])
+plot(y, pch = 19, cex = 0.5,ylim = range(c(y_lower, y_upper)), ylab = "Var/Cov", xlab = "Index",
+     main = "Percentile Approach Confidence Intervals")
+segments(x, y_lower, x, y_upper, lwd = 1.5,col = "blue")
+
+```
+
+Above there is the plot of the confidence intervals of each entry of the variance-covariance matrix (Index) using the percentile approach.
+
+```{r}
+plot(1:length(standard_errors), standard_errors, type = "l", 
+     xlab = "Bootstrap Iterations", ylab = "Standard Error", 
+     main = "Standard Errors of Bootstrap Estimates")
+```
+
+## Point d
+
+Show the behavior of the values $\{\theta_j\}_{j=1}^p$ and estimate $j^*$.
+
+```{r}
+eigen_values <- eigen(cov_matrix)$values
+theta <- cumsum(eigen_values) / sum(eigen_values)
+theta
+```
+
+```{r}
+jstar <- min(which(theta > 0.76))
+jstar
+```
+
+## Point e
+
+Perform bootstrap to estimate the bias and standard error of the estimators for the parameters in the sequence $\{\theta_j\}_{j=1}^p$.
+
+```{r}
+boot_theta <- matrix(0, nrow = B, ncol = length(theta))
+boot_jstar <- numeric(B)
+for (i in 1:B) {
+  boot_sample <- games[sample(nrow(games), replace= TRUE),]
+  cov_boot <- cov(boot_sample)
+  eigen_boot <- eigen(cov_boot)$values
+  boot_theta[i,] <- cumsum(eigen_boot) / sum(eigen_boot)
+  boot_jstar[i] <- min(which(boot_theta[i,] > 0.76))
+}
+```
+
+```{r}
+bias <- colMeans(boot_theta)-theta
+se <- apply(boot_theta, 2, sd)
+bias
+se
+```
+
+Also report the bootstrap estimates and standard errors for the estimator of $j^*$.
+
+```{r}
+bias_jstar <- mean(boot_jstar) - jstar
+se_jstar <- sd(boot_jstar)
+bias_jstar
+se_jstar
+```
+
+Finally, give an estimate for $P(\hat{j^*=5})$.
+
+```{r}
+p_jstar <- mean(boot_jstar==5)
+p_jstar
+```
+
+## Point f
+
+Run a linear regression with average_rating as target variable, regressed over all the other variables.
+
+```{r}
+set.seed(abs(636-555-3226))
+ind <- sample(1:nrow(games),5000,FALSE)
+sub_data <- games[ind,]
+
+sub_data <- as.data.frame(sub_data)
+regression <- lm(sub_data$average_rating~., data = sub_data)
+summary(regression)  
+```
+
+The intercept is equal to 0.008392.
+It corresponds to the expected average rate of a board game when the other variables are equal to zero.
+And so it is not interpretable in this problem because we are talking about the average rating of a board game that does not exist.
+We can use the $R^2$ to assess the goodness of fit of our linear regression model, that is equal to 0.151.
+It means that only 15,1% of the the variation in *average_rating* is explained by the regressors.
+
+## Point g
+
+```{r}
+plot(fitted(regression), resid(regression))
+abline(0,0,col = "red")
+```
+
+Below we used the paired bootstrap method to provide bias, standard error and confidence intervals for regression coefficients, adjusted $R^2$ index and our $\hat{\theta}$.
+In particular, we chose this method and, for example, not the bootstrap of the errors because in the plot above it is possible to see that the residuals seem to not have constant variance.
+
+```{r}
+set.seed(abs(636-555-3226))
+perform_paired_bootstrap <- function(data, B) {
+  num_coeffs <- length(coef(regression))
+  bootstrap_estimates <- matrix(0, nrow = B, ncol = num_coeffs)
+  
+  for (i in 1:B) {
+    bootstrap_indices <- sample(nrow(data), replace = TRUE)
+    bootstrap_sample <- data[bootstrap_indices, ]
+    bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
+    bootstrap_estimates[i, ] <- coef(bootstrap_regression)
+  }
+  
+  coefficient_bias <- apply(bootstrap_estimates, 2, mean) - coef(regression)
+  coefficient_std_error <- apply(bootstrap_estimates, 2, sd)
+  coefficient_confidence_intervals <- t(apply(bootstrap_estimates, 2, function(x) quantile(x, c(0.025, 0.975))))
+  
+  adjusted_r_squared <- numeric(B)
+  for (i in 1:B) {
+    bootstrap_indices <- sample(nrow(data), replace = TRUE)
+    bootstrap_sample <- data[bootstrap_indices, ]
+    bootstrap_regression <- lm(average_rating ~ ., data = bootstrap_sample)
+    adjusted_r_squared[i] <- 1 - (1 - summary(bootstrap_regression)$r.squared) * ((nrow(bootstrap_sample) - 1) / (nrow(bootstrap_sample) - length(coef(bootstrap_regression)) - 1))
+  }
+  adjusted_r_squared_bias <- mean(adjusted_r_squared) - summary(regression)$adj.r.squared
+  adjusted_r_squared_std_error <- sd(adjusted_r_squared)
+  adjusted_r_squared_confidence_interval <- quantile(adjusted_r_squared, c(0.025, 0.975))
+  
+  theta_estimates <- numeric(B)
+  coeff <- coef(regression)
+  
+  for (i in 1:B) {
+    boot_sample <- data[sample(nrow(data), replace = TRUE), ]
+    regression_boot <- lm(average_rating ~ ., data = boot_sample)
+    coeff_boot <- coef(regression_boot)
+    theta_boot <- max(((coeff_boot[5] - coeff_boot[6])/(coeff_boot[3]+coeff_boot[2])), 0)
+    theta_estimates[i] <- theta_boot
+  }
+  
+  bias <- mean(theta_estimates) - ((coeff[5] - coeff[6])/(coeff[3]+coeff[2]))
+  se <- sd(theta_estimates)
+  ci <- quantile(theta_estimates, probs = c(0.025, 0.975))
+  
+  results <- list(
+    coefficient_bias = coefficient_bias,
+    coefficient_std_error = coefficient_std_error,
+    coefficient_confidence_intervals = coefficient_confidence_intervals,
+    adjusted_r_squared_bias = adjusted_r_squared_bias,
+    adjusted_r_squared_std_error = adjusted_r_squared_std_error,
+    adjusted_r_squared_confidence_interval = adjusted_r_squared_confidence_interval,
+    theta_bias = bias,
+    theta_std_error = se,
+    theta_confidence_interval = ci
+  )
+  
+  return(results)
+}
+
+results <- perform_paired_bootstrap(sub_data, B)
+results
+```
+
+## Point h
+
+```{r}
+set.seed(abs(636-555-3226))
+perform_jackknife <- function(data) {
+  num_coeffs <- length(coef(regression))
+  num_samples <- nrow(data)
+  jackknife_estimates <- matrix(0, nrow = num_samples, ncol = num_coeffs)
+  
+  for (i in 1:num_samples) {
+    jackknife_sample <- data[-i, ] 
+    jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
+    jackknife_estimates[i, ] <- coef(jackknife_regression)
+  }
+  
+  coefficient_bias <- num_samples * (colMeans(jackknife_estimates) - coef(regression)) / (num_samples - 1)
+  coefficient_std_error <- sqrt(num_samples * (colMeans(jackknife_estimates^2) - (colMeans(jackknife_estimates))^2) / (num_samples - 1))
+  coefficient_confidence_intervals <- t(apply(jackknife_estimates, 2, function(x) quantile(x, c(0.025, 0.975))))
+  
+  adjusted_r_squared <- numeric(num_samples)
+  for (i in 1:num_samples) {
+    jackknife_sample <- data[-i, ]
+    jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
+    adjusted_r_squared[i] <- 1 - (1 - summary(jackknife_regression)$r.squared) * ((nrow(jackknife_sample) - 1) / (nrow(jackknife_sample) - length(coef(jackknife_regression)) - 1))
+  }
+  adjusted_r_squared_bias <- num_samples * (mean(adjusted_r_squared) - summary(regression)$adj.r.squared) / (num_samples - 1)
+  adjusted_r_squared_std_error <- sqrt(num_samples * (mean(adjusted_r_squared^2) - (mean(adjusted_r_squared))^2) / (num_samples - 1))
+  adjusted_r_squared_confidence_interval <- quantile(adjusted_r_squared, c(0.025, 0.975))
+  
+  theta_estimates <- numeric(num_samples)
+  coeff <- coef(regression)
+  
+  for (i in 1:num_samples) {
+    jackknife_sample <- data[-i, ]
+    jackknife_regression <- lm(average_rating ~ ., data = jackknife_sample)
+    coeff_boot <- coef(jackknife_regression)
+    theta_estimates[i] <- max(((coeff_boot[5] - coeff_boot[6])/(coeff_boot[3] + coeff_boot[2])), 0)
+  }
+  
+  theta_bias <- num_samples * (mean(theta_estimates) - (coeff[5] - coeff[6])/(coeff[3] + coeff[2])) / (num_samples - 1)
+  theta_std_error <- sqrt(num_samples * (mean(theta_estimates^2) - (mean(theta_estimates))^2) / (num_samples - 1))
+  theta_confidence_interval <- quantile(theta_estimates, probs = c(0.025, 0.975))
+  
+  results <- list(
+    coefficient_bias = coefficient_bias,
+    coefficient_std_error = coefficient_std_error,
+    coefficient_confidence_intervals = coefficient_confidence_intervals,
+    adjusted_r_squared_bias = adjusted_r_squared_bias,
+    adjusted_r_squared_std_error = adjusted_r_squared_std_error,
+    adjusted_r_squared_confidence_interval = adjusted_r_squared_confidence_interval,
+    theta_bias = theta_bias,
+    theta_std_error = theta_std_error,
+    theta_confidence_interval = theta_confidence_interval
+  )
+  
+  return(results)
+}
+results_jackknife <- perform_jackknife(sub_data)
+results_jackknife
+```
+
+The differences between the results of the paired bootstrap and the jackknife methods can be attributed to their different resampling techniques.
+The paired bootstrap randomly samples with replacement, while the jackknife systematically leaves out observations.
+They also have different statistical properties.
+The paired bootstrap provides an estimate of the distribution of the coefficients, while the jackknife estimates the variance of the coefficients.
+This leads to variations in the results.
+
 # EXERCISE 2- WE NEED SOME MUSIC!
 
 ```{r setup, include=FALSE}
@@ -19,7 +336,9 @@ library(tidyverse)
 library(reshape2)
 library(combinat)
 ```
+
 ## Point a
+
 *DESCRIPTION OF THE VARIABLES AND EXPLORATORY ANALYSIS*: Considering the data saved in spot.RDS, a description of the variables can be found on Kaggle:
 
 \- Acousticness: a confidence measure from 0.0 to 1.0 of whether the track is acoustic.
@@ -81,6 +400,7 @@ head(songs)
 ```{r}
 boxplot(popularity~first_auth,data=songs)
 ```
+
 ## Point b
 
 Focusing on "pop" and given two artists, we want to measure their different in popularity.
@@ -89,8 +409,7 @@ We measure their difference with:
 
 $$
 T(X, Y) = \left| \text{median}(\text{logit}(X)) - \text{median}(\text{logit}(Y)) \right|
-$$
-After implementing this estimator to compare the popularity of AC/DC and Kanye West, we provide a matrix with all pairwise comparisons.
+$$ After implementing this estimator to compare the popularity of AC/DC and Kanye West, we provide a matrix with all pairwise comparisons.
 
 ```{r}
 u_art<- unique(songs$first_auth)
@@ -126,6 +445,7 @@ ggplot(melt(pop_diff),aes(Var1,Var2))+
   theme(axis.text.x = element_text(angle=90,hjust = 1,siz=5),
         axis.text.y = element_text(hjust = 1,siz=5))
 ```
+
 ## Point c
 
 Now we perform a hypothesis testing to assess the absence of difference between the popularity of two artists measured via T(X,Y) and perform a sequence of pairwise permutation tests reporting the estimated p-values.
@@ -174,6 +494,7 @@ ggplot(melt(p_values),aes(Var1,Var2))+
         axis.text.y = element_text(hjust = 1,siz=5))
 
 ```
+
 ## Point d
 
 The cutree() cut a hierarchical clustering tree into a 5 clusters.
@@ -184,7 +505,9 @@ The resulting clusters are used to assign colors to the boxes in the boxplot.
 boxplot( data$pop ~ data$first_auth,
          col= cutree( hclust(as.dist(1-p_values)),5))
 ```
+
 ## Point e
+
 Now, we apply the scale() function to "pop" and perform, for each artist, a single-sample t-test to assess:
 
 $$
@@ -219,7 +542,9 @@ The ones with smaller values indicates a higher popularity index than the others
 
 plot(sort(p_values), type="l",col = "blue", main = "Density Plot of P-values", xlab = "P-values", ylab = "Density", ylim=c(0,2))
 ```
+
 ## Point f
+
 The p.adjust function is used to adjust p-values for multiple comparisons.
 When conducting multiple statistical tests or comparing multiple groups, the probability of obtaining a significant result by chance increases.
 Multiple comparison procedures, such as adjusting p-values, are used to control for this increased risk of false positives (Type I errors).The p.adjust function takes a vector of p-values as input and applies various methods to adjust these p-values: Bonferroni adjustment,Benjamini-Hochberg and Holm.
@@ -244,14 +569,12 @@ legend("bottomright", legend = c("P-values", "Adjusted (BH)", "Adjusted (Bonferr
 ```
 
 ## Point g
-*Holm's procedure*
-When the n hypotheses are tested seperately using tests with the level $$\frac{\alpha}{n}$$ it follows immediately from the Boole inequality that the probability of rejecting any true hypothesis is smaller then or equal to alpha.
-This constitutes a multiple test procedure with the multiple level of signficance alpha for free combination, the classical Bonferroni mupltiple test procedure.
 
-As written in the paper "A simple sequentially rejective multiple test procedure" of Sture Holm, the sequentially rejective Bonferroni test the obtained levels are compared to the numbers $$\frac{\alpha}{n}, \frac{\alpha}{n-1}, \ldots, \frac{\alpha}{1}$$, whereas in the classical Bonferroni test they are compared to $$\frac{\alpha}{n}$$.
+*Holm's procedure* 
+When the n hypotheses are tested seperately using tests with the level $\frac{\alpha}{n}$ it follows immediately from the Boole inequality that the probability of rejecting any true hypothesis is smaller then or equal to alpha.
+This constitutes a multiple test procedure with the multiple level of significance alpha for free combination, the classical Bonferroni multiple test procedure.
+As written in the paper "A simple sequentially rejective multiple test procedure" of Sture Holm, in the sequentially rejective Bonferroni test the obtained levels are compared to the numbers $\frac{\alpha}{n}, \frac{\alpha}{n-1}, \ldots, \frac{\alpha}{1}$, whereas in the classical Bonferroni test they are compared to $\frac{\alpha}{n}$.
 This means that the probability of rejecting any set of (false) hypotheses using the CLASSICAL Bonferroni test is SMALLER than or equal to the same probability using the sequantially rejective Bonferroni test based on the same test statistics.
-So the classical Bonferroni test can be replaced by the corresponding sequentially rejective Bonferroni test without loosing any probability of rejecting false hypotheses.
-The power gain obtained by using a sequentially rejective Bonferroni test dependes very much upon the alternative.
-The power of a hypothesis test is the probability of rejecting the null hypothesis when the alternative hypothesis is the hypothesis that is true.
-As a consequence, the power gain is small if all the hypothese are "almost true".
-It may be considerable if a number of hypotheses are "completely wrong".
+So the classical Bonferroni test can be replaced by the corresponding sequentially rejective Bonferroni test without loosing any probability of rejecting false hypotheses.The power gain obtained by using a sequentially rejective Bonferroni test dependes very much upon the alternative.The power of a hypothesis test is the probability of rejecting the null hypothesis when the alternative hypothesis is the hypothesis that is true.As a consequence, the power gain is small if all the hypothese are "almost true".It may be considerable if a number of hypotheses are "completely wrong".
+So, in the Bonferroni procedure the significance level at which each test is performed is constant and equal to $\frac{\alpha}{n}$ in which n is the number of hypthoses testes.In the Holm's procedure the significance level increases as we test the hypotheses, in particular we are going to test the sorted p-values: $p_j = \frac{\alpha}{{n-j+1}}$ with j=1,...,m. With this procedure we test if the p.values are less then the treshold, it continues until we do not fail to reject the fist time.It is clear that the treshold of Holm's procedure is equal or less than the thresholds of the Bonferroni correction: $\frac{\alpha}{{n-j+1}} \leq \frac{\alpha}{n}$.
+Since the power of the test and $\alpha$ are inversely correlated, we can conclude that the power of the Holm's procedure is greater than the power of the Bonferroni correction.
