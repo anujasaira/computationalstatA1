@@ -4,11 +4,9 @@ author: "Aldo Giovanni e Giacomo"
 date: "2023-06-02"
 output: pdf_document
 ---
-EXERCISE 1 - RISIKO! is back, with friends
+# EXERCISE 1 - RISIKO! is back, with friends
 
 ```{r}
-library(ggplot2)
-library(ggcorrplot)
 library(ggplot2)
 library(ggcorrplot)
 library(boot)
@@ -106,11 +104,6 @@ segments(x, y_lower, x, y_upper, lwd = 1.5,col = "blue")
 
 Above there is the plot of the confidence intervals of each entry of the variance-covariance matrix (Index) using the percentile approach.
 
-```{r}
-plot(1:length(standard_errors), standard_errors, type = "l", 
-     xlab = "Bootstrap Iterations", ylab = "Standard Error", 
-     main = "Standard Errors of Bootstrap Estimates")
-```
 
 ## Point d
 
