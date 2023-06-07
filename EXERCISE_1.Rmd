@@ -10,7 +10,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 # EXERCISE 1 - RISIKO! is back, with friends
-
 ```{r}
 library(ggplot2)
 library(ggcorrplot)
@@ -23,28 +22,22 @@ The dataset *game* contains data about around 25000 board games.The variables th
 They are the year in which it has been published (*yearpublished*), the minimum and the maximum number of players that can play the game (*minplayers*, *maxplayers*) and the minimun age to play (*minage*).
 Then there is the *average_rating*, *total_owners* and *average_weight*.All are quantitative variables except for the first (*id*) and second (*name*) ones that we are not going to consider for our exercise.
 
+Considering, for example, the two variable *average_rating* and *total_owners*, the plot above make us see which is the relationship between them.
 ```{r}
 ggplot(games, aes(x = total_owners, y = average_rating)) +
-  geom_point() +
-  xlab("Total Owners") +
-  ylab("Average Rating") +
+  geom_point() + xlab("Total Owners") +ylab("Average Rating") +
   ggtitle("Relationship Between Owners and Ratings")
 ```
-
-Considering, for example, the two variable *average_rating* and *total_owners*, the plot above make us see which is the relationship between them.
-##Point b
+## Point b
 ```{r}
 games <- games[,-c(1,2)]
 games <- scale(games)
-```
-
-```{r}
 cov_matrix <- cov(games)
 ggcorrplot(cov_matrix)
 ```
-
 From the plot and the variance-covariance matrix values we can see that the variables don't have a strong relationship in general.
 
+The correlation matrix is the same as the variance-covariance matrix because our dataset has been scaled, resulting in equivalent covariance and correlation values.
 ```{r}
 cor_matrix <- cor(games)
 plot(cov_matrix, cor_matrix, 
@@ -52,21 +45,15 @@ plot(cov_matrix, cor_matrix,
      ylab = "Correlation Matrix")
 abline(0,1,col = "red")
 ```
-
-The correlation matrix is the same as the variance-covariance matrix because our dataset has been scaled, resulting in equivalent covariance and correlation values.
-
 ## Point c 
 Now we perform nonparametric bootstrap to obtain standard error estimates for each of the entries of the variance-covariance matrix.
 
 ```{r}
 set.seed(12345)
-
 B <- 1000
 boot <- function(B, games){
-  
   results <- matrix(NA, nrow = B, ncol = ncol(games)^2)
   bootstrap <- replicate(B, {
-    
     bootSample <- games[sample(nrow(games), replace = T),]
     bootCov <- cov(bootSample)
     i <- seq_len(B)
@@ -74,9 +61,7 @@ boot <- function(B, games){
   })
   return(bootstrap)
 }
-
 boot <- boot(1000,games)
-
 standard_errors <- apply(boot, 1, sd)
 standard_errors
 ```
@@ -116,7 +101,6 @@ theta
 jstar <- min(which(theta > 0.76))
 jstar
 ```
-
 ## Point e
 Performe bootstrap to estimate the bias and standard error of the estimators for the parameters in the sequence $\{\theta_j\}_{j=1}^p$.
 
@@ -130,9 +114,6 @@ for (i in 1:B) {
   boot_theta[i,] <- cumsum(eigen_boot) / sum(eigen_boot)
   boot_jstar[i] <- min(which(boot_theta[i,] > 0.76))
 }
-```
-
-```{r}
 bias <- colMeans(boot_theta)-theta
 se <- apply(boot_theta, 2, sd)
 bias
@@ -151,7 +132,6 @@ Finally, give an estimate for $P(\hat{j^*=5})$.
 p_jstar <- mean(boot_jstar==5)
 p_jstar
 ```
-
 ## Point f
 Run a linear regression with average_rating as target variable, regressed over all the other variables.
 ```{r}
@@ -168,7 +148,6 @@ The intercept is equal to 0.008392.
 It corresponds to the expected average rate of a board game when the other variables are equal to zero.
 And so it is not interpretable in this problem because we are talking about the average rating of a board game that does not exist.
 We can use the $R^2$ to assess the goodness of fit of our linear regression model, that is equal to 0.151. It means that only 15,1% of the the variation in *average_rating* is explained by the regressors.
-
 ## Point g
 
 ```{r}
@@ -240,9 +219,7 @@ perform_paired_bootstrap <- function(data, B) {
 results <- perform_paired_bootstrap(sub_data, B)
 results
 ```
-
 ## Point h
-
 ```{r}
 set.seed(abs(636-555-3226))
 perform_jackknife <- function(data) {
