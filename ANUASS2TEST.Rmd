@@ -437,7 +437,7 @@ jstar <- min(which(theta > 0.76))
 jstar
 ```
 ## Point e
-Performe bootstrap to estimate the bias and standard error of the estimators for the parameters in the sequence $\{\theta_j\}_{j=1}^p$.
+Perform bootstrap to estimate the bias and standard error of the estimators for the parameters in the sequence $\{\theta_j\}_{j=1}^p$.
 
 ```{r}
 boot_theta <- matrix(0, nrow = B, ncol = length(theta))
