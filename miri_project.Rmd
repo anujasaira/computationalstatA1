@@ -16,9 +16,18 @@ To address this trade-off, Breiman (1996a) introduced a technique called bagging
 
 Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as neural networks, classification and regression trees (CART), and variable selection for regression (Breiman, 1996b). He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
 
+To better understand stability and instability, and what bagging do, we
+define the concepts of bias and variance for classifiers. Unstable classifiers, such as trees, characteristically have high variance and low bias. Stable classifers, like linear discriminant analysis, have low variance, but can have high bias. 
+
+Instability is an essential ingredient for bagging to improve accuracy.
+
 # Comparison and Random Forest 
+
 Bootstrapping is random sampling with replacement from the available training data. Bagging (= bootstrap aggregation) is performing it many times and training an estimator for each bootstrapped dataset.
 
+When you just/only do bootstrap without an aggregation at the end you only use the standard deviation of the bootstraps replications together, than you call it bootstrap.
+
+If you do the same, but at the end you take an aggregation of voting or anything else, than you call it bagging.
 They are both ensemble technique.
 One of the technique in bagging is called as Random Forest. In Random Forest you basically use multiple decision trees.
 
@@ -35,8 +44,10 @@ Using a small subset of predictors is particularly helpful when we have many cor
 Just like bagging, random forests don't overfit if we increase the number of trees (denoted as B). Therefore, in practice, a sufficiently large value of B is used until the error rate stabilizes.
 
 
-
-
+# References
+Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani (2021). *An Introduction to Statistical Learning with Applications in R*, Second Edition.
+Tae-Hwy Lee, Aman Ullah and Ran Wang. *Bootstrap Aggregating and Random Forest*.
+Andreas Buja, Werner Stuetzle.*OBSERVATIONS ON BAGGING*. University of Pennsylvania and University of Washington.
 
 
 
