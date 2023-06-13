@@ -60,6 +60,8 @@ Three sets of coefficients are used. In the first set of coefficients there are 
 
 These computed mean-squared-errors were averaged over the 250 repetitions to give the sequences ${\bar{e}^S_m},{\bar{e}^B_m}$. For each set of coefficients, these two sequences are plotted vs m in Figure1 a,b,c.
 
+![Figure 1. Prediction error for subset selection and bagged subset selection](aleimm.png)
+
 **Discussion of simulation results**
 
 Looking at Figures1 a,b,c an obvious result is that the most accurate bagged predictor is at least as good as the most accurate subset predictor. In the first set of coefficients (with only three non-zero ${\beta_m}$), subset selection is nearly optimal and there is no improvement. In the second and third set of coefficients there is substantial improvement. *Bagging can improve only if the unbagged is not optimal*. Note that in all three graphs there is a point past which the bagged predictors have larger prediction error than the unbagged. The explenation is this: linear regression using all variables is a fairly stable procedure. The stability decreases as the number of variable used in the predictor decreases.*For a stable procedure* $\delta_B= \delta_A(\mathbf{x},P_L)$ *is not as accurate as* $\delta(\mathbf{x},P)$. As m increases, the instability increases and there is a cross-over point at which $\delta^B_m$ becomes more accurate than $\delta_m$.
@@ -67,3 +69,18 @@ Looking at Figures1 a,b,c an obvious result is that the most accurate bagged pre
 **CONCLUDING REMARKS**
 
 **Bagging class probability estimates**
+
+Some classification methods estimate probabilities p(j\|**x**) that an object with prediction vector **x** belongs to class j. Then the class corresponding to **x** is estimated as $argmax_jp(j|\mathbf{x})$. For such methods, a natural competitor to bagging by voting is to average the p(j\|**x**) over all bootstrap replications, getting $p_B(j|\mathbf{x})$ and then use the estimated class $argmax_jp_B(j|\mathbf{x})$. In some applications, estimates of class probabilities are require instead of, or along with, the classifications. The evidence so far indicates that bagged estimates are likely to be more accurate than the single estimates. To verify this, it would be necessary to compare both estimates with the true values p\*(j\|**x**) over the **x** in the test set. For real data the true values are unknown but they can be computed for the simulated waveform data. Using the waveform data, a simulation with learning and test sets both of size 300 and 25 bootstrap replications has been done. In each iteration, the average of \|p(j\|**x**)-p\*(j\|**x**)\| and \|p_B(j\|**x**)-p\*(j\|**x**)\| was computed. This was repeated 50 times and the results averaged. The single tree estimated had an error of .189. The error of the bagged estimates was .124, a decrease of 34%.
+
+**How many bootstrap replicate are enough?**
+
+In the paper's experiment, 50 bootstrap replicates was used for classification and 25 for regression. To give some ideas of what the results are as connected with the number of bootstrap replicates we ran the waveform data using 10,25,50 and 100 replicates using the same simulation scheme. The results appear in Table 10.![](aleimm2.png){width="254"} The unbagged rate is 29.1, so its clear that we are getting most of the improvement using only 10 bootstrap replicates.
+
+**How big should the bootstrap learning set be?**
+
+In the paper's simulations the bootstrap replicates $L^B$ were used of the same size as the initial learning set L. While a bootstrap replicate may have 2,3,... duplicates of a given instance, it also leaves out about .37 of the instances. A reader of the technical report on which the paper is based remarked that this was an appreciable loss of data, and that accuracy might improve if a larger bootstrap set was used. Anyway with a bootstrap learning sets twice the size of L there was no improvement in accuracy.
+
+**Conclusions**
+
+Bootstrap Aggregating can be a valuable approach to improve the performance of a predictive model, especially when the initial model is not very accurate or reliable. Bagging is a technique that involves creating multiple bootstrap samples from the original data and fitting a separate model to each sample. The models are then combined or aggregated to make predictions.Implementing bagging is relatively straightforward, as it requires adding a loop to select bootstrap samples and sending them to the modeling procedure, as well as an aggregation step at the end. However, when using bagging with decision trees as the base model, one may lose the simplicity and interpretability of the individual trees. Decision trees typically have a clear and interpretable structure that allows for easy understanding of the underlying rules. In the bagging process, where multiple trees are combined, the resulting ensemble model may not have a straightforward and interpretable structure. Despite this loss of interpretability, the advantage of using bagging with decision trees is increased accuracy. By combining multiple trees through bagging, the variance is reduced, leading to improved predictive performance.\
+In summary, bagging is a valuable technique for improving the accuracy of a predictive model, even at the cost of losing the simplicity and interpretability of individual trees and it allows for increased accuracy through the combination of multiple models.
