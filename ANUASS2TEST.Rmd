@@ -1,15 +1,17 @@
 ---
 title: "Assignment II"
-author: "Aldo Giovanni e Giacomo, Anuja Saira Abraham 5204982, Alessia Marzotti 5108443, Miriam Mercuri 5207057""
-date: "2023-06-02"
-output: pdf_document
+author: "Aldo Giovanni e Giacomo,Anuja Saira Abraham 5204982,Alessia Marzotti 5108443,Miriam Mercuri 5207057"
+date: "2023-06-06"
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 \small
 
 ## EXERCISE 1 - RISIKO! is back, with friends
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(ggplot2)
 library(ggcorrplot)
 library(boot)

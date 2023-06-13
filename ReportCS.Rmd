@@ -44,6 +44,80 @@ iv) If (jn, xn) belong to T, then the estimated class of Xn is that class having
 
 
 
-############WE DO THE CODE AND SHOW THAT ACTUALLY THERE IS A REDUCTION IN THE ERROR
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(caret)
+library(randomForest)
+
+```
+We are going to use diabetes dataset compare the result of decision tree and random forest. Random forest is also known as bagged decision tree. The random forest is a classification algorithm consisting of many decisions trees. It uses bagging and feature randomness when building each individual tree to try to create an uncorrelated forest of trees whose prediction by committee is more accurate than that of any individual tree.
+
+```{r}
 
 
+misclassification_rate_vec <- rep(0,100)
+misclassification_rate_vec_rf <- rep(0,100)
+
+#E_sim <- read.table('/Users/anujaabraaham/Downloads/diabetes.csv',sep = ',',header = TRUE)
+E_sim <- diabetes
+E_sim$Outcome<- as.factor(E_sim$Outcome)
+
+head(E_sim)
+```
+This is a data base gathered among the Pima Indians by the National Institute of Diabetes and Digestive and Kidney Diseases. The data base consists of 768 cases, 8 variables and two classes. The variables are medical measurements on the patient plus age and pregnancy information. The classes are: tested positive for diabetes (268) or negative (500).
+
+As per how Breiman did the analysis we followed a similar pattern with raw data instead of simulated data. The data is split into 2 a learning set, L, (10% of the data) with 76 rows and a test set, T, (90% of the data) with 692 rows.
+Next we will train the decision tree model using train() function with 10-fold cross-validation. A bagged decision tree aka random forest model is created in parallel using the function randomForest().
+The two models are made to predict the result using the same dataset and the error is calculated.
+The whole process is iterated 100 times for different combination of learning and test data and the mean error is calculated.
+
+```{r}
+for (i in 1:100){
+  index <- createDataPartition(E_sim$Outcome, p = 0.9, list = FALSE)
+
+  # Divide the data into test set T and learning set L
+  L <- E_sim[-index, ]
+  T <- E_sim[index, ]
+  
+  # Train the classification tree model with 10-fold cross-validation 
+  modeldt <- train(
+    Outcome ~ ., 
+    data = L, 
+    method = "rpart", 
+    trControl = trainControl(method = "cv", number = 10)
+  )
+  
+  rf_model <- randomForest(Outcome ~ ., data = L, proximity=TRUE)
+
+  
+
+  # Predict the class labels for the test set using the trained model
+  predictions <- predict(modeldt, newdata = T)
+
+  # Calculate misclassification rate
+  misclassification_rate <- mean(predictions != T$Outcome)
+
+  misclassification_rate_vec[i] <- misclassification_rate
+  
+  
+  predictions_rf <- predict(rf_model, newdata = T)
+
+  # Calculate misclassification rate
+  misclassification_rate_rf <- mean(predictions_rf != T$Outcome)
+
+  misclassification_rate_vec_rf[i] <- misclassification_rate_rf
+  
+}
+
+
+
+```
+
+```{r}
+mis<- mean(misclassification_rate_vec)
+mis_rf <- mean(misclassification_rate_vec_rf)
+mis
+mis_rf
+```
+From the result it is clear that the model using bagged predictor is better than the model without the bagged predictor. 
+Bagged predictor works better for unstable classifiers than for stable ones. 

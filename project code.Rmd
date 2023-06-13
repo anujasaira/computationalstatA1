@@ -1,0 +1,73 @@
+---
+title: "Project Lab"
+author: "Anuja Saira Abraham"
+date: "2023-06-12"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(caret)
+library(rpart)
+library(randomForest)
+
+```
+
+```{r}
+
+
+misclassification_rate_vec <- rep(0,100)
+misclassification_rate_vec_rf <- rep(0,100)
+
+#E_sim <- read.table('/Users/anujaabraaham/Downloads/diabetes.csv',sep = ',',header = TRUE)
+E_sim <- diabetes
+E_sim$Outcome<- as.factor(E_sim$Outcome)
+
+
+for (i in 1:100){
+  index <- createDataPartition(E_sim$Outcome, p = 0.9, list = FALSE)
+
+  # Divide the data into test set T and learning set L
+  L <- E_sim[-index, ]
+  T <- E_sim[index, ]
+  
+  # Train the classification tree model with 10-fold cross-validation on the training set
+  modeldt <- train(
+    Outcome ~ ., 
+    data = L, 
+    method = "rpart", 
+    trControl = trainControl(method = "cv", number = 10)
+  )
+  
+  rf_model <- randomForest(Outcome ~ ., data = L, proximity=TRUE)
+
+  
+
+  # Predict the class labels for the test set using the trained model
+  predictions <- predict(modeldt, newdata = T)
+
+  # Calculate misclassification rate
+  misclassification_rate <- mean(predictions != T$Outcome)
+
+  misclassification_rate_vec[i] <- misclassification_rate
+  
+  
+  predictions_rf <- predict(rf_model, newdata = T)
+
+  # Calculate misclassification rate
+  misclassification_rate_rf <- mean(predictions_rf != T$Outcome)
+
+  misclassification_rate_vec_rf[i] <- misclassification_rate_rf
+  
+}
+
+
+
+```
+
+```{r}
+mis<- mean(misclassification_rate_vec)
+mis_rf <- mean(misclassification_rate_vec_rf)
+mis
+mis_rf
+```
