@@ -2,7 +2,9 @@
 title: "alessia_project"
 author: "Alessia"
 date: "2023-06-06"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 # BAGGING PREDICTORS, LEO BRAIMAN
@@ -42,21 +44,26 @@ With data of the from $L={(y_n,\mathbf{x_n}),n=1...N}$ where $\mathbf{x}=(x_1,..
 
 To mitigate the potential instability of forward variable selection, techniques such as cross-validation or bootstrap can be used to assess the stability of selected variables and the robustness of the resulting model. These techniques allow for a more accurate estimation of model performance and more reliable identification of the most relevant variables.
 
-**Simulation structure**        
+**Simulation structure**
 
-The simulated data used in this section are drawn from the model y= $\sum_{m}\beta_mx_m+\epsilon$ where $\epsilon$ is N(0,1). The number of variables M=30 and the sample size is 60. The subset selection is nearly optimal is there are only a few large non-zero $\beta_m$ , and its performance is poor if there are many small but non-zero $\beta_m$. 
-Subset selection methods can indeed perform well when there are only a few large non-zero coefficients. This is why subset selection can be effective in such cases:
+The simulated data used in this section are drawn from the model y= $\sum_{m}\beta_mx_m+\epsilon$ where $\epsilon$ is N(0,1). The number of variables M=30 and the sample size is 60. The subset selection is nearly optimal is there are only a few large non-zero $\beta_m$ , and its performance is poor if there are many small but non-zero $\beta_m$. Subset selection methods can indeed perform well when there are only a few large non-zero coefficients. This is why subset selection can be effective in such cases:
 
-1. Focus on important predictors: subset selection methods aim to identify a subset of predictors that are most relevant for predicting the response variable. When there are only a few predictors with large non-zero coefficients, subset selection can successfully identify and include those important predictors in the model.
+1.  Focus on important predictors: subset selection methods aim to identify a subset of predictors that are most relevant for predicting the response variable. When there are only a few predictors with large non-zero coefficients, subset selection can successfully identify and include those important predictors in the model.
 
-2. Improved model interpretability: by selecting a subset of predictors with large non-zero coefficients, subset selection can lead to a more interpretable model. The resulting model will focus on the most influential predictors, providing insights into the relationship between these predictors and the response variable.
+2.  Improved model interpretability: by selecting a subset of predictors with large non-zero coefficients, subset selection can lead to a more interpretable model. The resulting model will focus on the most influential predictors, providing insights into the relationship between these predictors and the response variable.
 
-3. Reduction in model complexity: by selecting a smaller subset of predictors, subset selection reduces the complexity of the model compared to including all predictors. This reduction in complexity can improve model generalization, making the model more robust and less prone to overfitting.
+3.  Reduction in model complexity: by selecting a smaller subset of predictors, subset selection reduces the complexity of the model compared to including all predictors. This reduction in complexity can improve model generalization, making the model more robust and less prone to overfitting.
 
-It's important to note that subset selection methods, like forward selection or backward elimination, are not guaranteed to find the exact optimal model in all cases. They are heuristic approaches that explore different combinations of predictors. The optimality of the selected model depends on factors such as the quality of the selection criteria and the sample size.
-In practice, it's always recommended to evaluate the performance of the selected model using cross-validation or other validation techniques like bootstrap. This helps to assess the model's predictive accuracy and determine if additional refinement or regularization techniques are needed.
-In summary, when there are only a few large non-zero coefficients, subset selection methods can be effective in identifying the most important predictors and constructing a simpler, interpretable model. However, it's crucial to validate the model and consider other factors to ensure its performance and reliability.
+It's important to note that subset selection methods, like forward selection or backward elimination, are not guaranteed to find the exact optimal model in all cases. They are heuristic approaches that explore different combinations of predictors. The optimality of the selected model depends on factors such as the quality of the selection criteria and the sample size. In practice, it's always recommended to evaluate the performance of the selected model using cross-validation or other validation techniques like bootstrap. This helps to assess the model's predictive accuracy and determine if additional refinement or regularization techniques are needed. In summary, when there are only a few large non-zero coefficients, subset selection methods can be effective in identifying the most important predictors and constructing a simpler, interpretable model. However, it's crucial to validate the model and consider other factors to ensure its performance and reliability.
 
-Three sets of coefficients are used. In the first set of coefficients there are only three non-zero ${\beta_m}$. In the second set of coefficients there are 15 non-zero ${\beta_m}$. In the third set there are 27 non-zero ${\beta_m}$, all relatively small. For each set of coefficients, the following procedure was replicated 250 times: 
-i) Data L=$L={(y_n,\mathbf{x_n}),n=1...60}$ was drawn from the model y=$\sum_{m}\beta_mx_m+\epsilon$.
-ii) Forward entry variables was done using L to get the predictors $\delta_1(\mathbf{x})...\delta_M(\mathbf{x})$. The mean_squared prediction error of each of these was computed giving $e_1
+Three sets of coefficients are used. In the first set of coefficients there are only three non-zero ${\beta_m}$. In the second set of coefficients there are 15 non-zero ${\beta_m}$. In the third set there are 27 non-zero ${\beta_m}$, all relatively small. For each set of coefficients, the following procedure was replicated 250 times: 1. Data L=$L={(y_n,\mathbf{x_n}),n=1...60}$ was drawn from the model y=$\sum_{m}\beta_mx_m+\epsilon$. 2. Forward entry variables was done using L to get the predictors $\delta_1(\mathbf{x})...\delta_M(\mathbf{x})$. The mean_squared prediction error of each of these was computed giving $e_1...e_M$. 3. Fifty bootstrap replicates $L_B$ of L were generated. For each of these, forward step-wise regression was applied to construct predictors ${\delta_1(\mathbf{x},L_B)...\delta_M(\mathbf{x},L_B)}$. These were averaged over the $L_b$ to give the bagged sequence $\delta^B_1(\mathbf{X})...\delta^B_M(\mathbf{X})$. The prediction errors $e^B_1...e^B_M$ for this sequence were computed.
+
+These computed mean-squared-errors were averaged over the 250 repetitions to give the sequences ${\bar{e}^S_m},{\bar{e}^B_m}$. For each set of coefficients, these two sequences are plotted vs m in Figure1 a,b,c.
+
+**Discussion of simulation results**
+
+Looking at Figures1 a,b,c an obvious result is that the most accurate bagged predictor is at least as good as the most accurate subset predictor. In the first set of coefficients (with only three non-zero ${\beta_m}$), subset selection is nearly optimal and there is no improvement. In the second and third set of coefficients there is substantial improvement. *Bagging can improve only if the unbagged is not optimal*. Note that in all three graphs there is a point past which the bagged predictors have larger prediction error than the unbagged. The explenation is this: linear regression using all variables is a fairly stable procedure. The stability decreases as the number of variable used in the predictor decreases.*For a stable procedure* $\delta_B= \delta_A(\mathbf{x},P_L)$ *is not as accurate as* $\delta(\mathbf{x},P)$. As m increases, the instability increases and there is a cross-over point at which $\delta^B_m$ becomes more accurate than $\delta_m$.
+
+**CONCLUDING REMARKS**
+
+**Bagging class probability estimates**
