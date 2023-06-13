@@ -60,7 +60,7 @@ Three sets of coefficients are used. In the first set of coefficients there are 
 
 These computed mean-squared-errors were averaged over the 250 repetitions to give the sequences ${\bar{e}^S_m},{\bar{e}^B_m}$. For each set of coefficients, these two sequences are plotted vs m in Figure1 a,b,c.
 
-![Figure 1. Prediction error for subset selection and bagged subset selection](aleimm.png)
+![Figure 1. Prediction error for subset selection and bagged subset selection](aleimm.png){width="530"}
 
 **Discussion of simulation results**
 
