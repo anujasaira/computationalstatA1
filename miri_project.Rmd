@@ -19,7 +19,7 @@ To address this trade-off, Breiman (1996) introduced a technique called bagging,
 Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as neural networks, classification and regression trees (CART), and variable selection for regression. He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
 
 To better understand stability and instability, and what bagging do, we
-define the concepts of bias and variance for classifiers. Unstable classifiers, such as trees, characteristically have high variance and low bias. Stable classifers, like linear discriminant analysis, have low variance, but can have high bias. 
+define the concepts of bias and variance for classifiers. Unstable classifiers, such as trees, characteristically have high variance and low bias. Stable classifiers, like linear discriminant analysis, have low variance, but can have high bias. 
 
 Instability is an essential ingredient for bagging to improve accuracy.
 
