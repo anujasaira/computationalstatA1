@@ -165,8 +165,9 @@ expectation over £, and the subscript A in C;A denotes aggregation. If
 method of aggregating the \textasciitilde y(x, Z\textasciitilde) is by
 voting. Let ``\textbackslash4 = nr\{k; \textasciitilde(x, £\#) = j\} and
 take 9\textasciitilde A(X) = argmaxjNj, that is, the j for which
-\textasciitilde,\textasciitilde-is maximum. \#\# Bagging Classification
-Trees
+\textasciitilde,\textasciitilde-is maximum.
+
+\#\# Bagging Classification Trees
 
 In a classification problem in which Y is qualitative, there are a few
 possible approaches, but the simplest is as follows. For a given test
@@ -263,7 +264,8 @@ mean error is calculated.
     \AttributeTok{trControl =} \FunctionTok{trainControl}\NormalTok{(}\AttributeTok{method =} \StringTok{"cv"}\NormalTok{, }\AttributeTok{number =} \DecValTok{10}\NormalTok{)}
 \NormalTok{  )}
   
-\NormalTok{  rf\_model }\OtherTok{\textless{}{-}} \FunctionTok{randomForest}\NormalTok{(Outcome }\SpecialCharTok{\textasciitilde{}}\NormalTok{ ., }\AttributeTok{data =}\NormalTok{ L, }\AttributeTok{proximity=}\ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{  rf\_model }\OtherTok{\textless{}{-}} \FunctionTok{randomForest}\NormalTok{(Outcome }\SpecialCharTok{\textasciitilde{}}\NormalTok{ ., }\AttributeTok{data =}\NormalTok{ L,}\AttributeTok{mtry =} \DecValTok{4}\NormalTok{, }\AttributeTok{importance=}\ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{  bagged\_tree}\OtherTok{\textless{}{-}} \FunctionTok{randomForest}\NormalTok{(Outcome }\SpecialCharTok{\textasciitilde{}}\NormalTok{ ., }\AttributeTok{data =}\NormalTok{ L,}\AttributeTok{mtry =} \DecValTok{8}\NormalTok{, }\AttributeTok{ntree =} \DecValTok{25}\NormalTok{)}
 
   
 
@@ -296,7 +298,7 @@ mean error is calculated.
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 0.298815
+## [1] 0.2972399
 \end{verbatim}
 
 \begin{Shaded}
@@ -306,7 +308,7 @@ mean error is calculated.
 \end{Shaded}
 
 \begin{verbatim}
-## [1] 0.2601734
+## [1] 0.2627457
 \end{verbatim}
 
 From the result it is clear that the model using bagged predictor is

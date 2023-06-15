@@ -80,6 +80,7 @@ It uses bagging and feature randomness when building each individual tree to try
 
 misclassification_rate_vec <- rep(0,100)
 misclassification_rate_vec_rf <- rep(0,100)
+misclassification_rate_vec_bagged<- rep(0,100)
 
 E_sim <- read.table('/Users/anujaabraaham/Downloads/diabetes.csv',sep = ',',header = TRUE)
 #E_sim <- diabetes
@@ -116,25 +117,28 @@ for (i in 1:100){
     trControl = trainControl(method = "cv", number = 10)
   )
   
-  rf_model <- randomForest(Outcome ~ ., data = L, proximity=TRUE)
+  rf_model <- randomForest(Outcome ~ ., data = L,mtry = 4, importance=TRUE)
+  bagged_tree<- randomForest(Outcome ~ ., data = L,mtry = 8, ntree = 25)
 
   
 
   # Predict the class labels for the test set using the trained model
   predictions <- predict(modeldt, newdata = T)
-
   # Calculate misclassification rate
   misclassification_rate <- mean(predictions != T$Outcome)
-
   misclassification_rate_vec[i] <- misclassification_rate
   
   
   predictions_rf <- predict(rf_model, newdata = T)
-
   # Calculate misclassification rate
   misclassification_rate_rf <- mean(predictions_rf != T$Outcome)
-
   misclassification_rate_vec_rf[i] <- misclassification_rate_rf
+  
+  predictions_bagged <- predict(bagged_tree, newdata = T)
+  # Calculate misclassification rate
+  misclassification_rate_bagged <- mean(predictions_bagged != T$Outcome)
+
+  misclassification_rate_vec_bagged[i] <- misclassification_rate_bagged
   
 }
 
@@ -145,8 +149,10 @@ for (i in 1:100){
 ```{r}
 mis<- mean(misclassification_rate_vec)
 mis_rf <- mean(misclassification_rate_vec_rf)
+mis_bagg <- mean(misclassification_rate_vec_bagged)
 mis
 mis_rf
+mis_bagg
 ```
 
 From the result it is clear that the model using bagged predictor is better than the model without the bagged predictor.
