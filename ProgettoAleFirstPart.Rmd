@@ -1,0 +1,17 @@
+---
+title: "AleProjectFirstPart"
+author: "Alessia"
+date: "2023-06-15"
+output: html_document
+---
+
+## WHY BAGGING WORKS
+
+Instability is important in bootstrap aggregating because it helps improve the performance of the ensemble model by reducing variance and increasing accuracy. Bagging is a technique that combines multiple models (often decision trees) trained on different bootstrap samples of the dataset to make predictions. The key idea behind bagging is to introduce diversity among the base models by using different subsets of the training data. This diversity is achieved through the bootstrap sampling process, where each base model is trained on a randomly selected subset of the original data, allowing for variations in the training sets. If the base models used in bagging are stable, meaning they produce similar predictions when trained on slightly different datasets, the ensemble model's performance may not significantly improve. This is because the models will produce similar predictions and will not provide enough diversity to effectively reduce variance. On the other hand, if the base models are unstable, meaning they are sensitive to small changes in the training data, the ensemble model will benefit from the aggregation of these diverse models. The variations among the models can help to capture different aspects of the data and lead to improved generalization and prediction accuracy. Therefore, instability, or the ability of the base models to exhibit different behaviors with different training data, is important in bagging as it contributes to increased diversity and better performance of the ensemble model.
+
+#da finire tutto il paragrafo
+
+Let each (y,**x**) case in L be independently drawn from the probability distribution P. Suppose y is numerical and $\delta(\mathbf{x},L)$ the predictor. Then the aggregated predictor is $\delta_A(\mathbf{x},P)=E_L\delta(\mathbf{x},L)$. Take Y,**X** to be random variables having the distribution P and independent of L. The average prediction error e in $\delta(\mathbf{x},L)$ is
+$$e= E_LE_{Y,X}(Y-\delta(\mathbf{x},L))^2$$
+Define the error in the aggregated predictor $\delta_A$ to be
+$$e_A= E_{Y,X}(Y-\delta_A(\mathbf{x},L))^2$$
