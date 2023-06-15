@@ -39,6 +39,23 @@ Our scope of this project is to show that the sequence of predictors $\varphi(\m
 
 -   
 
+CLASSIFICATION TREE
+A classification tree is a structural mapping of binary decisions that lead to a decision about the class (interpretation) of an object (such as a pixel).
+Although sometimes referred to as a decision tree, it is more properly a type of decision tree that leads to categorical decisions.
+A regression tree, another form of decision tree, leads to quantitative decisions.
+
+![Figure 1.Classification Tree](imgclasstree.png){width="500"}
+A classification tree is composed of branches that represent attributes, while the leaves represent decisions. In use, the decision process starts at the trunk and follows the branches until a leaf is reached.For a classification tree, we predict that each observation belongs to the most commonly occurring class of training observations in the region to which it belongs. In interpreting the results of a classification tree, we are often interested not only in the class prediction corresponding to a particular terminal node region, but also in the class proportions among the training observations that fall into that region.
+The task of growing a classification tree is quite similar to the task of growing a regression tree. Just as in the regression setting, we use recursive binary splitting to grow a classification tree. However, in the classification setting, RSS (Residual Sum Square) cannot be used as a criterion for making the binary splits.
+The classification tree suffer from high variance. This means that if we split the training data into two parts at random, and fit a classification tree to both halves, the results that we get could be quite different. In contrast, a procedure with low variance will yield similar results if applied repeatedly to distinct data sets; linear regression tends to have low variance, if the ratio of n to p is moderately large
+
+Bagging
+
+The bootstrap is used in many situations in which it is hard or even impossible to directly compute the standard deviation of a quantity of interest.Here the bootstrap can be used in order to improve statistical learning methods such as decision trees. The decision trees suffer from high variance. Bootstrap aggregation, or bagging, is a general-purpose procedure for reducing the variance of a statistical learning method; we introduce it here because it is particularly useful and frequently used in the context of decision trees.
+![Figure 1.Bagging](bagg.png){width="500"}
+
+Given a set of $\mathit{n}$  n independent observations $\mathit{Z_1}$,...,$\mathit{Z_n}$, each with variance $\sigma^2$, the variance of the mean $\overline{\mathit{Z}}$  of the observations is given by $\sigma^2$/$\mathit{n}$. In other words, averaging a set of observations reduces variance. Hence a natural way to reduce the variance and increase the test set accuracy of a statistical learning method is to take many training sets from the population, build a separate prediction model using each training set, and average the resulting predictions.
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -79,11 +96,11 @@ The whole process is iterated 100 times for different combination of learning an
 
 ```{r}
 for (i in 1:100){
-  index <- createDataPartition(E_sim$Outcome, p = 0.9, list = FALSE)
+  index <- createDataPartition(E_sim$Outcome, p = 0.7, list = FALSE)
 
   # Divide the data into test set T and learning set L
-  L <- E_sim[-index, ]
-  T <- E_sim[index, ]
+  T <- E_sim[-index, ]
+  L <- E_sim[index, ]
   
   # Train the classification tree model with 10-fold cross-validation 
   modeldt <- train(
@@ -120,6 +137,10 @@ for (i in 1:100){
 
 
 
+```
+
+```{r}
+rpart.plot(modeldt,extra=106)
 ```
 
 ```{r}
