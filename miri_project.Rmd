@@ -21,8 +21,21 @@ Unstable classifiers, such as trees, characteristically have high variance and l
 
 Instability is an essential ingredient for bagging to improve accuracy.
 
-A learning set of L consists of data {$(y_n,x_n), n=1,...,N$} where the $y$'s are either class labels or a numerical response. Assume we have a procedure for using the learning set to form a predictor $\delta(x,L)$. Now, suppose we are given a sequence of learning sets {$L_k$} each consisting of N independent observations from the same underlying distribution as L. Our mission is to use the {$L_k$} to get a better predictor than the single learning set predictor $\delta(x,L)$. The restriction is that all we are allowed to work with is the sequence of predictors {$\delta(x,L_k)$}. If $y$ is numerical, an obvious procedure is to replace $\delta(x,L)$ by the average of $\delta(x,L_k)$ over $k$, i.e. by $\delta_A(x)=E_L\delta(x,L)$ where $E_L$ denotes the expectation over L, and the subscript A in $\delta_A$ denotes aggregation. If $\delta(x,L)$ predicts a class $j\in\{1,...,J\}$, then one method of aggregating the $\delta(x,L_k)$ is by voting. Let $N_j=nr\{k;\delta(x,L_k)=j\}$ and take $\delta_A(x)=argmax_jN_j$, that is the j for which $N_j$ is maximum. Usually, though, we have a single learning set L without the luxuty of replicates of L. Still, an imitation of the process leading to $\delta_A$ can be done. Take repeated bootstrap samples $\{L^{(B)}\}$ from L, and form $\{\delta(x,L^{(B)})\}$. If $y$ is numerical, take $\delta_B$ as $$\delta_B(x)=av_B\delta(x,L^{(B)})$$.
-If $y$ is a class label, let the $\{\delta(x,L^{(B)})\}$ vote to form $\delta_B(x)$. We 
+We have a learning set (L) with data points {$(y_n, x_n)$} for training a predictor ($\delta(x, L)$).
+
+To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L. We only have access to the predictors {$\delta(x, L_k)$}.
+
+For numerical responses, we average the predictors $\delta(x, L_k)$ to get an aggregated predictor $\delta_A(x)$.
+
+For class labels, we use voting among the predictors $\delta(x, L_k)$ to form the aggregated predictor $\delta_A(x)$.
+
+If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from L to create bootstrap replicates {$L^{(B)}$}. We form predictors ${\delta(x, L^{(B)})}$ using these replicates.
+
+For numerical responses, the aggregated predictor is $\delta_B(x)$, which is the average of the predictors $\delta(x, L^{(B)})$.
+
+For class labels, the aggregated predictor $\delta_B(x)$ is determined by voting among the predictors $\delta(x, L^{(B)})$.
+
+This procedure is called bootstrap aggregating or bagging, where the bootstrap replicates {$L^{(B)}$} are drawn to approximate the underlying distribution of L.
 
 # Comparison 
 
