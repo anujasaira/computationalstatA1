@@ -12,41 +12,31 @@ editor_options:
 
 **INTRODUCTION**
 
-In a typical prediction problem, there is a trade-off between two factors: bias and variance.
-Bias refers to the error introduced by simplifying assumptions in a model, while variance refers to the amount by which predictions vary for different samples of data.
+In a typical prediction problem, there is a trade-off between two factors: bias and variance. Bias refers to the error introduced by simplifying assumptions in a model, while variance refers to the amount by which predictions vary for different samples of data.
 
-When we try to improve the fit of a model, there comes a point where increasing the precision of the fit leads to higher variance in predictions for future observations.
-On the other hand, reducing prediction variance can result in a higher expected bias for future predictions.
+When we try to improve the fit of a model, there comes a point where increasing the precision of the fit leads to higher variance in predictions for future observations. On the other hand, reducing prediction variance can result in a higher expected bias for future predictions.
 
-To address this trade-off, Breiman (1996) introduced a technique called bagging, which stands for "Bootstrap AGGregatING." The idea behind bagging is simple.
-Instead of relying on a single model fit to the observed data for making predictions, multiple bootstrap samples (randomly selected subsets) of the data are created.
-Each of these samples is used to fit a model, and the predictions from all the fitted models are averaged to obtain the bagged prediction.
+To address this trade-off, Breiman (1996) introduced a technique called bagging, which stands for "Bootstrap AGGregatING." The idea behind bagging is simple. Instead of relying on a single model fit to the observed data for making predictions, multiple bootstrap samples (randomly selected subsets) of the data are created. Each of these samples is used to fit a model, and the predictions from all the fitted models are averaged to obtain the bagged prediction.
 
-Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as classification and regression trees (CART).
-He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
+Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as classification and regression trees (CART). He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
 
-Unstable classifiers, such as trees, characteristically have high variance and low bias.
-Stable classifiers have low variance, but can have high bias.
+Unstable classifiers, such as trees, characteristically have high variance and low bias. Stable classifiers have low variance, but can have high bias.
 
 Instability is an essential ingredient for bagging to improve accuracy.
 
-We have a learning set (L) with data points {$(y_n, x_n)$} for training a predictor ($\delta(x, L)$).
-
-To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L.
-We only have access to the predictors {$\delta(x, L_k)$}.
-
+We have a learning set (L) with data points {$(y_n, x_n)$} for training a predictor ($\delta(x, L)$). To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L. We only have access to the predictors {$\delta(x, L_k)$}. 
 For numerical responses, we average the predictors $\delta(x, L_k)$ to get an aggregated predictor $\delta_A(x)$.
-
 For class labels, we use voting among the predictors $\delta(x, L_k)$ to form the aggregated predictor $\delta_A(x)$.
 
-If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from L to create bootstrap replicates {$L^{(B)}$}.
-We form predictors ${\delta(x, L^{(B)})}$ using these replicates.
-
+If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from L to create bootstrap replicates {$L^{(B)}$}. We form predictors ${\delta(x, L^{(B)})}$ using these replicates.
 For numerical responses, the aggregated predictor is $\delta_B(x)$, which is the average of the predictors $\delta(x, L^{(B)})$.
-
 For class labels, the aggregated predictor $\delta_B(x)$ is determined by voting among the predictors $\delta(x, L^{(B)})$.
 
-This procedure is called bootstrap aggregating or bagging, where the bootstrap replicates {$L^{(B)}$} are drawn to approximate the underlying distribution of L.
+This paper aims to provide a comprehensive analysis and interpretation of Breiman's influential paper. We focus on utilizing classification trees, specifically with the "diabetes" dataset mentioned in the paper, and supplement our findings with relevant code examples. Additionally, we incorporate the random forest function and offer an explanation of its significance within our analysis.
+
+Our discussion delves into the empirical evidence and insights put forth by Breiman to substantiate the effectiveness of bagging. We explore the underlying principles and reasoning behind why bagging yields positive results, as outlined by Breiman.
+
+Lastly, we present our conclusions based on our work, drawing comparisons between the Bootstrap method covered in our class and the findings from our analysis. We aim to provide a concise yet comprehensive overview of our research, shedding light on the practical implications and significance of the discussed concepts.
 
 **CLASSIFICATION TREE**
 
@@ -410,15 +400,23 @@ In summary, bagging is a valuable technique for improving the accuracy of a pred
 
 # Comparison
 
-Bootstrapping is random sampling with replacement from the available training data.
-Bagging (= bootstrap aggregation) is performing it many times and training an estimator for each bootstrapped dataset.
+Starting from what we studied in class, related to the Breiman's paper about bagging predictors, we can talk about bootstrap. We've seen different approach one of which is the paired bootstrap. 
+We consider the original sample $\{(Y_i,X_i)\}_{i=1}^n$ as i.i.d. from an unknown distribution $F_{X,Y}$.
+We follow this algorithm:
+1. For b=1,...,B:
+- obtain a bootstrap sample $\{(Y_1^*,X_1^*),...,(Y_n^*,X_n^*)\}$, sampling with replacement from $\hat{F}_{X,Y}$;
+-regress $Y^*$ onto $X^*$ and obtain the bootstrap estimate of the coefficients $\hat{\beta^*}_{(b)}$.
+2. Use the sample $(\hat{\beta^*}_{(1)},...,\hat{\beta^*}_{(B)}$ to draw inference. 
 
-When you just/only do bootstrap without an aggregation at the end you only use the standard deviation of the bootstraps replications together, than you call it bootstrap.
+Instead the bagging algorithm has three basic steps:
 
-If you do the same, but at the end you take an aggregation of voting or anything else, than you call it bagging.
-They are both ensemble technique.
-One of the technique in bagging is called as Random Forest.
-In Random Forest you basically use multiple decision trees.
+Bootstrapping: Bagging employs a bootstrapping sampling technique, which involves creating diverse subsets of the training dataset. This is achieved by randomly selecting data points from the training data, allowing for the possibility of selecting the same instance multiple times due to replacement. Consequently, a value or instance can appear more than once within a sample.
+
+Parallel training: The generated bootstrap samples are then independently and simultaneously trained using weak or base learners. These learners can be decision trees or other simple models. Each bootstrap sample is trained separately, allowing for parallel processing and speeding up the overall training process.
+
+Aggregation: Once the individual models are trained, their predictions are aggregated to produce a more accurate estimate. The specific aggregation method depends on the task at hand, such as regression or classification. In regression, the individual model outputs are averaged, a technique known as soft voting. In classification, the class with the highest majority of votes is selected, referred to as hard voting or majority voting.
+
+In essence, when comparing bagging to the bootstrap method studied in our class, we can view bagging as an extension or application of bootstrap with an additional aggregation step at the end. Bagging incorporates the idea of bootstrapping by generating diverse samples through random sampling with replacement. However, what sets bagging apart is the subsequent aggregation of predictions from these bootstrapped samples, which further enhances the predictive power and robustness of the ensemble model. In contrast, bootstrap alone focuses on the estimation of uncertainty through the analysis of repeated resamples without the aggregation step. Thus, bagging can be seen as a refinement of the bootstrap technique, incorporating aggregation for improved performance.
 
 # References
 
