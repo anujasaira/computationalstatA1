@@ -17,7 +17,7 @@ The aggregation averages over the versions when predicting a numerical outcome a
 The multiple versions are formed by making bootstrap replicates of the learning set and using these as new learning sets.
 The vital element is the instability of the prediction method.
 If perturbing the learning set can cause significant changes in the predictor constructed, then bagging can improve accuracy.
-$\(\ell\)$ A learning set $\mathcal{L}$ consists of data {($\mathit{y_n}$, $\mathit{x_n}$),$\mathit{n}$ = 1....
+$\mathcal{L}$ A learning set $\mathcal{L}$ consists of data {($\mathit{y_n}$, $\mathit{x_n}$),$\mathit{n}$ = 1....
 , $\mathit{N}$}
 
 $\mathit{y}$ : class labels/numeric responses
@@ -39,29 +39,6 @@ Our scope of this project is to show that the sequence of predictors $\varphi(\m
 
 -   
 
-Assume we have a procedure for using this learning set to form a predictor 9v(x, £) -- if the input is x we predict y by \~d(x, £).
-Now, suppose we are given a sequence of learnings sets {£k } each consisting of N independent observations from the same underlying distribution as £.
-Our mission is to use the {£\~} to get a better predictor than the single learning set predictor 9:(x,/2).
-The restriction is that all we are allowed to work with is the sequence of predictors {\~(x, £k)}.
-If y is numerical, an obvious procedure is to replace c;(x, £) by the average of 97(x, £k) over k, i.e. by 9;A(X) -- E£9:(x, £) where E£ denotes the expectation over £, and the subscript A in C;A denotes aggregation.
-If 9\~(x, £) predicts a class j E {1,..., J}, then one method of aggregating the \~y(x, Z\~) is by voting.
-Let "\\4 = nr{k; \~(x, £#) = j} and take 9\~A(X) = argmaxjNj, that is, the j for which \~,\~-is maximum.
-
-\## Bagging Classification Trees
-
-In a classification problem in which Y is qualitative, there are a few possible approaches, but the simplest is as follows.
-For a given test observation, we can record the class predicted by each of the B trees, and take a majority vote: the overall prediction is the most commonly occurring class among the B predictions.
-
-We are going to see results for moderate sized data sets.
-In all runs the following procedure was used: i) The data set is randomly divided into a test set T and a learning set L.
-In the real data sets T is 10% of the data.
-ii) A classification tree is constructed from L using 10-fold cross-validation.
-Running the test set T down this tree gives the misclassification rate es(L, T).
-iii) A bootstrap sample Lb is selected from L, and a tree grown using Lb.
-The original learning set L is used as test set to select the best pruned subtree(but how?)##############################################################ASK##############################################################################################################################################################################.This is repeated 50 times.
-iv) If (jn, xn) belong to T, then the estimated class of Xn is that class having the plurality.
-(If there is a tie, the estimated class is the one with the lowest class label.) The proportion of times the estimated class differs from the true class is the bagging misclassification rate eb(L, T).
-v) The random division of the data into L and T is repeated 100 times and the reported es(L,T) and eb(L,T) are the averages over the 100 iterations.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
