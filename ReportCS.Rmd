@@ -59,8 +59,8 @@ misclassification_rate_vec <- rep(0,100)
 misclassification_rate_vec_rf <- rep(0,100)
 misclassification_rate_vec_bagged<- rep(0,100)
 
-E_sim <- read.table('/Users/anujaabraaham/Downloads/diabetes.csv',sep = ',',header = TRUE)
-#E_sim <- diabetes
+#E_sim <- read.table('/Users/anujaabraaham/Downloads/diabetes.csv',sep = ',',header = TRUE)
+E_sim <- read.table('diabetes.csv',sep=',',header = TRUE)
 E_sim$Outcome<- as.factor(E_sim$Outcome)
 
 head(E_sim)
