@@ -193,7 +193,7 @@ The dataset sample is split into learning(10%) and test(90%) set.
 A regression tree is constructed from the learning set using 10-fold cross-validation.
 Running the test set down this tree gives the squared error.
 A bootstrapsample $\mathcal{L_B}$ is selected from $\mathcal{L}$ and a tree grown using $\mathcal{L_B}$ and $\mathcal{L}$ used to select the pruned subtree.
-This is repeated 25 times giving tree predictors \$\phi*1(x)\* $,...,$\phi{25}(x) \$.The bagged predictor is $\hat{\mathit{y_n}}$ = $\mathit{av_k}\phi_{k}(x_n)$, and the squared error $\mathit{e_B(L,T)}$ is $\mathit{av_n(y_n-\hat{y_n})^2}$.
+This is repeated 25 times giving tree predictors \$\phi\*1(x)\* $,...,$\phi{25}(x) \$.The bagged predictor is $\hat{\mathit{y_n}}$ = $\mathit{av_k}\phi_{k}(x_n)$, and the squared error $\mathit{e_B(L,T)}$ is $\mathit{av_n(y_n-\hat{y_n})^2}$.
 The random division of the data into 12 and T is repeated 100 times and the errors averaged.
 
 ![Figure 3.Bagging Regession Tree](baggreg.png){width="600px," height="450px"}
