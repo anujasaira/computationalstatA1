@@ -44,7 +44,6 @@ Our scope of this project is to show that the sequence of predictors $\varphi(\m
 knitr::opts_chunk$set(echo = TRUE)
 library(caret)
 library(randomForest)
-
 ```
 
 We are going to use diabetes dataset compare the result of decision tree and random forest.

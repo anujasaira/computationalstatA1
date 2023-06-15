@@ -6,10 +6,6 @@ output:
   pdf_document: default
   html_document: default
 ---
-```{r}
-install.packages("caret")
-```
-
 
 # Introduction
 
