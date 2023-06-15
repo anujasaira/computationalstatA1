@@ -9,29 +9,30 @@ output:
 
 # Introduction
 
-Bagging is a method of obtaining more robust predictions when the model class under consideration is unstable with respect to the data, i.e., small changes in the data can cause the predicted values to change significantly.
-
 In a typical prediction problem, there is a trade-off between two factors: bias and variance. Bias refers to the error introduced by simplifying assumptions in a model, while variance refers to the amount by which predictions vary for different samples of data.
 
 When we try to improve the fit of a model, there comes a point where increasing the precision of the fit leads to higher variance in predictions for future observations. On the other hand, reducing prediction variance can result in a higher expected bias for future predictions.
 
 To address this trade-off, Breiman (1996) introduced a technique called bagging, which stands for "Bootstrap AGGregatING." The idea behind bagging is simple. Instead of relying on a single model fit to the observed data for making predictions, multiple bootstrap samples (randomly selected subsets) of the data are created. Each of these samples is used to fit a model, and the predictions from all the fitted models are averaged to obtain the bagged prediction.
 
-Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as neural networks, classification and regression trees (CART), and variable selection for regression. He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
+Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as classification and regression trees (CART). He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
 
-To better understand stability and instability, and what bagging do, we define the concepts of bias and variance for classifiers. Unstable classifiers, such as trees, characteristically have high variance and low bias. Stable classifiers, like linear discriminant analysis, have low variance, but can have high bias.
+Unstable classifiers, such as trees, characteristically have high variance and low bias. Stable classifiers have low variance, but can have high bias.
 
 Instability is an essential ingredient for bagging to improve accuracy.
 
-A statistic $\hat{\theta_n}(x)=h_n(L_1,...,L_n)(x)$ is called stable at x if $\hat{\theta_n}(x)= \theta(x) + o_p(1)$$(n \to \infty)$ for some fixed value $\theta(x)$. Instability thus take place whenever the procedure $\hat{\theta_n}$ is not converging to a fixed value: another realization from the data generating distribution would produce a different value of the procedure, with positive probability.
+A learning set of L consists of data {$(y_n,x_n), n=1,...,N$} where the $y$'s are either class labels or a numerical response. Assume we have a procedure for using the learning set to form a predictor $\delta(x,L)$. Now, suppose we are given a sequence of learning sets {$L_k$} each consisting of N independent observations from the same underlying distribution as L. Our mission is to use the {$L_k$} to get a better predictor than the single learning set predictor $\delta(x,L)$. The restriction is that all we are allowed to work with is the sequence of predictors {$\delta(x,L_k)$}. If $y$ is numerical, an obvious procedure is to replace $\delta(x,L)$ by the average of $\delta(x,L_k)$ over $k$, i.e. by $\delta_A(x)=E_L\delta(x,L)$ where $E_L$ denotes the expectation over L, and the subscript A in $\delta_A$ denotes aggregation. If $\delta(x,L)$ predicts a class $j\in\{1,...,J\}$, then one method of aggregating the $\delta(x,L_k)$ is by voting. Let $N_j=nr\{k;\delta(x,L_k)=j\}$ and take $\delta_A(x)=argmax_jN_j$, that is the j for which $N_j$ is maximum. Usually, though, we have a single learning set L without the luxuty of replicates of L. Still, an imitation of the process leading to $\delta_A$ can be done. Take repeated bootstrap samples $\{L^{(B)}\}$ from L, and form $\{\delta(x,L^{(B)})\}$. If $y$ is numerical, take $\delta_B$ as $$\delta_B(x)=av_B\delta(x,L^{(B)})$$.
+If $y$ is a class label, let the $\{\delta(x,L^{(B)})\}$ vote to form $\delta_B(x)$. We 
 
-# Comparison and Random Forest
+# Comparison 
 
 Bootstrapping is random sampling with replacement from the available training data. Bagging (= bootstrap aggregation) is performing it many times and training an estimator for each bootstrapped dataset.
 
 When you just/only do bootstrap without an aggregation at the end you only use the standard deviation of the bootstraps replications together, than you call it bootstrap.
 
 If you do the same, but at the end you take an aggregation of voting or anything else, than you call it bagging. They are both ensemble technique. One of the technique in bagging is called as Random Forest. In Random Forest you basically use multiple decision trees.
+
+# Random Forest
 
 Random forests are an improvement over bagged trees that aim to make the trees less similar to each other. In bagging, we create multiple decision trees using different training samples. However, in random forests, when building these trees, we make a small change. Instead of considering all predictors at each split, we randomly select a subset of predictors and choose only one from that subset for the split. We refresh this subset for each split, usually picking the square root of the total number of predictors.
 
@@ -47,7 +48,7 @@ Just like bagging, random forests don't overfit if we increase the number of tre
 
 In the process of constructing a random forest, multiple decision trees are created. Each tree is generated independently, and for each tree, a random vector $\Theta_k$ is generated. The generation of $\Theta_k$ is unrelated to the previously generated random vectors $\Theta_1,...,\Theta_{k-1}$, but they are all drawn from the same distribution.
 
-To grow a tree, the training set and the corresponding $\Theta_k$ are used. This combination results in a classifier h(**x**, $\Theta_k$), where **x** represents an input vector. In bagging, for example, $\Theta$ is generated by counting the number of darts that randomly fall into N boxes, with N being the number of examples in the training set. In random split selection, the content of Θ depends on its usage in constructing the tree.
+To grow a tree, the training set and the corresponding $\Theta_k$ are used. This combination results in a classifier h(**x**, $\Theta_k$), where **x** represents an input vector. In bagging, for example, $\Theta$ is generated by counting the number of darts that randomly fall into N boxes, with N being the number of examples in the training set. In random split selection, the content of $\Theta$ depends on its usage in constructing the tree.
 
 Once a large number of trees are generated, they collectively contribute to the final classification decision. Each tree casts a vote, and the class with the highest number of votes is considered the most popular. This aggregation of trees is what we refer to as a random forest.
 
