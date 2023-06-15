@@ -2,47 +2,71 @@
 title: "Report"
 author: "Aldo Giovanni e Giacomo"
 date: "2023-05-25"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
+  markdown:
+    wrap: sentence
 ---
 
-##INTRODUCTION TO BAGGING PREDICTORS
 
-Bagging predictors is a method for generating multiple versions of a predictor and using these to get an aggregated predictor. The aggregation averages over the versions when predicting a numerical outcome and
-does a plurality vote when predicting a class. The multiple versions are formed by making bootstrap replicates of the learning set and using these as new learning sets. 
-The vital element is the instability of the prediction method. If perturbing the learning set can cause significant changes in the predictor constructed, then bagging can improve accuracy.
+**INTRODUCTION**
 
-Bagging is an ensemble method,which is an approach that combines many simple “building  block” models in order to obtain a single and potentially very powerful model. These simple building block models are sometimes known as weak learners, since they may lead to mediocre predictions on their own. 
-The bootstrap can be used in order to improve statistical learning methods such as decision trees.The decision trees suffer from high variance.
-This means that if we split the training data into two parts at random,
-and fit a decision tree to both halves, the results that we get could be
-quite different. In contrast, a procedure with low variance will yield similar results if applied repeatedly to distinct data sets. Bootsrap
-aggregation, or bagging, is a general-purpose procedure for reducing the variance of a statistical learning method; it is
-particularly useful and frequently used in the context of decision trees.
-Recall that given a set of n independent observations Z1,...,Zn, each
-with variance σ2, the variance of the mean Z¯ of the observations is given
-by σ2/n. In other words, averaging a set of observations reduces variance.
-Hence a natural way to reduce the variance and increase the test set accuracy of a statistical learning method is to take many training sets from the population, build a separate prediction model using each training set,and average the resulting predictions.
-This is not practical because we generally do not have access
-to multiple training sets. Instead, we can bootstrap, by taking repeated
-samples from the (single) training data set. In this approach we generate
-B different bootstrapped training data sets. We then train our method on
-the bth bootstrapped training set in order to get the bth prediction, and finally average all the predictions. This is called bagging.
+Bagging predictors is a method for generating multiple versions of a predictor and using these to get an aggregated predictor.
+The aggregation averages over the versions when predicting a numerical outcome and does a plurality vote when predicting a class.
+The multiple versions are formed by making bootstrap replicates of the learning set and using these as new learning sets.
+The vital element is the instability of the prediction method.
+If perturbing the learning set can cause significant changes in the predictor constructed, then bagging can improve accuracy.
+$\(\ell\)$
+A learning set $\mathcal{L}$ consists of data {($\mathit{y_n}$, $\mathit{x_n}$),$\mathit{n}$ = 1....
+, $\mathit{N}$}
 
-To apply bagging to regression trees, we simply construct B regression trees using B bootstrapped training sets, and average the resulting predictions. These trees are grown deep, and are not pruned. Hence each individual tree has high variance, but low bias. Averaging these B trees reduces the variance. Bagging has been demonstrated to give impressive improvements in accuracy by combining together hundreds or even thousands of trees into a single procedure.
+$\mathit{y}$ : class labels/numeric responses
 
-## Bagging Classification Trees
+$\mathit{x}$ : input
 
-In a classification problem in which Y is qualitative, there are a few possible approaches, but the simplest is as follows. For a given test
-observation, we can record the class predicted by each of the B trees, and
-take a majority vote: the overall prediction is the most commonly occurring class among the B predictions.
+$\varphi(\mathit{x},\mathcal{L})$ : predictor
 
-We are going to see results for moderate sized data sets. In all runs the following procedure was used:
-i) The data set is randomly divided into a test set T and a learning set L. In the real data sets T is 10% of the data.
-ii) A classification tree is constructed from L using 10-fold cross-validation. Running the test set T down this tree gives the misclassification rate es(L, T).
-iii) A bootstrap sample Lb is selected from L, and a tree grown using Lb. The original learning set L is used as test set to select the best pruned subtree(but how?)##############################################################ASK##############################################################################################################################################################################.This is repeated 50 times.
-iv) If (jn, xn) belong to T, then the estimated class of Xn is that class having the plurality. (If there is a tie, the estimated class is the one with the lowest class label.) The proportion of times the estimated class differs from the true class is the bagging misclassification rate eb(L, T). v) The random division of the data into L and T is repeated 100 times and the reported es(L,T) and eb(L,T) are the averages over the 100 iterations. 
+$\mathcal{L_k}$ : sequence of learning sets consisting of N independent observations from the same underlying distribution as $\mathcal{L}$.
 
+Our scope of this project is to show that the sequence of predictors $\varphi(\mathit{x},\mathcal{L_k})$ is a better predictor than $\varphi(\mathit{x},\mathcal{L})$.
 
+-   $\mathit{y}$ is numeric
+
+    Replace $\varphi(\mathit{x},\mathcal{L})$ by the average of $\varphi(\mathit{x},\mathcal{L_k})$.
+    In other words find the expecation of the predictor over $\mathcal{L}$ .
+
+-   $\mathit{y}$ is class labels
+
+-   
+    			
+
+    		
+
+    	
+
+Assume we have a procedure for using this learning set to form a predictor 9v(x, £) -- if the input is x we predict y by \~d(x, £).
+Now, suppose we are given a sequence of learnings sets {£k } each consisting of N independent observations from the same underlying distribution as £.
+Our mission is to use the {£\~} to get a better predictor than the single learning set predictor 9:(x,/2).
+The restriction is that all we are allowed to work with is the sequence of predictors {\~(x, £k)}.
+If y is numerical, an obvious procedure is to replace c;(x, £) by the average of 97(x, £k) over k, i.e. by 9;A(X) -- E£9:(x, £) where E£ denotes the expectation over £, and the subscript A in C;A denotes aggregation.
+If 9\~(x, £) predicts a class j E {1,..., J}, then one method of aggregating the \~y(x, Z\~) is by voting.
+Let "\\4 = nr{k; \~(x, £#) = j} and take 9\~A(X) = argmaxjNj, that is, the j for which \~,\~-is maximum. \## Bagging Classification Trees
+
+In a classification problem in which Y is qualitative, there are a few possible approaches, but the simplest is as follows.
+For a given test observation, we can record the class predicted by each of the B trees, and take a majority vote: the overall prediction is the most commonly occurring class among the B predictions.
+
+We are going to see results for moderate sized data sets.
+In all runs the following procedure was used: i) The data set is randomly divided into a test set T and a learning set L.
+In the real data sets T is 10% of the data.
+ii) A classification tree is constructed from L using 10-fold cross-validation.
+Running the test set T down this tree gives the misclassification rate es(L, T).
+iii) A bootstrap sample Lb is selected from L, and a tree grown using Lb.
+The original learning set L is used as test set to select the best pruned subtree(but how?)##############################################################ASK##############################################################################################################################################################################.This is repeated 50 times.
+iv) If (jn, xn) belong to T, then the estimated class of Xn is that class having the plurality.
+(If there is a tie, the estimated class is the one with the lowest class label.) The proportion of times the estimated class differs from the true class is the bagging misclassification rate eb(L, T).
+v) The random division of the data into L and T is repeated 100 times and the reported es(L,T) and eb(L,T) are the averages over the 100 iterations.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -50,7 +74,11 @@ library(caret)
 library(randomForest)
 
 ```
-We are going to use diabetes dataset compare the result of decision tree and random forest. Random forest is also known as bagged decision tree. The random forest is a classification algorithm consisting of many decisions trees. It uses bagging and feature randomness when building each individual tree to try to create an uncorrelated forest of trees whose prediction by committee is more accurate than that of any individual tree.
+
+We are going to use diabetes dataset compare the result of decision tree and random forest.
+Random forest is also known as bagged decision tree.
+The random forest is a classification algorithm consisting of many decisions trees.
+It uses bagging and feature randomness when building each individual tree to try to create an uncorrelated forest of trees whose prediction by committee is more accurate than that of any individual tree.
 
 ```{r}
 
@@ -58,16 +86,22 @@ We are going to use diabetes dataset compare the result of decision tree and ran
 misclassification_rate_vec <- rep(0,100)
 misclassification_rate_vec_rf <- rep(0,100)
 
-#E_sim <- read.table('/Users/anujaabraaham/Downloads/diabetes.csv',sep = ',',header = TRUE)
-E_sim <- diabetes
+E_sim <- read.table('/Users/anujaabraaham/Downloads/diabetes.csv',sep = ',',header = TRUE)
+#E_sim <- diabetes
 E_sim$Outcome<- as.factor(E_sim$Outcome)
 
 head(E_sim)
 ```
-This is a data base gathered among the Pima Indians by the National Institute of Diabetes and Digestive and Kidney Diseases. The data base consists of 768 cases, 8 variables and two classes. The variables are medical measurements on the patient plus age and pregnancy information. The classes are: tested positive for diabetes (268) or negative (500).
 
-As per how Breiman did the analysis we followed a similar pattern with raw data instead of simulated data. The data is split into 2 a learning set, L, (10% of the data) with 76 rows and a test set, T, (90% of the data) with 692 rows.
-Next we will train the decision tree model using train() function with 10-fold cross-validation. A bagged decision tree aka random forest model is created in parallel using the function randomForest().
+This is a data base gathered among the Pima Indians by the National Institute of Diabetes and Digestive and Kidney Diseases.
+The data base consists of 768 cases, 8 variables and two classes.
+The variables are medical measurements on the patient plus age and pregnancy information.
+The classes are: tested positive for diabetes (268) or negative (500).
+
+As per how Breiman did the analysis we followed a similar pattern with raw data instead of simulated data.
+The data is split into 2 a learning set, L, (10% of the data) with 76 rows and a test set, T, (90% of the data) with 692 rows.
+Next we will train the decision tree model using train() function with 10-fold cross-validation.
+A bagged decision tree aka random forest model is created in parallel using the function randomForest().
 The two models are made to predict the result using the same dataset and the error is calculated.
 The whole process is iterated 100 times for different combination of learning and test data and the mean error is calculated.
 
@@ -119,5 +153,6 @@ mis_rf <- mean(misclassification_rate_vec_rf)
 mis
 mis_rf
 ```
-From the result it is clear that the model using bagged predictor is better than the model without the bagged predictor. 
-Bagged predictor works better for unstable classifiers than for stable ones. 
+
+From the result it is clear that the model using bagged predictor is better than the model without the bagged predictor.
+Bagged predictor works better for unstable classifiers than for stable ones.
