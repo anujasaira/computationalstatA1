@@ -21,21 +21,19 @@ Unstable classifiers, such as trees, characteristically have high variance and l
 
 Instability is an essential ingredient for bagging to improve accuracy.
 
-We have a learning set (L) with data points {$(y_n, x_n)$} for training a predictor ($\delta(x, L)$).
-
-To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L. We only have access to the predictors {$\delta(x, L_k)$}.
-
+We have a learning set (L) with data points {$(y_n, x_n)$} for training a predictor ($\delta(x, L)$). To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L. We only have access to the predictors {$\delta(x, L_k)$}. 
 For numerical responses, we average the predictors $\delta(x, L_k)$ to get an aggregated predictor $\delta_A(x)$.
-
 For class labels, we use voting among the predictors $\delta(x, L_k)$ to form the aggregated predictor $\delta_A(x)$.
 
 If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from L to create bootstrap replicates {$L^{(B)}$}. We form predictors ${\delta(x, L^{(B)})}$ using these replicates.
-
 For numerical responses, the aggregated predictor is $\delta_B(x)$, which is the average of the predictors $\delta(x, L^{(B)})$.
-
 For class labels, the aggregated predictor $\delta_B(x)$ is determined by voting among the predictors $\delta(x, L^{(B)})$.
 
-This procedure is called bootstrap aggregating or bagging, where the bootstrap replicates {$L^{(B)}$} are drawn to approximate the underlying distribution of L.
+This paper aims to provide a comprehensive analysis and interpretation of Breiman's influential paper. We focus on utilizing classification trees, specifically with the "diabetes" dataset mentioned in the paper, and supplement our findings with relevant code examples. Additionally, we incorporate the random forest function and offer an explanation of its significance within our analysis.
+
+Our discussion delves into the empirical evidence and insights put forth by Breiman to substantiate the effectiveness of bagging. We explore the underlying principles and reasoning behind why bagging yields positive results, as outlined by Breiman.
+
+Lastly, we present our conclusions based on our work, drawing comparisons between the Bootstrap method covered in our class and the findings from our analysis. We aim to provide a concise yet comprehensive overview of our research, shedding light on the practical implications and significance of the discussed concepts.
 
 # Comparison 
 
