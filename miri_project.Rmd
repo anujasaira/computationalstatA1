@@ -37,12 +37,23 @@ Lastly, we present our conclusions based on our work, drawing comparisons betwee
 
 # Comparison 
 
-Bootstrapping is random sampling with replacement from the available training data. Bagging (= bootstrap aggregation) is performing it many times and training an estimator for each bootstrapped dataset.
+Starting from what we studied in class, related to the Breiman's paper about bagging predictors, we can talk about bootstrap. We've seen different approach one of which is the paired bootstrap. 
+We consider the original sample $\{(Y_i,X_i)\}_{i=1}^n$ as i.i.d. from an unknown distribution $F_{X,Y}$.
+We follow this algorithm:
+1. For b=1,...,B:
+- obtain a bootstrap sample $\{(Y_1^*,X_1^*),...,(Y_n^*,X_n^*)\}$, sampling with replacement from $\hat{F}_{X,Y}$;
+-regress $Y^*$ onto $X^*$ and obtain the bootstrap estimate of the coefficients $\hat{\beta^*}_{(b)}$.
+2. Use the sample $(\hat{\beta^*}_{(1)},...,\hat{\beta^*}_{(B)}$ to draw inference. 
 
-When you just/only do bootstrap without an aggregation at the end you only use the standard deviation of the bootstraps replications together, than you call it bootstrap.
+Instead the bagging algorithm has three basic steps:
 
-If you do the same, but at the end you take an aggregation of voting or anything else, than you call it bagging. They are both ensemble technique. One of the technique in bagging is called as Random Forest. In Random Forest you basically use multiple decision trees.
+Bootstrapping: Bagging employs a bootstrapping sampling technique, which involves creating diverse subsets of the training dataset. This is achieved by randomly selecting data points from the training data, allowing for the possibility of selecting the same instance multiple times due to replacement. Consequently, a value or instance can appear more than once within a sample.
 
+Parallel training: The generated bootstrap samples are then independently and simultaneously trained using weak or base learners. These learners can be decision trees or other simple models. Each bootstrap sample is trained separately, allowing for parallel processing and speeding up the overall training process.
+
+Aggregation: Once the individual models are trained, their predictions are aggregated to produce a more accurate estimate. The specific aggregation method depends on the task at hand, such as regression or classification. In regression, the individual model outputs are averaged, a technique known as soft voting. In classification, the class with the highest majority of votes is selected, referred to as hard voting or majority voting.
+
+In essence, when comparing bagging to the bootstrap method studied in our class, we can view bagging as an extension or application of bootstrap with an additional aggregation step at the end. Bagging incorporates the idea of bootstrapping by generating diverse samples through random sampling with replacement. However, what sets bagging apart is the subsequent aggregation of predictions from these bootstrapped samples, which further enhances the predictive power and robustness of the ensemble model. In contrast, bootstrap alone focuses on the estimation of uncertainty through the analysis of repeated resamples without the aggregation step. Thus, bagging can be seen as a refinement of the bootstrap technique, incorporating aggregation for improved performance.
 # Random Forest
 
 Random forests are an improvement over bagged trees that aim to make the trees less similar to each other. In bagging, we create multiple decision trees using different training samples. However, in random forests, when building these trees, we make a small change. Instead of considering all predictors at each split, we randomly select a subset of predictors and choose only one from that subset for the split. We refresh this subset for each split, usually picking the square root of the total number of predictors.
