@@ -6,6 +6,7 @@ output:
   pdf_document: default
   html_document: default
 ---
+
 # Introduction
 
 Bagging is a method of obtaining more robust predictions when the model class under consideration is unstable with respect to the data, i.e., small changes in the data can cause the predicted values to change significantly.
@@ -18,22 +19,19 @@ To address this trade-off, Breiman (1996) introduced a technique called bagging,
 
 Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as neural networks, classification and regression trees (CART), and variable selection for regression. He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
 
-To better understand stability and instability, and what bagging do, we
-define the concepts of bias and variance for classifiers. Unstable classifiers, such as trees, characteristically have high variance and low bias. Stable classifiers, like linear discriminant analysis, have low variance, but can have high bias. 
+To better understand stability and instability, and what bagging do, we define the concepts of bias and variance for classifiers. Unstable classifiers, such as trees, characteristically have high variance and low bias. Stable classifiers, like linear discriminant analysis, have low variance, but can have high bias.
 
 Instability is an essential ingredient for bagging to improve accuracy.
 
-A statistic $\hat{\theta_n}(x)=h_n(L_1,...,L_n)(x)$ is called stable at x if $\hat{\theta_n}(x)= \theta(x) + o_p(1)$$(n \to \infty)$ for some fixed value $\theta(x)$. Instability thus take place whenever the procedure $\hat{\theta_n}$ is not converging to a fixed value: another realization from the data generating distribution would produce a different value of the procedure, with positive probability. 
+A statistic $\hat{\theta_n}(x)=h_n(L_1,...,L_n)(x)$ is called stable at x if $\hat{\theta_n}(x)= \theta(x) + o_p(1)$$(n \to \infty)$ for some fixed value $\theta(x)$. Instability thus take place whenever the procedure $\hat{\theta_n}$ is not converging to a fixed value: another realization from the data generating distribution would produce a different value of the procedure, with positive probability.
 
-# Comparison and Random Forest 
+# Comparison and Random Forest
 
 Bootstrapping is random sampling with replacement from the available training data. Bagging (= bootstrap aggregation) is performing it many times and training an estimator for each bootstrapped dataset.
 
 When you just/only do bootstrap without an aggregation at the end you only use the standard deviation of the bootstraps replications together, than you call it bootstrap.
 
-If you do the same, but at the end you take an aggregation of voting or anything else, than you call it bagging.
-They are both ensemble technique.
-One of the technique in bagging is called as Random Forest. In Random Forest you basically use multiple decision trees.
+If you do the same, but at the end you take an aggregation of voting or anything else, than you call it bagging. They are both ensemble technique. One of the technique in bagging is called as Random Forest. In Random Forest you basically use multiple decision trees.
 
 Random forests are an improvement over bagged trees that aim to make the trees less similar to each other. In bagging, we create multiple decision trees using different training samples. However, in random forests, when building these trees, we make a small change. Instead of considering all predictors at each split, we randomly select a subset of predictors and choose only one from that subset for the split. We refresh this subset for each split, usually picking the square root of the total number of predictors.
 
@@ -43,7 +41,7 @@ Random forests solve this problem by restricting each split to consider only a s
 
 The main difference between bagging and random forests lies in the choice of the predictor subset size. If we use all predictors, it's equivalent to bagging. However, when using the square root of the total predictors, random forests show a reduction in the test error.
 
-Using a small subset of predictors is particularly helpful when we have many correlated predictors. 
+Using a small subset of predictors is particularly helpful when we have many correlated predictors.
 
 Just like bagging, random forests don't overfit if we increase the number of trees (denoted as B). Therefore, in practice, a sufficiently large value of B is used until the error rate stabilizes.
 
@@ -53,9 +51,10 @@ To grow a tree, the training set and the corresponding $\Theta_k$ are used. This
 
 Once a large number of trees are generated, they collectively contribute to the final classification decision. Each tree casts a vote, and the class with the highest number of votes is considered the most popular. This aggregation of trees is what we refer to as a random forest.
 
-A random forest is a classifier consisting of a collection of tree-structured classifiers {h(**x**,$\Theta_k$), k=1,...} where the {$\Theta_k$} are independent identically distributed random vectors and each tree casts a unit vote for the most popular class at input **x**. 
+A random forest is a classifier consisting of a collection of tree-structured classifiers {h(**x**,$\Theta_k$), k=1,...} where the {$\Theta_k$} are independent identically distributed random vectors and each tree casts a unit vote for the most popular class at input **x**.
 
 # References
+
 Breiman L. (1996). *Bagging Predictors*, Statistics Department, University of California, Berkeley.
 
 Breiman L. (2001). *Random forest*, Statistics Department, University of California, Berkeley.
@@ -66,26 +65,4 @@ Tae-Hwy Lee, Aman Ullah and Ran Wang. *Bootstrap Aggregating and Random Forest*.
 
 Andreas Buja, Werner Stuetzle.*Observation on Bagging*. University of Pennsylvania and University of Washington.
 
-Peter Bühlmann, Bin Yu (2002).*Analyzing bagging*, ETH Zürich and University of California, Berkely. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Peter Bühlmann, Bin Yu (2002).*Analyzing bagging*, ETH Zürich and University of California, Berkely.

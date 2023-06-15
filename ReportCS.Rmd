@@ -10,7 +10,6 @@ editor_options:
     wrap: sentence
 ---
 
-
 **INTRODUCTION**
 
 Bagging predictors is a method for generating multiple versions of a predictor and using these to get an aggregated predictor.
@@ -18,8 +17,7 @@ The aggregation averages over the versions when predicting a numerical outcome a
 The multiple versions are formed by making bootstrap replicates of the learning set and using these as new learning sets.
 The vital element is the instability of the prediction method.
 If perturbing the learning set can cause significant changes in the predictor constructed, then bagging can improve accuracy.
-$\(\ell\)$
-A learning set $\mathcal{L}$ consists of data {($\mathit{y_n}$, $\mathit{x_n}$),$\mathit{n}$ = 1....
+$\(\ell\)$ A learning set $\mathcal{L}$ consists of data {($\mathit{y_n}$, $\mathit{x_n}$),$\mathit{n}$ = 1....
 , $\mathit{N}$}
 
 $\mathit{y}$ : class labels/numeric responses
@@ -40,11 +38,6 @@ Our scope of this project is to show that the sequence of predictors $\varphi(\m
 -   $\mathit{y}$ is class labels
 
 -   
-    			
-
-    		
-
-    	
 
 Assume we have a procedure for using this learning set to form a predictor 9v(x, £) -- if the input is x we predict y by \~d(x, £).
 Now, suppose we are given a sequence of learnings sets {£k } each consisting of N independent observations from the same underlying distribution as £.
@@ -52,7 +45,9 @@ Our mission is to use the {£\~} to get a better predictor than the single learn
 The restriction is that all we are allowed to work with is the sequence of predictors {\~(x, £k)}.
 If y is numerical, an obvious procedure is to replace c;(x, £) by the average of 97(x, £k) over k, i.e. by 9;A(X) -- E£9:(x, £) where E£ denotes the expectation over £, and the subscript A in C;A denotes aggregation.
 If 9\~(x, £) predicts a class j E {1,..., J}, then one method of aggregating the \~y(x, Z\~) is by voting.
-Let "\\4 = nr{k; \~(x, £#) = j} and take 9\~A(X) = argmaxjNj, that is, the j for which \~,\~-is maximum. \## Bagging Classification Trees
+Let "\\4 = nr{k; \~(x, £#) = j} and take 9\~A(X) = argmaxjNj, that is, the j for which \~,\~-is maximum.
+
+\## Bagging Classification Trees
 
 In a classification problem in which Y is qualitative, there are a few possible approaches, but the simplest is as follows.
 For a given test observation, we can record the class predicted by each of the B trees, and take a majority vote: the overall prediction is the most commonly occurring class among the B predictions.
