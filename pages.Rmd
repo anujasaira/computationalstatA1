@@ -227,7 +227,7 @@ On the other hand, if the base models are unstable, meaning they are sensitive t
 Let each (y,**x**) case in $\mathcal{L}$ be independently drawn from the probability distribution P.
 Suppose y is numerical and $\phi(\mathbf{x},\mathcal{L})$ the predictor.
 The aggregated predictor is $\phi_A(\mathbf{x},P)=E_L\phi(x,\mathcal{L})$.
-Now assume $z=y-\phi(\mathbf{x},\mathcal{L})$, apply the inequality $E(Z)^2\geq(EZ)^2$ and take the expectation over L(mean squared error):$$E_L(y-\phi(\mathbf{x},\mathcal{L}))^2\geq(E_L(y-\phi(\mathbf{x},\mathcal{L}))^2$$ Now we take the $E_{y,\mathbf{x}}$ of both members of the inequality and so we get average prediction error:
+Now assume $z=y-\phi(\mathbf{x},\mathcal{L})$, apply the inequality $E(Z)^2\geq(EZ)^2$ and take the expectation over $\mathcal{L}$ (mean squared error):$$E_L(y-\phi(\mathbf{x},\mathcal{L}))^2\geq(E_L(y-\phi(\mathbf{x},\mathcal{L}))^2$$ Now we take the $E_{y,\mathbf{x}}$ of both members of the inequality and so we get average prediction error:
 
 LHS: $E_{y,\mathbf{x}}[E_L(y-\phi(\mathbf{x},\mathcal{L}))^2]$ = $E_{y,\mathbf{x}}E_L(y^2-2y\phi(\mathbf{x},\mathcal{L})+\phi^2(\mathbf{x},\mathcal{L}))$
 
