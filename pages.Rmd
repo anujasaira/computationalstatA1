@@ -103,6 +103,7 @@ At the same time, target values are assigned to leaves when no further splits ar
 Regression tree prediction uses a previously grown regression tree to predict the attribute values of a target for a data set.
 
 ## Bagging decision tree
+
 ![Bagging Regession Tree](baggreg.png){width="600px," height="350px"}
 
 The bootstrap is used in many situations in which it is hard or even impossible to directly compute the standard deviation of a quantity of interest.Here the bootstrap can be used in order to improve statistical learning methods such as decision trees.
@@ -165,8 +166,7 @@ The main difference between bagging and random forests lies in the choice of the
 If we use all predictors, it's equivalent to bagging.
 However, when using the square root of the total predictors, random forests show a reduction in the test error.
 
-**Larger Data Sets**
-For large dataset that is dataset with more than 2000 samples, 10% of the data is set aside as training set and the remaining 90% as learning set.The set aside 10% was then used to select the best pruned subtree.In bagging, 50 bootstrap replicates of the training set were generated and a large tree grown on each one.
+**Larger Data Sets** For large dataset that is dataset with more than 2000 samples, 10% of the data is set aside as training set and the remaining 90% as learning set.The set aside 10% was then used to select the best pruned subtree.In bagging, 50 bootstrap replicates of the training set were generated and a large tree grown on each one.
 The error rate given in the paper shown below.
 
 ![Figure 3. Misclassification Rate](largedataerr.png){width="500px," height="200px"}
@@ -175,6 +175,7 @@ The percentage of decrease in misclassification rate is similar to the rate of d
 But if we have a closer look at the errors, the error for classification tree is very much small and the improvement is not extremely significant.
 
 ## Application in R
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(caret)
@@ -269,88 +270,182 @@ Bagged Predictor model performs better than Decision Tree ie it can reduce the v
 
 **Numeric Prediction**
 
-Instability is important in bootstrap aggregating because it helps improve the performance of the ensemble model by reducing variance and increasing accuracy. Bagging is a technique that combines multiple models (often decision trees) trained on different bootstrap samples of the dataset to make predictions. The key idea behind bagging is to introduce diversity among the base models by using different subsets of the training data. This diversity is achieved through the bootstrap sampling process, where each base model is trained on a randomly selected subset of the original data, allowing for variations in the training sets. If the base models used in bagging are stable, meaning they produce similar predictions when trained on slightly different datasets, the ensemble model's performance may not significantly improve. This is because the models will produce similar predictions and will not provide enough diversity to effectively reduce variance. On the other hand, if the base models are unstable, meaning they are sensitive to small changes in the training data, the ensemble model will benefit from the aggregation of these diverse models. The variations among the models can help to capture different aspects of the data and lead to improved generalization and prediction accuracy. Therefore, instability, or the ability of the base models to exhibit different behaviors with different training data, is important in bagging as it contributes to increased diversity and better performance of the ensemble model.
+Instability is important in bootstrap aggregating because it helps improve the performance of the ensemble model by reducing variance and increasing accuracy.
+Bagging is a technique that combines multiple models (often decision trees) trained on different bootstrap samples of the dataset to make predictions.
+The key idea behind bagging is to introduce diversity among the base models by using different subsets of the training data.
+This diversity is achieved through the bootstrap sampling process, where each base model is trained on a randomly selected subset of the original data, allowing for variations in the training sets.
+If the base models used in bagging are stable, meaning they produce similar predictions when trained on slightly different datasets, the ensemble model's performance may not significantly improve.
+This is because the models will produce similar predictions and will not provide enough diversity to effectively reduce variance.
+On the other hand, if the base models are unstable, meaning they are sensitive to small changes in the training data, the ensemble model will benefit from the aggregation of these diverse models.
+The variations among the models can help to capture different aspects of the data and lead to improved generalization and prediction accuracy.
+Therefore, instability, or the ability of the base models to exhibit different behaviors with different training data, is important in bagging as it contributes to increased diversity and better performance of the ensemble model.
 
-Let each (y,**x**) case in L be independently drawn from the probability distribution P. Suppose y is numerical and $\Phi(\mathbf{x},L)$ the predictor. The aggregated predictor is $\Phi_A(\mathbf{x},P)=E_L\Phi(x,L)$. Now assume $z=y-\Phi(\mathbf{x},L)$, apply the inequality $E(Z)^2\geq(EZ)^2$ and take the expectation over L(mean squared error):$$E_L(y-\Phi(\mathbf{x},L))^2\geq(E_L(y-\Phi(\mathbf{x},L))^2$$ Now we take the $E_{y,\mathbf{x}}$ of both members of the inequality and so we get average prediction error:
+Let each (y,**x**) case in L be independently drawn from the probability distribution P.
+Suppose y is numerical and $\Phi(\mathbf{x},L)$ the predictor.
+The aggregated predictor is $\Phi_A(\mathbf{x},P)=E_L\Phi(x,L)$.
+Now assume $z=y-\Phi(\mathbf{x},L)$, apply the inequality $E(Z)^2\geq(EZ)^2$ and take the expectation over L(mean squared error):$$E_L(y-\Phi(\mathbf{x},L))^2\geq(E_L(y-\Phi(\mathbf{x},L))^2$$ Now we take the $E_{y,\mathbf{x}}$ of both members of the inequality and so we get average prediction error:
 
 1.  $E_{y,\mathbf{x}}[E_L(y-\Phi(\mathbf{x},L))^2]$= $E_{y,\mathbf{x}}E_L(y^2-2y\Phi(\mathbf{x},L)+\Phi^2(\mathbf{x},L))$= $E_{y,{x}}E_Ly^2-2E_{y,\mathbf{x}}E_Ly\Phi(\mathbf{x},L)+E_{y,\mathbf{x}}E_L\Phi^2(\mathbf{x},L)$=$E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}y\Phi_A+E_{y,\mathbf{x}}E_L\Phi^2({x},L)$
 2.  $E_{y,\mathbf{x}}(E_L(y-\Phi(\mathbf{x},L))^2$=$E_{y,\mathbf{x}}(y-\Phi_A)^2$=$E_{y,\mathbf{x}}(y^2-2y\Phi_A+\Phi_A^2)$=$E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\Phi_A+E_{y,\mathbf{x}}\Phi_a^2$
 
 Substituting this two values in the inequality we get: $$E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}y\Phi_A+E_{y,\mathbf{x}}E_L\Phi^2({x},L)\geq(E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\Phi_A+E_{y,\mathbf{x}}\Phi_A^2)$$
 
-So how much lower the mean squared error of $\Phi_A$ is depends on how unequal the two sides of $$[E_L\Phi(\mathbf{x},L)]^2\leq[E_L\Phi^2({x},L)]$$ are. The effect of instability is clear;
+So how much lower the mean squared error of $\Phi_A$ is depends on how unequal the two sides of $$[E_L\Phi(\mathbf{x},L)]^2\leq[E_L\Phi^2({x},L)]$$ are.
+The effect of instability is clear;
 
 -   if $\Phi(x,L)$ does not change too much with replicate L the two sides will be nearly equal, and aggregation will not help;
 
-```{=html}
 <!-- -->
-```
+
 -   the more highly variable the $\Phi(x,L)$ are, the more improvement may produce. But $\Phi_A(x,L)$ always improves on $\Phi$.
 
-To clarify better this last point we have to remind that if the predictors remain constant, then the expected value will also remain constant over repeated observations. In this case, both sides of the inequality will be equal because the expected value squared will be the same as the expected value of the squared predictors. Instead, when the predictors are highly variable the square of the mean might understimate the average value of the squared predictors because it doesn't account for the variability.
+To clarify better this last point we have to remind that if the predictors remain constant, then the expected value will also remain constant over repeated observations.
+In this case, both sides of the inequality will be equal because the expected value squared will be the same as the expected value of the squared predictors.
+Instead, when the predictors are highly variable the square of the mean might understimate the average value of the squared predictors because it doesn't account for the variability.
 
 **Classification**
 
-In classification, a predictor $\delta(\mathbf{x},L)$ predicts a class label j $\in$ {1,...,J}. Denote Q(J\|**x**)= P($\delta(\mathbf{x},L)=j$). The interpretation of Q(J\|**x**) is this: over many independent replicates of the learning set *L*, $\Phi$ predicts class label j at input **x** with relative frequency Q(J\|**x**). Let $P(J|\mathbf{x})$ be the probability that input **x** generates class j. Then the probability that the predictors classifies the generated state at **x** correctly is $\sum_{j}Q(J|\mathbf{x})P(J|\mathbf{x})$. The overall probability of correct classification is r= $\int[Q(J|\mathbf{x})P(J|\mathbf{x})]P_x(d_x)$ where $P_x(d_x)$ is the **x** probability distribution. Note that for any $Q(j|\mathbf{x})$, $\sum_{j}Q(J|\mathbf{x})P(J|\mathbf{x})\leq\max\_jP(J|\mathbf{x})$ with equality only if $$
+In classification, a predictor $\delta(\mathbf{x},L)$ predicts a class label j $\in$ {1,...,J}.
+Denote Q(J\|**x**)= P($\delta(\mathbf{x},L)=j$).
+The interpretation of Q(J\|**x**) is this: over many independent replicates of the learning set *L*, $\Phi$ predicts class label j at input **x** with relative frequency Q(J\|**x**).
+Let $P(J|\mathbf{x})$ be the probability that input **x** generates class j.
+Then the probability that the predictors classifies the generated state at **x** correctly is $\sum_{j}Q(J|\mathbf{x})P(J|\mathbf{x})$.
+The overall probability of correct classification is r= $\int[Q(J|\mathbf{x})P(J|\mathbf{x})]P_x(d_x)$ where $P_x(d_x)$ is the **x** probability distribution.
+Note that for any $Q(j|\mathbf{x})$, $\sum_{j}Q(J|\mathbf{x})P(J|\mathbf{x})\leq\max\_jP(J|\mathbf{x})$ with equality only if $$
 \begin{cases} 
 1\quad if\quad P(j|\mathbf{x})=max_iP(i|\mathbf{x})) \\
 O\quad else \\
 \end{cases}
-$$ The predictor $\delta^*(\mathbf{x})$= $argmax_jP(J|\mathbf{x})$ leads to the above expression for $Q(J|\mathbf{x})$ and gives the highest attainable correct classification rate: $r^*$=$\int max_j P(j|\mathbf{x})P_X(\mathbf{})$. Call $\Phi$ order-correct at the input **x** if $argmax_jQ(j|\mathbf{x})=argmax_jP(j|\mathbf{x})$. This means that if input **x** results in class j more often than any other class, then $\delta$ also predicts class j at **x** more often than any other class. The aggregated predictor is: $\delta_A(\mathbf{x})= argmax_jQ(j|\mathbf({x}))$. For the aggregated predictor the probability of correct classification at **x** is $\sum_{j}I(argmax_iQ(i|\mathbf{x})=j)P(j|\mathbf{x})$. If $\delta$ is order_correct at **x**, then the previous formula equals $max_jP(j|\mathbf{x})$. Letting C be the set of all inputs **x** at which $\Phi$ is order-correct, we get for the correct classification probability of $\Phi_A$ the expression:$$r_A=\int_\mathbf{x\in C}max_jP(J|\mathbf{x})P_x(d\mathbf{x})+\int_\mathbf{x\in C'}[\sum_jI(\delta_A(\mathbf{x})=j)P(j|\mathbf{x})]P_x(\mathbf{x}))] $$ Even if $\Phi$ is order-correct at **x** its correct classification rate can be far from optimal. But $\delta_A$ is optimal. If a predictor is good in the sense that it is order-correct for most inputs **x**, then aggregation can transform it into a nearly optimal predictor. On the other hand, unlike the numerical prediction situation, poor predictors can be transformed into worse ones. The same behavior regarding stability holds. Bagging unstable classifiers usually improves them. Bagging stable classifiers is not a good idea.
+$$ The predictor $\delta^*(\mathbf{x})$= $argmax_jP(J|\mathbf{x})$ leads to the above expression for $Q(J|\mathbf{x})$ and gives the highest attainable correct classification rate: $r^*$=$\int max_j P(j|\mathbf{x})P_X(\mathbf{})$.
+Call $\Phi$ order-correct at the input **x** if $argmax_jQ(j|\mathbf{x})=argmax_jP(j|\mathbf{x})$.
+This means that if input **x** results in class j more often than any other class, then $\delta$ also predicts class j at **x** more often than any other class.
+The aggregated predictor is: $\delta_A(\mathbf{x})= argmax_jQ(j|\mathbf({x}))$.
+For the aggregated predictor the probability of correct classification at **x** is $\sum_{j}I(argmax_iQ(i|\mathbf{x})=j)P(j|\mathbf{x})$.
+If $\delta$ is order_correct at **x**, then the previous formula equals $max_jP(j|\mathbf{x})$.
+Letting C be the set of all inputs **x** at which $\Phi$ is order-correct, we get for the correct classification probability of $\Phi_A$ the expression:$$r_A=\int_\mathbf{x\in C}max_jP(J|\mathbf{x})P_x(d\mathbf{x})+\int_\mathbf{x\in C'}[\sum_jI(\delta_A(\mathbf{x})=j)P(j|\mathbf{x})]P_x(\mathbf{x}))] $$ Even if $\Phi$ is order-correct at **x** its correct classification rate can be far from optimal.
+But $\delta_A$ is optimal.
+If a predictor is good in the sense that it is order-correct for most inputs **x**, then aggregation can transform it into a nearly optimal predictor.
+On the other hand, unlike the numerical prediction situation, poor predictors can be transformed into worse ones.
+The same behavior regarding stability holds.
+Bagging unstable classifiers usually improves them.
+Bagging stable classifiers is not a good idea.
 
 ## A LINEAR REGRESSION ILLUSTRATION
 
 **Forward variable selection**
 
-With data of the form $L={(y_n,\mathbf{x_n}),n=1...N}$ where $\mathbf{x}=(x_1,...,x_M)$ consists of M predictor variables, a popular prediction method consists of forming predictors $\delta_1(\mathbf{x})...\delta_M(\mathbf{x})$ where $\delta_m(\mathbf{x})$ is linear in **x** and depends on only m of the M x-variables. Then one of the $\delta_m(\mathbf{x})$ is chosen as the designated predictor. A common method for constructing the $\delta_m(\mathbf{x})$, and one that is used in our simulation, is forward variable entry. If the variables used in $\delta_k(\mathbf{x})$ are $(x_{1k},...,x_{mk})$ then for each m $\notin {m_1,...m_K}$ form the linear regression of y on $(x_{m1},...,x_{mk+1}, x_m)$, compute the RSS(m) and take $x_{mk+1}$ such that $m_{k+1}$ minimizes RSS(m) and $\delta_{k+1}(\mathbf{x})$ the linear regression based on $(x_{m1},...,x_{mk+1})$. What is clear about this procedure is that it is an unstable procedures. The variables are competing for inclusion in the $\delta_m$ and small changes in the data can cause large changes in the $\delta_m$. Forward variable selection is considered an unstable procedure due to the following reasons:
+With data of the form $L={(y_n,\mathbf{x_n}),n=1...N}$ where $\mathbf{x}=(x_1,...,x_M)$ consists of M predictor variables, a popular prediction method consists of forming predictors $\delta_1(\mathbf{x})...\delta_M(\mathbf{x})$ where $\delta_m(\mathbf{x})$ is linear in **x** and depends on only m of the M x-variables.
+Then one of the $\delta_m(\mathbf{x})$ is chosen as the designated predictor.
+A common method for constructing the $\delta_m(\mathbf{x})$, and one that is used in our simulation, is forward variable entry.
+If the variables used in $\delta_k(\mathbf{x})$ are $(x_{1k},...,x_{mk})$ then for each m $\notin {m_1,...m_K}$ form the linear regression of y on $(x_{m1},...,x_{mk+1}, x_m)$, compute the RSS(m) and take $x_{mk+1}$ such that $m_{k+1}$ minimizes RSS(m) and $\delta_{k+1}(\mathbf{x})$ the linear regression based on $(x_{m1},...,x_{mk+1})$.
+What is clear about this procedure is that it is an unstable procedures.
+The variables are competing for inclusion in the $\delta_m$ and small changes in the data can cause large changes in the $\delta_m$.
+Forward variable selection is considered an unstable procedure due to the following reasons:
 
-1.  Dependency on the order of variable selection: in forward variable selection, the procedure starts with an empty model and adds one variable at a time based on certain selection criteria. However, the initial selection of variables can significantly impact the final result. If the initial set of selected variables differs, the progressive selection of variables can lead to different models. Therefore, the selection of initial variables can cause instability in the results.
+1.  Dependency on the order of variable selection: in forward variable selection, the procedure starts with an empty model and adds one variable at a time based on certain selection criteria.
+    However, the initial selection of variables can significantly impact the final result.
+    If the initial set of selected variables differs, the progressive selection of variables can lead to different models.
+    Therefore, the selection of initial variables can cause instability in the results.
 
-2.  Sensitivity to correlated variables: forward variable selection may be influenced by correlated variables. When adding a variable to the model, it may appear to provide significant informative value, but it could be strongly correlated with other variables already present in the model. This correlation can lead to an overestimation of the importance of the added variable and result in selecting a suboptimal model.
+2.  Sensitivity to correlated variables: forward variable selection may be influenced by correlated variables.
+    When adding a variable to the model, it may appear to provide significant informative value, but it could be strongly correlated with other variables already present in the model.
+    This correlation can lead to an overestimation of the importance of the added variable and result in selecting a suboptimal model.
 
-3.  Impact of small data variations: forward variable selection can be sensitive to small variations in the input data. Even a slight modification of the input data can lead to a completely different variable selection or a different model. This instability can make it challenging to reproduce the results.
+3.  Impact of small data variations: forward variable selection can be sensitive to small variations in the input data.
+    Even a slight modification of the input data can lead to a completely different variable selection or a different model.
+    This instability can make it challenging to reproduce the results.
 
-To mitigate the potential instability of forward variable selection, techniques such as cross-validation or bootstrap can be used to assess the stability of selected variables and the robustness of the resulting model. These techniques allow for a more accurate estimation of model performance and more reliable identification of the most relevant variables.
+To mitigate the potential instability of forward variable selection, techniques such as cross-validation or bootstrap can be used to assess the stability of selected variables and the robustness of the resulting model.
+These techniques allow for a more accurate estimation of model performance and more reliable identification of the most relevant variables.
 
 **Simulation structure**
 
-In this paragraph we are going to use a simulated data drawn from the model y= $\sum_{m}\beta_mx_m+\epsilon$ where $\epsilon$ is N(0,1). The number of variables is M=30 and the sample size is 60. The subset selection is nearly optimal if there are only a few large non-zero $\beta_m$ , and its performance is poor if there are many small but non-zero $\beta_m$. This is why subset selection can be effective in such cases:
+In this paragraph we are going to use a simulated data drawn from the model y= $\sum_{m}\beta_mx_m+\epsilon$ where $\epsilon$ is N(0,1).
+The number of variables is M=30 and the sample size is 60.
+The subset selection is nearly optimal if there are only a few large non-zero $\beta_m$ , and its performance is poor if there are many small but non-zero $\beta_m$.
+This is why subset selection can be effective in such cases:
 
-1.  Focus on important predictors: subset selection methods aim to identify a subset of predictors that are most relevant for predicting the response variable. When there are only a few predictors with large non-zero coefficients, subset selection can successfully identify and include those important predictors in the model.
+1.  Focus on important predictors: subset selection methods aim to identify a subset of predictors that are most relevant for predicting the response variable.
+    When there are only a few predictors with large non-zero coefficients, subset selection can successfully identify and include those important predictors in the model.
 
-2.  Improved model interpretability: by selecting a subset of predictors with large non-zero coefficients, subset selection can lead to a more interpretable model. The resulting model will focus on the most influential predictors, providing insights into the relationship between these predictors and the response variable.
+2.  Improved model interpretability: by selecting a subset of predictors with large non-zero coefficients, subset selection can lead to a more interpretable model.
+    The resulting model will focus on the most influential predictors, providing insights into the relationship between these predictors and the response variable.
 
-3.  Reduction in model complexity: by selecting a smaller subset of predictors, subset selection reduces the complexity of the model compared to including all predictors. This reduction in complexity can improve model generalization, making the model more robust and less prone to overfitting.
+3.  Reduction in model complexity: by selecting a smaller subset of predictors, subset selection reduces the complexity of the model compared to including all predictors.
+    This reduction in complexity can improve model generalization, making the model more robust and less prone to overfitting.
 
-It's important to note that subset selection methods, like forward selection or backward elimination, are not guaranteed to find the exact optimal model in all cases. They are heuristic approaches that explore different combinations of predictors. The optimality of the selected model depends on factors such as the quality of the selection criteria and the sample size. In practice, it's always recommended to evaluate the performance of the selected model using cross-validation or other validation techniques like bootstrap. This helps to assess the model's predictive accuracy and determine if additional refinement or regularization techniques are needed. In summary, when there are only a few large non-zero coefficients, subset selection methods can be effective in identifying the most important predictors and constructing a simpler, interpretable model. However, it's crucial to validate the model and consider other factors to ensure its performance and reliability.
+It's important to note that subset selection methods, like forward selection or backward elimination, are not guaranteed to find the exact optimal model in all cases.
+They are heuristic approaches that explore different combinations of predictors.
+The optimality of the selected model depends on factors such as the quality of the selection criteria and the sample size.
+In practice, it's always recommended to evaluate the performance of the selected model using cross-validation or other validation techniques like bootstrap.
+This helps to assess the model's predictive accuracy and determine if additional refinement or regularization techniques are needed.
+In summary, when there are only a few large non-zero coefficients, subset selection methods can be effective in identifying the most important predictors and constructing a simpler, interpretable model.
+However, it's crucial to validate the model and consider other factors to ensure its performance and reliability.
 
-Three sets of coefficients are used in the paper's example. In the first set of coefficients there are only three non-zero ${\beta_m}$. In the second set of coefficients there are 15 non-zero ${\beta_m}$. In the third set there are 27 non-zero ${\beta_m}$, all relatively small. For each set of coefficients, the following procedure was replicated 250 times:
+Three sets of coefficients are used in the paper's example.
+In the first set of coefficients there are only three non-zero ${\beta_m}$.
+In the second set of coefficients there are 15 non-zero ${\beta_m}$.
+In the third set there are 27 non-zero ${\beta_m}$, all relatively small.
+For each set of coefficients, the following procedure was replicated 250 times:
 
-1\. Data $L={(y_n,\mathbf{x_n}),n=1...60}$ was drawn from the model y=$\sum_{m}\beta_mx_m+\epsilon$.
+1\.
+Data $L={(y_n,\mathbf{x_n}),n=1...60}$ was drawn from the model y=$\sum_{m}\beta_mx_m+\epsilon$.
 
-2\. Forward entry variables was done using L to get the predictors $\delta_1(\mathbf{x})...\delta_M(\mathbf{x})$. The mean squared prediction error of each of these was computed giving $e_1...e_M$.
+2\.
+Forward entry variables was done using L to get the predictors $\delta_1(\mathbf{x})...\delta_M(\mathbf{x})$.
+The mean squared prediction error of each of these was computed giving $e_1...e_M$.
 
-3\. Fifty bootstrap replicates $L_B$ of L were generated. For each of these, forward step-wise regression was applied to construct predictors ${\delta_1(\mathbf{x},L_B)...\delta_M(\mathbf{x},L_B)}$. These were averaged over the $L_b$ to give the bagged sequence $\delta^B_1(\mathbf{X})...\delta^B_M(\mathbf{X})$. The prediction errors $e^B_1...e^B_M$ for this sequence were computed.
+3\.
+Fifty bootstrap replicates $L_B$ of L were generated.
+For each of these, forward step-wise regression was applied to construct predictors ${\delta_1(\mathbf{x},L_B)...\delta_M(\mathbf{x},L_B)}$.
+These were averaged over the $L_b$ to give the bagged sequence $\delta^B_1(\mathbf{X})...\delta^B_M(\mathbf{X})$.
+The prediction errors $e^B_1...e^B_M$ for this sequence were computed.
 
-These computed mean-squared-errors were averaged over the 250 repetitions to give the sequences ${\bar{e}^S_m},{\bar{e}^B_m}$. For each set of coefficients, these two sequences are plotted vs m in Figure1 a,b,c.
+These computed mean-squared-errors were averaged over the 250 repetitions to give the sequences ${\bar{e}^S_m},{\bar{e}^B_m}$.
+For each set of coefficients, these two sequences are plotted vs m in Figure1 a,b,c.
 
 ![Figure 1. Prediction error for subset selection and bagged subset selection](aleimm.png){width="530"}
 
-Looking at Figures1 a,b,c an obvious result is that the most accurate bagged predictor is at least as good as the most accurate subset predictor. In the first set of coefficients (with only three non-zero ${\beta_m}$), subset selection is nearly optimal and there is no improvement. In the second and third set of coefficients there is substantial improvement. *Bagging can improve only if the unbagged is not optimal*. Note that in all three graphs there is a point past which the bagged predictors have larger prediction error than the unbagged. The explenation is this: linear regression using all variables is a fairly stable procedure. The stability decreases as the number of variable used in the predictor decreases. *For a stable procedure* $\delta_B= \delta_A(\mathbf{x},P_L)$ *is not as accurate as* $\delta(\mathbf{x},P)$. As m decreases, the instability increases and there is a cross-over point at which $\delta^B_m$ becomes more accurate than $\delta_m$.
+Looking at Figures1 a,b,c an obvious result is that the most accurate bagged predictor is at least as good as the most accurate subset predictor.
+In the first set of coefficients (with only three non-zero ${\beta_m}$), subset selection is nearly optimal and there is no improvement.
+In the second and third set of coefficients there is substantial improvement.
+*Bagging can improve only if the unbagged is not optimal*.
+Note that in all three graphs there is a point past which the bagged predictors have larger prediction error than the unbagged.
+The explenation is this: linear regression using all variables is a fairly stable procedure.
+The stability decreases as the number of variable used in the predictor decreases.
+*For a stable procedure* $\delta_B= \delta_A(\mathbf{x},P_L)$ *is not as accurate as* $\delta(\mathbf{x},P)$.
+As m decreases, the instability increases and there is a cross-over point at which $\delta^B_m$ becomes more accurate than $\delta_m$.
 
 ## Remarks
 
 **Bagging class probability estimates**
 
-Some classification methods estimate probabilities p(j\|**x**) that an object with prediction vector **x** belongs to class j. Then the class corresponding to **x** is estimated as $argmax_jp(j|\mathbf{x})$. For such methods, a natural competitor to bagging by voting is to average the p(j\|**x**) over all bootstrap replications, getting $p_B(j|\mathbf{x})$ and then use the estimated class $argmax_jp_B(j|\mathbf{x})$. In some applications, estimates of class probabilities are require instead of, or along with, the classifications. The evidence so far indicates that bagged estimates are likely to be more accurate than the single estimates. To verify this, it would be necessary to compare both estimates with the true values p\*(j\|**x**) over the **x** in the test set. For real data the true values are unknown but they can be computed for the simulated waveform data. Using the waveform data, a simulation with learning and test sets both of size 300 and 25 bootstrap replications has been done. In each iteration, the average of $|p(j|\mathbf{x})-p*(j|\mathbf{x})|$ and $|p_B(j|\mathbf{x})-p*(j|\mathbf{x})|$ was computed. This was repeated 50 times and the results averaged. The single tree estimated had an error of .189. The error of the bagged estimates was .124, a decrease of 34%.
+Some classification methods estimate probabilities p(j\|**x**) that an object with prediction vector **x** belongs to class j.
+Then the class corresponding to **x** is estimated as $argmax_jp(j|\mathbf{x})$.
+For such methods, a natural competitor to bagging by voting is to average the p(j\|**x**) over all bootstrap replications, getting $p_B(j|\mathbf{x})$ and then use the estimated class $argmax_jp_B(j|\mathbf{x})$.
+In some applications, estimates of class probabilities are require instead of, or along with, the classifications.
+The evidence so far indicates that bagged estimates are likely to be more accurate than the single estimates.
+To verify this, it would be necessary to compare both estimates with the true values p\*(j\|**x**) over the **x** in the test set.
+For real data the true values are unknown but they can be computed for the simulated waveform data.
+Using the waveform data, a simulation with learning and test sets both of size 300 and 25 bootstrap replications has been done.
+In each iteration, the average of $|p(j|\mathbf{x})-p*(j|\mathbf{x})|$ and $|p_B(j|\mathbf{x})-p*(j|\mathbf{x})|$ was computed.
+This was repeated 50 times and the results averaged.
+The single tree estimated had an error of .189.
+The error of the bagged estimates was .124, a decrease of 34%.
 
 **How many bootstrap replicate are enough?**
 
-In the paper's experiment, 50 bootstrap replicates was used for classification and 25 for regression. To give some ideas of what the results are as connected with the number of bootstrap replicates the waveform data was ran using 10,25,50 and 100 replicates with the same simulation scheme. The results appear in Table 10.![](aleimm2.png){width="254"} The unbagged rate is 29.1, so its clear that we are getting most of the improvement using only 10 bootstrap replicates.
+In the paper's experiment, 50 bootstrap replicates was used for classification and 25 for regression.
+To give some ideas of what the results are as connected with the number of bootstrap replicates the waveform data was ran using 10,25,50 and 100 replicates with the same simulation scheme.
+The results appear in Table 10.![](aleimm2.png){width="254"}
+The unbagged rate is 29.1, so its clear that we are getting most of the improvement using only 10 bootstrap replicates.
 
 **How big should the bootstrap learning set be?**
 
-In the paper's simulations the bootstrap replicates $L^B$ were used of the same size as the initial learning set L. While a bootstrap replicate may have 2,3,... duplicates of a given instance, it also leaves out about .37 of the instances. A reader of the technical report on which the paper is based remarked that this was an appreciable loss of data, and that accuracy might improve if a larger bootstrap set was used. Anyway with a bootstrap learning sets twice the size of L there was no improvement in accuracy.
+In the paper's simulations the bootstrap replicates $L^B$ were used of the same size as the initial learning set L.
+While a bootstrap replicate may have 2,3,... duplicates of a given instance, it also leaves out about .37 of the instances.
+A reader of the technical report on which the paper is based remarked that this was an appreciable loss of data, and that accuracy might improve if a larger bootstrap set was used.
+Anyway with a bootstrap learning sets twice the size of L there was no improvement in accuracy.
 
 # Comparison
 
@@ -385,10 +480,22 @@ Thus, bagging can be seen as a refinement of the bootstrap technique, incorporat
 
 ## Conclusions
 
-Bootstrap Aggregating can be a valuable approach to improve the performance of a predictive model, especially when the initial model is not very accurate or reliable. Bagging is a technique that involves creating multiple bootstrap samples from the original data and fitting a separate model to each sample. The models are then combined or aggregated to make predictions.Implementing bagging is relatively straightforward, as it requires adding a loop to select bootstrap samples and sending them to the modeling procedure, as well as an aggregation step at the end. However, when using bagging with decision trees as the base model, one may lose the simplicity and interpretability of the individual trees. Decision trees typically have a clear and interpretable structure that allows for easy understanding of the underlying rules. In the bagging process, where multiple trees are combined, the resulting ensemble model may not have a straightforward and interpretable structure. Despite this loss of interpretability, the advantage of using bagging with decision trees is increased accuracy. By combining multiple trees through bagging, the variance is reduced, leading to improved predictive performance.\
+Bootstrap Aggregating can be a valuable approach to improve the performance of a predictive model, especially when the initial model is not very accurate or reliable.
+Bagging is a technique that involves creating multiple bootstrap samples from the original data and fitting a separate model to each sample.
+The models are then combined or aggregated to make predictions.Implementing bagging is relatively straightforward, as it requires adding a loop to select bootstrap samples and sending them to the modeling procedure, as well as an aggregation step at the end.
+However, when using bagging with decision trees as the base model, one may lose the simplicity and interpretability of the individual trees.
+Decision trees typically have a clear and interpretable structure that allows for easy understanding of the underlying rules.
+In the bagging process, where multiple trees are combined, the resulting ensemble model may not have a straightforward and interpretable structure.
+Despite this loss of interpretability, the advantage of using bagging with decision trees is increased accuracy.
+By combining multiple trees through bagging, the variance is reduced, leading to improved predictive performance.\
+
 In summary, bagging is a valuable technique for improving the accuracy of a predictive model, even at the cost of losing the simplicity and interpretability of individual trees and it allows for increased accuracy through the combination of multiple models.
-Our application in R demonstrated the effectiveness of Bagging in reducing errors when dealing with unstable datasets, such as the "diabetes" dataset, using classification trees. Additionally, we explored the Random Forest technique and compared it with Bagging. Random Forest can be seen as an extension of Bagging, where the prediction subset size (m) is equal to the total number of predictors (p). We discovered that Random Forest further reduces errors, especially when dealing with many correlated predictors.
-Furthermore, we compared the concepts of bootstrap and bagging. Bagging can be regarded as an application or extension of bootstrap, where an additional aggregation step is performed at the end.
+Our application in R demonstrated the effectiveness of Bagging in reducing errors when dealing with unstable datasets, such as the "diabetes" dataset, using classification trees.
+Additionally, we explored the Random Forest technique and compared it with Bagging.
+Random Forest can be seen as an extension of Bagging, where the prediction subset size (m) is equal to the total number of predictors (p).
+We discovered that Random Forest further reduces errors, especially when dealing with many correlated predictors.
+Furthermore, we compared the concepts of bootstrap and bagging.
+Bagging can be regarded as an application or extension of bootstrap, where an additional aggregation step is performed at the end.
 
 # References
 
