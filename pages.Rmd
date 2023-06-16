@@ -170,11 +170,10 @@ The dataset consists of 768 cases, 8 variables and two classes.
 The variables are medical measurements on the patient plus age and pregnancy information.
 The classes are: tested positive for diabetes (268) or negative (500).
 In the simulated data, Breiman uses 300 samples as learning set from the 1800 samples generated.
-However we are going to use the raw dataset and split the dataset into 2 - a learning set, L, (10% of the data) with 76 rows and a test set, T, (90% of the data) with 692 rows.
+However we are going to use the raw dataset and split the dataset into 2 - a learning set, L, (70% of the data) with 76 rows and a test set, T, (30% of the data) with 692 rows.
 Next we will construct the classification tree model using train() function with 10-fold cross-validation.
-A bagged classification tree is created in parallel using the function randomForest() and setting the number of trees as 25 and mtry (the number of variables used) as 8.
-Last we create a Random Forest model using the same function but here we mtry as 3 (approx equal to $\sqrt{8}$).
-So the best 3 variables among the 8 will be chosen.
+A bagged classification tree and a random forest is created in parallel using the function randomForest() and setting the number of trees as 25 and mtry (the number of variables used) as 8 for former and 3 ($\sqrt{8}$) for the latter.
+So the best 3 variables among the 8 will be chosen in the Random Forest.
 The three models are made to predict the result using the test dataset T and the miscalculation rate is calculated.
 The whole process is iterated 100 times for different combination of learning and test data and the mean error is calculated.
 
