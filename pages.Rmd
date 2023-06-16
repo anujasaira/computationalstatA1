@@ -15,41 +15,26 @@ editor_options:
 In a typical prediction problem, there is a trade-off between two factors: bias and variance.
 Bias refers to the error introduced by simplifying assumptions in a model, while variance refers to the amount by which predictions vary for different samples of data.
 
-When we try to improve the fit of a model, there comes a point where increasing the precision of the fit leads to higher variance in predictions for future observations.
-On the other hand, reducing prediction variance can result in a higher expected bias for future predictions.
+When we try to improve the fit of a model, there comes a point where increasing the precision of the fit leads to higher variance in predictions for future observations. On the other hand, reducing prediction variance can result in a higher expected bias for future predictions.
 
-To address this trade-off, Breiman (1996) introduced a technique called bagging, which stands for "Bootstrap AGGregatING." The idea behind bagging is simple.
-Instead of relying on a single model fit to the observed data for making predictions, multiple bootstrap samples (randomly selected subsets) of the data are created.
-Each of these samples is used to fit a model, and the predictions from all the fitted models are averaged to obtain the bagged prediction.
+To address this trade-off, Breiman (1996) introduced a technique called bagging, which stands for "Bootstrap AGGregatING." The idea behind bagging is simple. Instead of relying on a single model fit to the observed data for making predictions, multiple bootstrap samples (randomly selected subsets) of the data are created. Each of these samples is used to fit a model, and the predictions from all the fitted models are averaged to obtain the bagged prediction.
 
-Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as classification and regression trees (CART).
-He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
+Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as classification and regression trees (CART). He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
 
 Unstable classifiers, such as trees, characteristically have high variance and low bias.
-Stable classifiers have low variance, but can have high bias.
-
-Instability is an essential ingredient for bagging to improve accuracy.
+Stable classifiers have low variance, but can have high bias. Instability is an essential ingredient for bagging to improve accuracy.
 
 We have a learning set (L) with data points {$(y_n, x_n)$} for training a predictor ($\delta(x, L)$).
-To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L.
-We only have access to the predictors {$\delta(x, L_k)$}.
-For numerical responses, we average the predictors $\delta(x, L_k)$ to get an aggregated predictor $\delta_A(x)$.
-For class labels, we use voting among the predictors $\delta(x, L_k)$ to form the aggregated predictor $\delta_A(x)$.
+To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L. We only have access to the predictors {$\delta(x, L_k)$}. For numerical responses, we average the predictors $\delta(x, L_k)$ to get an aggregated predictor $\delta_A(x)$. For class labels, we use voting among the predictors $\delta(x, L_k)$ to form the aggregated predictor $\delta_A(x)$.
 
-If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from L to create bootstrap replicates {$L^{(B)}$}.
-We form predictors ${\delta(x, L^{(B)})}$ using these replicates.
-For numerical responses, the aggregated predictor is $\delta_B(x)$, which is the average of the predictors $\delta(x, L^{(B)})$.
-For class labels, the aggregated predictor $\delta_B(x)$ is determined by voting among the predictors $\delta(x, L^{(B)})$.
+If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from L to create bootstrap replicates {$L^{(B)}$}. We form predictors ${\delta(x, L^{(B)})}$ using these replicates. For numerical responses, the aggregated predictor is $\delta_B(x)$, which is the average of the predictors $\delta(x, L^{(B)})$. For class labels, the aggregated predictor $\delta_B(x)$ is determined by voting among the predictors $\delta(x, L^{(B)})$.
 
 This paper aims to provide a comprehensive analysis and interpretation of Breiman's influential paper.
-We focus on utilizing classification trees, specifically with the "diabetes" dataset mentioned in the paper, and supplement our findings with relevant code examples.
-Additionally, we incorporate the random forest function and offer an explanation of its significance within our analysis.
+We focus on utilizing classification trees, specifically with the "diabetes" dataset mentioned in the paper, and supplement our findings with relevant code examples. Additionally, we incorporate the random forest function and offer an explanation of its significance within our analysis.
 
-Our discussion delves into the empirical evidence and insights put forth by Breiman to substantiate the effectiveness of bagging.
-We explore the underlying principles and reasoning behind why bagging yields positive results, as outlined by Breiman.
+Our discussion delves into the empirical evidence and insights put forth by Breiman to substantiate the effectiveness of bagging. We explore the underlying principles and reasoning behind why bagging yields positive results, as outlined by Breiman.
 
-Lastly, we present our conclusions based on our work, drawing comparisons between the Bootstrap method covered in our class and the findings from our analysis.
-We aim to provide a concise yet comprehensive overview of our research, shedding light on the practical implications and significance of the discussed concepts.
+Lastly, we present our conclusions based on our work, drawing comparisons between the Bootstrap method covered in our class and the findings from our analysis. We aim to provide a concise yet comprehensive overview of our research, shedding light on the practical implications and significance of the discussed concepts.
 
 ## Decision tree
 
@@ -58,16 +43,8 @@ It has a hierarchical, tree structure, which consists of a root node, branches, 
 
 ![Decision Tree](imgclasstree.png){width="500px," height="300px"}
 
-Decision tree learning employs a divide and conquer strategy by conducting a greedy search to identify the optimal split points within a tree.
-This process of splitting is then repeated in a top-down, recursive manner until all, or the majority of records have been classified under specific class labels.
-Whether or not all data points are classified as homogeneous sets is largely dependent on the complexity of the decision tree.
-Smaller trees are more easily able to attain pure leaf nodes---i.e.
-data points in a single class.
-However, as a tree grows in size, it becomes increasingly difficult to maintain this purity, and it usually results in too little data falling within a given subtree.
-When this occurs, it is known as data fragmentation, and it can often lead to overfitting.
-As a result, decision trees have preference for small trees.
-Decision trees can maintain their accuracy is by forming an ensemble via a random forest algorithm; this classifier predicts more accurate results, particularly when the individual trees are uncorrelated with each other.
-It is explained further in the following section.
+Decision tree learning employs a divide and conquer strategy by conducting a greedy search to identify the optimal split points within a tree. This process of splitting is then repeated in a top-down, recursive manner until all, or the majority of records have been classified under specific class labels. Whether or not all data points are classified as homogeneous sets is largely dependent on the complexity of the decision tree. Smaller trees are more easily able to attain pure leaf nodes---i.e.
+data points in a single class.However, as a tree grows in size, it becomes increasingly difficult to maintain this purity, and it usually results in too little data falling within a given subtree. When this occurs, it is known as data fragmentation, and it can often lead to overfitting. As a result, decision trees have preference for small trees. Decision trees can maintain their accuracy is by forming an ensemble via a random forest algorithm; this classifier predicts more accurate results, particularly when the individual trees are uncorrelated with each other. It is explained further in the following section.
 
 Decision Trees are broadly classified into 3: ID3, C4.5,CHAID,MARS, CART. In this paper we are going to explore only about CART.
 

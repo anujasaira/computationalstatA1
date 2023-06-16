@@ -76,6 +76,25 @@ Once a large number of trees are generated, they collectively contribute to the 
 
 A random forest is a classifier consisting of a collection of tree-structured classifiers {h(**x**,$\Theta_k$), k=1,...} where the {$\Theta_k$} are independent identically distributed random vectors and each tree casts a unit vote for the most popular class at input **x**.
 
+## Conclusions
+
+Bootstrap Aggregating can be a valuable approach to improve the performance of a predictive model, especially when the initial model is not very accurate or reliable.
+Bagging is a technique that involves creating multiple bootstrap samples from the original data and fitting a separate model to each sample.
+The models are then combined or aggregated to make predictions.Implementing bagging is relatively straightforward, as it requires adding a loop to select bootstrap samples and sending them to the modeling procedure, as well as an aggregation step at the end.
+However, when using bagging with decision trees as the base model, one may lose the simplicity and interpretability of the individual trees.
+Decision trees typically have a clear and interpretable structure that allows for easy understanding of the underlying rules.
+In the bagging process, where multiple trees are combined, the resulting ensemble model may not have a straightforward and interpretable structure.
+Despite this loss of interpretability, the advantage of using bagging with decision trees is increased accuracy.
+By combining multiple trees through bagging, the variance is reduced, leading to improved predictive performance.\
+
+In summary, bagging is a valuable technique for improving the accuracy of a predictive model, even at the cost of losing the simplicity and interpretability of individual trees and it allows for increased accuracy through the combination of multiple models.
+Our application in R demonstrated the effectiveness of Bagging in reducing errors when dealing with unstable datasets, such as the "diabetes" dataset, using classification trees.
+Additionally, we explored the Random Forest technique and compared it with Bagging.
+Random Forest can be seen as an extension of Bagging, where the prediction subset size (m) is equal to the total number of predictors (p).
+We discovered that Random Forest further reduces errors, especially when dealing with many correlated predictors.
+Furthermore, we compared the concepts of bootstrap and bagging.
+Bagging can be regarded as an application or extension of bootstrap, where an additional aggregation step is performed at the end.
+
 # References
 
 Breiman L. (1996). *Bagging Predictors*, Statistics Department, University of California, Berkeley.
