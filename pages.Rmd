@@ -51,7 +51,7 @@ We explore the underlying principles and reasoning behind why bagging yields pos
 Lastly, we present our conclusions based on our work, drawing comparisons between the Bootstrap method covered in our class and the findings from our analysis.
 We aim to provide a concise yet comprehensive overview of our research, shedding light on the practical implications and significance of the discussed concepts.
 
-## DECISION TREE
+## Decision tree
 
 A decision tree is a non-parametric supervised learning algorithm, that is utilized for both classification and regression tasks.
 It has a hierarchical, tree structure, which consists of a root node, branches, internal nodes and leaf nodes.
@@ -80,7 +80,7 @@ CART is includes two decision trees:
 
 -   **Regression Tree** which is used to predict continuous value decision.
 
-### CLASSIFICATION TREE
+### Classification tree
 
 A classification tree is an algorithm where the target variable is categorical.
 The algorithm is then used to identify the "Class" within which the target variable is most likely to fall.
@@ -89,7 +89,7 @@ In use, the decision process starts at the trunk and follows the branches until 
 
 A classification tree model is created as and example and an example is available after the explanation of the trees.
 
-### REGRESSION TREE
+### Regression tree
 
 Regression trees divide the data into subsets, that is, branches, nodes, and leaves.
 Like decision trees, regression trees select splits that decrease the dispersion of target attribute values.
@@ -102,7 +102,7 @@ To minimize the dispersion of target attributes, splits are selected.
 At the same time, target values are assigned to leaves when no further splits are required or possible.
 Regression tree prediction uses a previously grown regression tree to predict the attribute values of a target for a data set.
 
-## BAGGING DECISION TREE
+## Bagging decision tree
 ![Bagging Regession Tree](baggreg.png){width="600px," height="350px"}
 
 The bootstrap is used in many situations in which it is hard or even impossible to directly compute the standard deviation of a quantity of interest.Here the bootstrap can be used in order to improve statistical learning methods such as decision trees.
@@ -112,7 +112,7 @@ Given a set of $\mathit{n}$ n independent observations $\mathit{Z_1}$,...,$\math
 In other words, averaging a set of observations reduces variance.
 Hence a natural way to reduce the variance and increase the test set accuracy of a statistical learning method is to take many training sets from the population, build a separate prediction model using each training set, and average the resulting predictions.
 
-### BAGGING CLASSIFICATION TREE
+### Bagging classification tree
 
 Classification trees are decision trees in which the target variables can take categorical values.
 Classification trees use modified split selection criteria and stopping criteria.
@@ -127,7 +127,7 @@ A bootstrap sample $\mathcal{L_B}$ is selected from $\mathcal{L}$ and a tree gro
 This is repeated 50 times giving tree predictors $\phi_{1}(x)$,...,$\phi_{50}(x)$.The bagged predictor is estimates as which class has the plurality in $\phi_{1}(x)$,...,$\phi_{50}(x)$.
 That is by the highest number of votes or taking the class with highest probability in $\phi_{1}(x)$,...,$\phi_{50}(x)$.The proportion of times the estimated class differs from the true class is the bagging misclassification rate $\mathit{e_B(L,T)}$.The random division of the data into L and T is repeated 100 times and giving the result $\mathit{\bar{e_s}}$,$\mathit{\bar{e_B}}$.
 
-### BAGGING REGRESSION TREE
+### Bagging regression tree
 
 Regression trees are decision trees in which the target variables can take continuous values.
 Regression trees use modified split selection criteria and stopping criteria.
