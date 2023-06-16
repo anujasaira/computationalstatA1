@@ -71,3 +71,85 @@ mis_rf <- mean(misclassification_rate_vec_rf)
 mis
 mis_rf
 ```
+
+```{r}
+
+misclassification_rate_vec_bagged200 <- rep(0,100)
+misclassification_rate_vec_bagged25 <- rep(0,100)
+misclassification_rate_vec_bagged50<- rep(0,100)
+misclassification_rate_vec_bagged100<- rep(0,100)
+
+E_sim <- read.table('diabetes.csv',sep=',',header = TRUE)
+E_sim$Outcome<- as.factor(E_sim$Outcome)
+
+head(E_sim)
+```
+
+```{r}
+for (i in 1:100){
+  index <- createDataPartition(E_sim$Outcome, p = 0.7, list = FALSE)
+
+  # Divide the data into test set T and learning set L
+  T <- E_sim[-index, ]
+  L <- E_sim[index, ]
+  
+  bagged_tree200<- randomForest(Outcome ~ ., data = L,mtry = 8, ntree = 200)
+  bagged_tree25<- randomForest(Outcome ~ ., data = L,mtry = 8, ntree = 25)
+  bagged_tree50<- randomForest(Outcome ~ ., data = L,mtry = 8, ntree = 50)
+  bagged_tree100<- randomForest(Outcome ~ ., data = L,mtry = 8, ntree = 100)
+
+  # Predict the class labels for the test set using the trained model
+  predictions <- predict(bagged_tree200, newdata = T)
+  # Calculate misclassification rate
+  misclassification_bagged200 <- mean(predictions != T$Outcome)
+  misclassification_rate_vec_bagged200[i] <- misclassification_rate_vec_bagged200
+  
+  predictions <- predict(bagged_tree25, newdata = T)
+  # Calculate misclassification rate
+  misclassification_bagged25 <- mean(predictions != T$Outcome)
+  misclassification_rate_vec_bagged25[i] <- misclassification_bagged25
+  
+  predictions <- predict(bagged_tree50, newdata = T)
+  # Calculate misclassification rate
+  misclassification_bagged50 <- mean(predictions != T$Outcome)
+  misclassification_rate_vec_bagged50[i] <- misclassification_bagged50
+  
+  predictions <- predict(bagged_tree100, newdata = T)
+  # Calculate misclassification rate
+  misclassification_bagged100 <- mean(predictions != T$Outcome)
+  misclassification_rate_vec_bagged100[i] <- misclassification_bagged100
+  
+}
+
+
+
+```
+
+```{r}
+
+mis25 <- mean(misclassification_rate_vec_bagged25)
+mis50 <- mean(misclassification_rate_vec_bagged50)
+mis100 <- mean(misclassification_rate_vec_bagged100)
+mis200<- mean(misclassification_rate_vec_bagged200)
+
+err_data <- data.frame(No_Bootstrap_replicates = c( "25", "50","100","200"),
+                       misclassification_rate = c(mis25,mis50,mis100,mis200)) 
+err_data
+```
+
+***gg***
+
+**Classification**
+
+In classification, a predictor $\varphi(\mathbf{x},\mathcal{L})$ predicts a class label j $\in$ {1,...,J}. Denote $\mathit{Q}$(j\|**x**)= $P(\phi(\mathbf{x},\mathcal{L})=j)$. The interpretation of $\mathit{Q}$(j\|**x**) is that over many independent replicates of the learning set $\mathcal{L}$, $\phi$ predicts class label j at input **x** with relative frequency $\mathit{Q}$(j\|**x**). Let $P(j|\mathbf{x})$ be the probability that input **x** generates class j. Then the probability that the predictors classifies the generated state at **x** correctly is $\sum_{j}Q(j|\mathbf{x})P(j|\mathbf{x})$. The overall probability of correct classification is
+
+$$\mathit{r}= \int[Q(J|\mathbf{x})P(J|\mathbf{x})]P_x(d_x)$$
+
+where $P_x(d_x)$ is the **x** probability distribution. Note that for any $Q(j|\mathbf{x})$;
+
+$\sum_{j}Q(j|\mathbf{x})P(j|\mathbf{x})\leq max_jP(j|\mathbf{x})$ with equality only if $$
+\begin{cases} 
+1\quad if\quad P(j|\mathbf{x})=max_iP(i|\mathbf{x})) \\
+0\quad else \\
+\end{cases}
+$$ The predictor $\phi^*(\mathbf{x})$= $argmax_jP(j|\mathbf{x})$ leads to the above expression for $Q(j|\mathbf{x})$ and gives the highest attainable correct classification rate: $r^*=\int max_j P(j|\mathbf{x})P_X(\mathbf{x})$. Call $\phi$ order-correct at the input **x** if $argmax_jQ(j|\mathbf{x})=argmax_jP(j|\mathbf{x})$. This means that if input **x** results in class j more often than any other class, then $\delta$ also predicts class j at **x** more often than any other class. The aggregated predictor is: $$\phi_A(\mathbf{x})= argmax_jQ(j|\mathbf({x}))$$For the aggregated predictor the probability of correct classification at **x** is $\sum_{j}I(argmax_iQ(i|\mathbf{x})=j)P(j|\mathbf{x})$. If $\phi$ is order-correct at **x**, then the previous formula equals $max_jP(j|\mathbf{x})$. Let $$C=\{{\mathbf{x};argmax_jP(j|\mathbf{x})= argmax_j\mathit{Q}(j|x)}\}$$ we get for the correct classification probability of $\phi_A$ the expression:$$r_A=\int_\mathbf{x\in C}max_jP(j|\mathbf{x})P_x(d\mathbf{x})+\int_\mathbf{x\in C'}[\sum_jI(\phi_A(\mathbf{x})=j)P(j|\mathbf{x})]P_x(d\mathbf{x}))]$$Even if $\phi$ is order-correct at **x** its correct classification rate can be far from optimal because $\sum_j Q(j|\mathbf{x})P(j|\mathbf{x}) \leq max_jP(j|\mathbf{x})$. If a predictor is good in the sense that it is order-correct for most inputs **x**, then aggregation can transform it into a nearly optimal predictor. On the other hand, unlike the numerical prediction situation, poor predictors can be transformed into worse ones. The same behavior regarding stability holds. Bagging unstable classifiers usually improves them. Bagging stable classifiers is not a good idea.
