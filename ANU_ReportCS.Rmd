@@ -39,7 +39,7 @@ CART is includes two decision trees:
 
 -   **Regression Tree** which is used to predict continuous value decision.
 
-### **CLASSIFICATION TREE**
+### CLASSIFICATION TREE
 
 A classification tree is an algorithm where the target variable is categorical.
 The algorithm is then used to identify the "Class" within which the target variable is most likely to fall.
@@ -48,7 +48,7 @@ In use, the decision process starts at the trunk and follows the branches until 
 
 A classification tree model is created as and example and an example is available after the explanation of the trees.
 
-### **REGRESSION TREE**
+### REGRESSION TREE
 
 Regression trees divide the data into subsets, that is, branches, nodes, and leaves.
 Like decision trees, regression trees select splits that decrease the dispersion of target attribute values.
@@ -61,7 +61,7 @@ To minimize the dispersion of target attributes, splits are selected.
 At the same time, target values are assigned to leaves when no further splits are required or possible.
 Regression tree prediction uses a previously grown regression tree to predict the attribute values of a target for a data set.
 
-## **BAGGING**
+## BAGGING DECISION TREE
 ![Bagging Regession Tree](baggreg.png){width="600px," height="350px"}
 
 The bootstrap is used in many situations in which it is hard or even impossible to directly compute the standard deviation of a quantity of interest.Here the bootstrap can be used in order to improve statistical learning methods such as decision trees.
