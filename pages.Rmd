@@ -205,13 +205,13 @@ for (i in 1:100){
 mis<- mean(misclassification_rate_vec)
 mis_rf <- mean(misclassification_rate_vec_rf)
 mis_bagg <- mean(misclassification_rate_vec_bagged)
-err_data <- data.frame(Model = c("Decision Tree", "Bagging Predictor", "Random Forest"),
+err_data <- data.frame(Model = c("Classification Tree", "Bagging Predictor", "Random Forest"),
                        Error = c(mis,mis_bagg,mis_rf)) 
 err_data
 ```
 
-From the table above we can see that the Error is maximum for Decision Tree and least for Random Forest.
-Bagged Predictor model performs better than Decision Tree i.e. it can reduce the variance of an unstable dataset.
+From the table above we can see that the Error is maximum for Classification Tree and least for Random Forest.
+Bagged Predictor model performs better than CLassification Tree i.e. it can reduce the variance of an unstable dataset.
 
 **WHY BAGGING WORKS**
 
