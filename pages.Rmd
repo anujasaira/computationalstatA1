@@ -25,9 +25,9 @@ Unstable classifiers, such as trees, characteristically have high variance and l
 Stable classifiers have low variance, but can have high bias.
 Instability is an essential ingredient for bagging to improve accuracy.
 We have a learning set ($\mathcal{L}$) with data points {$(y_n, x_n)$} for training a predictor ($\phi(x,\mathcal{L})$).
-To improve the predictor, we use a sequence of learning sets {$\mathcal{L_k}$} drawn from the same distribution as $\mathcal{L}$.
-We only have access to the predictors {$\phi(x, \mathcal{L_k})$}.
-For numerical responses, we average the predictors $\phi(x, \mathcal{L_k})$ to get an aggregated predictor $\phi_A(x)$.For class labels, we use voting among the predictors $\phi(x, \mathcal{L_k})$ to form the aggregated predictor $\phi_A(x)$.
+To improve the predictor, we use a sequence of learning sets {$\mathcal{L}_k$} drawn from the same distribution as $\mathcal{L}$.
+We only have access to the predictors {$\phi(x, \mathcal{L}_k)$}.
+For numerical responses, we average the predictors $\phi(x, \mathcal{L}_k)$ to get an aggregated predictor $\phi_A(x)$.For class labels, we use voting among the predictors $\phi(x, \mathcal{L}_k)$ to form the aggregated predictor $\phi_A(x)$.
 If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from $\mathcal{L}$ to create bootstrap replicates {$\mathcal{L}^{(B)}$}.
 We form predictors ${\phi(x, \mathcal{L}^{(B)})}$ using these replicates.
 For numerical responses, the aggregated predictor is $\phi_B(x)$, which is the average of the predictors $\phi(x,\mathcal{L}^{(B)}$.
@@ -56,18 +56,18 @@ When this occurs, it is known as data fragmentation, and it can often lead to ov
 As a result, decision trees have preference for small trees.
 Decision trees can maintain their accuracy is by forming an ensemble via a random forest algorithm; this classifier predicts more accurate results, particularly when the individual trees are uncorrelated with each other.
 It is explained further in the following section.
-Decision Trees are broadly classified into 3: ID3, C4.5,CHAID,MARS, CART. In this paper we are going to explore only about CART.
+Decision Trees are broadly classified into 5: ID3, C4.5,CHAID,MARS, CART. In this paper we are going to explore only about CART.
 CART is a predictive algorithm used in Machine Learning and it explains how the target variable's values can be predicted based on other matters.
 It is a decision tree where each fork is split into a predictor variable and each node has a prediction for the target variable at the end.
-CART is includes two decision trees: **Classification Tree** which is used to predict categorical decision and **Regression Tree** which is used to predict continuous value decision.
+It includes two decision trees: **Classification Tree** which is used to predict categorical decision and **Regression Tree** which is used to predict continuous value decision.
 
-A **classification tree** is an algorithm where the target variable is categorical.
+A **Classification Tree** is an algorithm where the target variable is categorical.
 The algorithm is then used to identify the "Class" within which the target variable is most likely to fall.
 Classification trees are used when the dataset needs to be split into classes that belong to the response variable(like yes or no).
 In use, the decision process starts at the trunk and follows the branches until a leaf is reached.
 A classification tree model is created as and example and an example is available after the explanation of the trees.
 
-**Regression trees** divide the data into subsets, that is, branches, nodes, and leaves.
+**Regression Tree** divide the data into subsets, that is, branches, nodes, and leaves.
 Like decision trees, regression trees select splits that decrease the dispersion of target attribute values.Thus, the target attribute values can be predicted from their mean values in the leaves.
 The resulting model is piece wise-constant.
 It has fixed predicted values that are assigned to regions for which the domain is split by the tree structure.
@@ -80,10 +80,10 @@ Regression tree prediction uses a previously grown regression tree to predict th
 
 ![Bagging Regession Tree](baggreg.png){width="500px" height="200px"}
 
-The bootstrap is used in many situations in which it is hard or even impossible to directly compute the standard deviation of a quantity of interest.Here the bootstrap can be used in order to improve statistical learning methods such as decision trees.
+The bootstrap is used in many situations in which it is hard or even impossible to directly compute the standard deviation of a quantity of interest. Here the bootstrap can be used in order to improve statistical learning methods such as decision trees.
 The decision trees suffer from high variance.
 Bootstrap aggregation, or bagging, is a general-purpose procedure for reducing the variance of a statistical learning method; we introduce it here because it is particularly useful and frequently used in the context of decision trees.
-Given a set of $\mathit{n}$ n independent observations $\mathit{Z_1}$,...,$\mathit{Z_n}$, each with variance $\sigma^2$, the variance of the mean $\overline{\mathit{Z}}$ of the observations is given by $\sigma^2$/$\mathit{n}$.
+Given a set of $\mathit{n}$ independent observations $\mathit{Z_1}$,...,$\mathit{Z_n}$, each with variance $\sigma^2$, the variance of the mean $\overline{\mathit{Z}}$ of the observations is given by $\sigma^2$/$\mathit{n}$.
 In other words, averaging a set of observations reduces variance.
 Hence a natural way to reduce the variance and increase the test set accuracy of a statistical learning method is to take many training sets from the population, build a separate prediction model using each training set, and average the resulting predictions.
 
