@@ -14,37 +14,50 @@ editor_options:
 
 In a typical prediction problem, there is a trade-off between two factors: bias and variance.
 Bias refers to the error introduced by simplifying assumptions in a model, while variance refers to the amount by which predictions vary for different samples of data.
-
-When we try to improve the fit of a model, there comes a point where increasing the precision of the fit leads to higher variance in predictions for future observations. On the other hand, reducing prediction variance can result in a higher expected bias for future predictions.
-
-To address this trade-off, Breiman (1996) introduced a technique called bagging, which stands for "Bootstrap AGGregatING." The idea behind bagging is simple. Instead of relying on a single model fit to the observed data for making predictions, multiple bootstrap samples (randomly selected subsets) of the data are created. Each of these samples is used to fit a model, and the predictions from all the fitted models are averaged to obtain the bagged prediction.
-
-Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as classification and regression trees (CART). He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
-
+When we try to improve the fit of a model, there comes a point where increasing the precision of the fit leads to higher variance in predictions for future observations.
+On the other hand, reducing prediction variance can result in a higher expected bias for future predictions.
+To address this trade-off, Breiman (1996) introduced a technique called bagging, which stands for "Bootstrap AGGregatING." The idea behind bagging is simple.
+Instead of relying on a single model fit to the observed data for making predictions, multiple bootstrap samples (randomly selected subsets) of the data are created.
+Each of these samples is used to fit a model, and the predictions from all the fitted models are averaged to obtain the bagged prediction.
+Breiman explains that bagging works particularly well for modeling procedures that are sensitive to small changes in the data, such as classification and regression trees (CART).
+He also provides a theoretical explanation of how bagging reduces the mean-squared prediction error for such unstable procedures.
 Unstable classifiers, such as trees, characteristically have high variance and low bias.
-Stable classifiers have low variance, but can have high bias. Instability is an essential ingredient for bagging to improve accuracy.
+Stable classifiers have low variance, but can have high bias.
+Instability is an essential ingredient for bagging to improve accuracy.
 
 We have a learning set (L) with data points {$(y_n, x_n)$} for training a predictor ($\delta(x, L)$).
-To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L. We only have access to the predictors {$\delta(x, L_k)$}. For numerical responses, we average the predictors $\delta(x, L_k)$ to get an aggregated predictor $\delta_A(x)$. For class labels, we use voting among the predictors $\delta(x, L_k)$ to form the aggregated predictor $\delta_A(x)$.
-
-If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from L to create bootstrap replicates {$L^{(B)}$}. We form predictors ${\delta(x, L^{(B)})}$ using these replicates. For numerical responses, the aggregated predictor is $\delta_B(x)$, which is the average of the predictors $\delta(x, L^{(B)})$. For class labels, the aggregated predictor $\delta_B(x)$ is determined by voting among the predictors $\delta(x, L^{(B)})$.
+To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L.
+We only have access to the predictors {$\delta(x, L_k)$}.
+For numerical responses, we average the predictors $\delta(x, L_k)$ to get an aggregated predictor $\delta_A(x)$.For class labels, we use voting among the predictors $\delta(x, L_k)$ to form the aggregated predictor $\delta_A(x)$.
+If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from L to create bootstrap replicates {$L^{(B)}$}.
+We form predictors ${\delta(x, L^{(B)})}$ using these replicates.
+For numerical responses, the aggregated predictor is $\delta_B(x)$, which is the average of the predictors $\delta(x, L^{(B)})$.
+For class labels, the aggregated predictor $\delta_B(x)$ is determined by voting among the predictors $\delta(x, L^{(B)})$.
 
 This paper aims to provide a comprehensive analysis and interpretation of Breiman's influential paper.
-We focus on utilizing classification trees, specifically with the "diabetes" dataset mentioned in the paper, and supplement our findings with relevant code examples. Additionally, we incorporate the random forest function and offer an explanation of its significance within our analysis.
-
-Our discussion delves into the empirical evidence and insights put forth by Breiman to substantiate the effectiveness of bagging. We explore the underlying principles and reasoning behind why bagging yields positive results, as outlined by Breiman.
-
-Lastly, we present our conclusions based on our work, drawing comparisons between the Bootstrap method covered in our class and the findings from our analysis. We aim to provide a concise yet comprehensive overview of our research, shedding light on the practical implications and significance of the discussed concepts.
+We focus on utilizing classification trees, specifically with the "diabetes" dataset mentioned in the paper, and supplement our findings with relevant code examples.
+Additionally, we incorporate the random forest function and offer an explanation of its significance within our analysis.
+Our discussion delves into the empirical evidence and insights put forth by Breiman to substantiate the effectiveness of bagging.
+We explore the underlying principles and reasoning behind why bagging yields positive results, as outlined by Breiman.
+Lastly, we present our conclusions based on our work, drawing comparisons between the Bootstrap method covered in our class and the findings from our analysis.
+We aim to provide a concise yet comprehensive overview of our research, shedding light on the practical implications and significance of the discussed concepts.
 
 ## Decision tree
 
 A decision tree is a non-parametric supervised learning algorithm, that is utilized for both classification and regression tasks.
 It has a hierarchical, tree structure, which consists of a root node, branches, internal nodes and leaf nodes.
 
-![Decision Tree](imgclasstree.png){width="500px," height="300px"}
+![Decision Tree](imgclasstree.png){width="357"}
 
-Decision tree learning employs a divide and conquer strategy by conducting a greedy search to identify the optimal split points within a tree. This process of splitting is then repeated in a top-down, recursive manner until all, or the majority of records have been classified under specific class labels. Whether or not all data points are classified as homogeneous sets is largely dependent on the complexity of the decision tree. Smaller trees are more easily able to attain pure leaf nodes---i.e.
-data points in a single class.However, as a tree grows in size, it becomes increasingly difficult to maintain this purity, and it usually results in too little data falling within a given subtree. When this occurs, it is known as data fragmentation, and it can often lead to overfitting. As a result, decision trees have preference for small trees. Decision trees can maintain their accuracy is by forming an ensemble via a random forest algorithm; this classifier predicts more accurate results, particularly when the individual trees are uncorrelated with each other. It is explained further in the following section.
+Decision tree learning employs a divide and conquer strategy by conducting a greedy search to identify the optimal split points within a tree.
+This process of splitting is then repeated in a top-down, recursive manner until all, or the majority of records have been classified under specific class labels.
+Whether or not all data points are classified as homogeneous sets is largely dependent on the complexity of the decision tree.
+Smaller trees are more easily able to attain pure leaf nodes---i.e.
+data points in a single class.However, as a tree grows in size, it becomes increasingly difficult to maintain this purity, and it usually results in too little data falling within a given subtree.
+When this occurs, it is known as data fragmentation, and it can often lead to overfitting.
+As a result, decision trees have preference for small trees.
+Decision trees can maintain their accuracy is by forming an ensemble via a random forest algorithm; this classifier predicts more accurate results, particularly when the individual trees are uncorrelated with each other.
+It is explained further in the following section.
 
 Decision Trees are broadly classified into 3: ID3, C4.5,CHAID,MARS, CART. In this paper we are going to explore only about CART.
 
@@ -81,7 +94,7 @@ Regression tree prediction uses a previously grown regression tree to predict th
 
 ## Bagging decision tree
 
-![Bagging Regession Tree](baggreg.png){width="600px," height="350px"}
+![Bagging Regession Tree](baggreg.png){width="322"}
 
 The bootstrap is used in many situations in which it is hard or even impossible to directly compute the standard deviation of a quantity of interest.Here the bootstrap can be used in order to improve statistical learning methods such as decision trees.
 The decision trees suffer from high variance.
@@ -146,7 +159,7 @@ However, when using the square root of the total predictors, random forests show
 **Larger Data Sets** For large dataset that is dataset with more than 2000 samples, 10% of the data is set aside as training set and the remaining 90% as learning set.The set aside 10% was then used to select the best pruned subtree.In bagging, 50 bootstrap replicates of the training set were generated and a large tree grown on each one.
 The error rate given in the paper shown below.
 
-![Figure 3. Misclassification Rate](largedataerr.png){width="500px," height="200px"}
+![Figure 3. Misclassification Rate](largedataerr.png){width="244"}
 
 The percentage of decrease in misclassification rate is similar to the rate of difference in small dataset.
 But if we have a closer look at the errors, the error for classification tree is very much small and the improvement is not extremely significant.
@@ -181,7 +194,7 @@ However we are going to use the raw dataset and split the dataset into 2 - a lea
 Next we will construct the classification tree model using train() function with 10-fold cross-validation.
 A bagged decision tree is created in parallel using the function randomForest() and setting the number of trees as 25 and mtry (the number of variables used) as 8.
 Last we create a Random Forest model using the same function but here we mtry as 3 ($\sqrt{8}$).
-So the best 3 variables among the 8 will be chosen.\
+So the best 3 variables among the 8 will be chosen.
 
 The three models are made to predict the result using the test dataset T and the miscalculation rate is calculated.
 The whole process is iterated 100 times for different combination of learning and test data and the mean error is calculated.
@@ -317,52 +330,23 @@ A common method for constructing the $\delta_m(\mathbf{x})$, and one that is use
 If the variables used in $\delta_k(\mathbf{x})$ are $(x_{1k},...,x_{mk})$ then for each m $\notin {m_1,...m_K}$ form the linear regression of y on $(x_{m1},...,x_{mk+1}, x_m)$, compute the RSS(m) and take $x_{mk+1}$ such that $m_{k+1}$ minimizes RSS(m) and $\delta_{k+1}(\mathbf{x})$ the linear regression based on $(x_{m1},...,x_{mk+1})$.
 What is clear about this procedure is that it is an unstable procedures.
 The variables are competing for inclusion in the $\delta_m$ and small changes in the data can cause large changes in the $\delta_m$.
-Forward variable selection is considered an unstable procedure due to the following reasons:
-
-1.  Dependency on the order of variable selection: in forward variable selection, the procedure starts with an empty model and adds one variable at a time based on certain selection criteria.
-    However, the initial selection of variables can significantly impact the final result.
-    If the initial set of selected variables differs, the progressive selection of variables can lead to different models.
-    Therefore, the selection of initial variables can cause instability in the results.
-
-2.  Sensitivity to correlated variables: forward variable selection may be influenced by correlated variables.
-    When adding a variable to the model, it may appear to provide significant informative value, but it could be strongly correlated with other variables already present in the model.
-    This correlation can lead to an overestimation of the importance of the added variable and result in selecting a suboptimal model.
-
-3.  Impact of small data variations: forward variable selection can be sensitive to small variations in the input data.
-    Even a slight modification of the input data can lead to a completely different variable selection or a different model.
-    This instability can make it challenging to reproduce the results.
-
+Forward variable selection is considered an unstable procedure due to the following reasons:dependency on the order of variable selection, sensitivity to correlated variables and impact of small data variations(forward variable selection can be sensitive to small variations in the input data).
 To mitigate the potential instability of forward variable selection, techniques such as cross-validation or bootstrap can be used to assess the stability of selected variables and the robustness of the resulting model.
-These techniques allow for a more accurate estimation of model performance and more reliable identification of the most relevant variables.
 
 **Simulation structure**
 
 In this paragraph we are going to use a simulated data drawn from the model y= $\sum_{m}\beta_mx_m+\epsilon$ where $\epsilon$ is N(0,1).
 The number of variables is M=30 and the sample size is 60.
 The subset selection is nearly optimal if there are only a few large non-zero $\beta_m$ , and its performance is poor if there are many small but non-zero $\beta_m$.
-This is why subset selection can be effective in such cases:
-
-1.  Focus on important predictors: subset selection methods aim to identify a subset of predictors that are most relevant for predicting the response variable.
-    When there are only a few predictors with large non-zero coefficients, subset selection can successfully identify and include those important predictors in the model.
-
-2.  Improved model interpretability: by selecting a subset of predictors with large non-zero coefficients, subset selection can lead to a more interpretable model.
-    The resulting model will focus on the most influential predictors, providing insights into the relationship between these predictors and the response variable.
-
-3.  Reduction in model complexity: by selecting a smaller subset of predictors, subset selection reduces the complexity of the model compared to including all predictors.
-    This reduction in complexity can improve model generalization, making the model more robust and less prone to overfitting.
+This is why subset selection can be effective in such cases:focus on important predictors, improved model interpretability and reduction in model complexity.
 
 It's important to note that subset selection methods, like forward selection or backward elimination, are not guaranteed to find the exact optimal model in all cases.
-They are heuristic approaches that explore different combinations of predictors.
 The optimality of the selected model depends on factors such as the quality of the selection criteria and the sample size.
 In practice, it's always recommended to evaluate the performance of the selected model using cross-validation or other validation techniques like bootstrap.
-This helps to assess the model's predictive accuracy and determine if additional refinement or regularization techniques are needed.
 In summary, when there are only a few large non-zero coefficients, subset selection methods can be effective in identifying the most important predictors and constructing a simpler, interpretable model.
 However, it's crucial to validate the model and consider other factors to ensure its performance and reliability.
 
-Three sets of coefficients are used in the paper's example.
-In the first set of coefficients there are only three non-zero ${\beta_m}$.
-In the second set of coefficients there are 15 non-zero ${\beta_m}$.
-In the third set there are 27 non-zero ${\beta_m}$, all relatively small.
+Three sets of coefficients are used in the paper's example.In the first set of coefficients there are only three non-zero ${\beta_m}$.In the second set of coefficients there are 15 non-zero ${\beta_m}$.In the third set there are 27 non-zero ${\beta_m}$, all relatively small.
 For each set of coefficients, the following procedure was replicated 250 times:
 
 1\.
@@ -381,48 +365,29 @@ The prediction errors $e^B_1...e^B_M$ for this sequence were computed.
 These computed mean-squared-errors were averaged over the 250 repetitions to give the sequences ${\bar{e}^S_m},{\bar{e}^B_m}$.
 For each set of coefficients, these two sequences are plotted vs m in Figure1 a,b,c.
 
-![Figure 1. Prediction error for subset selection and bagged subset selection](aleimm.png){width="530"}
+![Figure 1. Prediction error for subset selection and bagged subset selection](aleimm.png){width="481"}
 
 Looking at Figures1 a,b,c an obvious result is that the most accurate bagged predictor is at least as good as the most accurate subset predictor.
-In the first set of coefficients (with only three non-zero ${\beta_m}$), subset selection is nearly optimal and there is no improvement.
-In the second and third set of coefficients there is substantial improvement.
-*Bagging can improve only if the unbagged is not optimal*.
-Note that in all three graphs there is a point past which the bagged predictors have larger prediction error than the unbagged.
-The explenation is this: linear regression using all variables is a fairly stable procedure.
-The stability decreases as the number of variable used in the predictor decreases.
-*For a stable procedure* $\delta_B= \delta_A(\mathbf{x},P_L)$ *is not as accurate as* $\delta(\mathbf{x},P)$.
-As m decreases, the instability increases and there is a cross-over point at which $\delta^B_m$ becomes more accurate than $\delta_m$.
+In the first set of coefficients (with only three non-zero ${\beta_m}$), subset selection is nearly optimal and there is no improvement.In the second and third set of coefficients there is substantial improvement.
+*Bagging can improve only if the unbagged is not optimal*.Note that in all three graphs there is a point past which the bagged predictors have larger prediction error than the unbagged.The explenation is this: linear regression using all variables is a fairly stable procedure.The stability decreases as the number of variable used in the predictor decreases.*For a stable procedure* $\delta_B= \delta_A(\mathbf{x},P_L)$ *is not as accurate as* $\delta(\mathbf{x},P)$.As m decreases, the instability increases and there is a cross-over point at which $\delta^B_m$ becomes more accurate than $\delta_m$.
 
 ## Remarks
 
-**Bagging class probability estimates**
-
-Some classification methods estimate probabilities p(j\|**x**) that an object with prediction vector **x** belongs to class j.
-Then the class corresponding to **x** is estimated as $argmax_jp(j|\mathbf{x})$.
-For such methods, a natural competitor to bagging by voting is to average the p(j\|**x**) over all bootstrap replications, getting $p_B(j|\mathbf{x})$ and then use the estimated class $argmax_jp_B(j|\mathbf{x})$.
-In some applications, estimates of class probabilities are require instead of, or along with, the classifications.
-The evidence so far indicates that bagged estimates are likely to be more accurate than the single estimates.
-To verify this, it would be necessary to compare both estimates with the true values p\*(j\|**x**) over the **x** in the test set.
-For real data the true values are unknown but they can be computed for the simulated waveform data.
-Using the waveform data, a simulation with learning and test sets both of size 300 and 25 bootstrap replications has been done.
-In each iteration, the average of $|p(j|\mathbf{x})-p*(j|\mathbf{x})|$ and $|p_B(j|\mathbf{x})-p*(j|\mathbf{x})|$ was computed.
-This was repeated 50 times and the results averaged.
-The single tree estimated had an error of .189.
-The error of the bagged estimates was .124, a decrease of 34%.
-
 **How many bootstrap replicate are enough?**
 
-In the paper's experiment, 50 bootstrap replicates was used for classification and 25 for regression.
-To give some ideas of what the results are as connected with the number of bootstrap replicates the waveform data was ran using 10,25,50 and 100 replicates with the same simulation scheme.
-The results appear in Table 10.![](aleimm2.png){width="254"}
-The unbagged rate is 29.1, so its clear that we are getting most of the improvement using only 10 bootstrap replicates.
+In the Leo Breiman paper's experiment, 50 bootstrap replicates was used for classification and 25 for regression.
+To give some ideas of what the results are as connected with the number of bootstrap replicates we have run our example with the diabetes dataset.
+![Table diabetes dataset, number of bootstrap replicates](MissClassificationRate%20vs%20Num%20Bootstrap.png){width="307"} The diabates dataset was run using 10,25,50,100 replicates.
+The results appear in the table above.
+The unbagged misclassification rate is .253, so it's clear that we are getting most of the improvement using 25 replicates and so using more than 25 replicates would not be useful.
+In this case we have a small decrease because bagging is pushing close to the minimal attainable error rate.
+In the Leo Breiman paper's instead we have an example with a simulated dataset in which bagging reduces the excess error by about two-thirds.
+In this example the unbagged rate was 29.1 and most of the improvement was reached using only 10 bootstrap replicates(with which the misclassification rate was 21.8) and so more than 25 bootstrap replicates would have been useless.
 
 **How big should the bootstrap learning set be?**
 
-In the paper's simulations the bootstrap replicates $L^B$ were used of the same size as the initial learning set L.
-While a bootstrap replicate may have 2,3,... duplicates of a given instance, it also leaves out about .37 of the instances.
-A reader of the technical report on which the paper is based remarked that this was an appreciable loss of data, and that accuracy might improve if a larger bootstrap set was used.
-Anyway with a bootstrap learning sets twice the size of L there was no improvement in accuracy.
+In the Leo Breiman paper's simulations the bootstrap replicates $L^B$ were used of the same size as the initial learning set L.
+While a bootstrap replicate may have 2,3,... duplicates of a given instance, it also leaves out about .37 of the instances.A reader of the technical report on which the paper is based remarked that this was an appreciable loss of data, and that accuracy might improve if a larger bootstrap set was used.Anyway with a bootstrap learning sets twice the size of L there was no improvement in accuracy.
 
 # Comparison
 
@@ -436,18 +401,18 @@ Use the sample $(\hat{\beta^*}_{(1)},...,\hat{\beta^*}_{(B)}$ to draw inference.
 
 Instead the bagging algorithm has three basic steps:
 
-Bootstrapping: Bagging employs a bootstrapping sampling technique, which involves creating diverse subsets of the training dataset.
-This is achieved by randomly selecting data points from the training data, allowing for the possibility of selecting the same instance multiple times due to replacement.
-Consequently, a value or instance can appear more than once within a sample.
+-   Bootstrapping: Bagging employs a bootstrapping sampling technique, which involves creating diverse subsets of the training dataset.
+    This is achieved by randomly selecting data points from the training data, allowing for the possibility of selecting the same instance multiple times due to replacement.
+    Consequently, a value or instance can appear more than once within a sample.
 
-Parallel training: The generated bootstrap samples are then independently and simultaneously trained using weak or base learners.
-These learners can be decision trees or other simple models.
-Each bootstrap sample is trained separately, allowing for parallel processing and speeding up the overall training process.
+-   Parallel training: The generated bootstrap samples are then independently and simultaneously trained using weak or base learners.
+    These learners can be decision trees or other simple models.
+    Each bootstrap sample is trained separately, allowing for parallel processing and speeding up the overall training process.
 
-Aggregation: Once the individual models are trained, their predictions are aggregated to produce a more accurate estimate.
-The specific aggregation method depends on the task at hand, such as regression or classification.
-In regression, the individual model outputs are averaged, a technique known as soft voting.
-In classification, the class with the highest majority of votes is selected, referred to as hard voting or majority voting.
+-   Aggregation: Once the individual models are trained, their predictions are aggregated to produce a more accurate estimate.
+    The specific aggregation method depends on the task at hand, such as regression or classification.
+    In regression, the individual model outputs are averaged, a technique known as soft voting.
+    In classification, the class with the highest majority of votes is selected, referred to as hard voting or majority voting.
 
 In essence, when comparing bagging to the bootstrap method studied in our class, we can view bagging as an extension or application of bootstrap with an additional aggregation step at the end.
 Bagging incorporates the idea of bootstrapping by generating diverse samples through random sampling with replacement.
@@ -464,7 +429,7 @@ However, when using bagging with decision trees as the base model, one may lose 
 Decision trees typically have a clear and interpretable structure that allows for easy understanding of the underlying rules.
 In the bagging process, where multiple trees are combined, the resulting ensemble model may not have a straightforward and interpretable structure.
 Despite this loss of interpretability, the advantage of using bagging with decision trees is increased accuracy.
-By combining multiple trees through bagging, the variance is reduced, leading to improved predictive performance.\
+By combining multiple trees through bagging, the variance is reduced, leading to improved predictive performance.
 
 In summary, bagging is a valuable technique for improving the accuracy of a predictive model, even at the cost of losing the simplicity and interpretability of individual trees and it allows for increased accuracy through the combination of multiple models.
 Our application in R demonstrated the effectiveness of Bagging in reducing errors when dealing with unstable datasets, such as the "diabetes" dataset, using classification trees.
