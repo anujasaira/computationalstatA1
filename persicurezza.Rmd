@@ -3,6 +3,9 @@ title: "alllinearregressionillustration"
 author: "Alessia"
 date: "2023-06-16"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 **Forward variable selection**
@@ -89,7 +92,6 @@ The stability decreases as the number of variable used in the predictor decrease
 *For a stable procedure* $\delta_B= \delta_A(\mathbf{x},P_L)$ *is not as accurate as* $\delta(\mathbf{x},P)$.
 As m decreases, the instability increases and there is a cross-over point at which $\delta^B_m$ becomes more accurate than $\delta_m$.
 
-
 **Bagging class probability estimates**
 
 Some classification methods estimate probabilities p(j\|**x**) that an object with prediction vector **x** belongs to class j.
@@ -105,8 +107,31 @@ This was repeated 50 times and the results averaged.
 The single tree estimated had an error of .189.
 The error of the bagged estimates was .124, a decrease of 34%
 
-
-
 the waveform data was ran using 10,25,50 and 100 replicates with the same simulation scheme.
 The results appear in Table 10.![](aleimm2.png){width="254"}
 The unbagged rate is 29.1, so its clear that we are getting most of the improvement using only 10 bootstrap replicates.
+
+In classification, a predictor $\delta(\mathbf{x},L)$ predicts a class label j $\in$ {1,...,J}.
+Denote Q(J\|x)= P($\delta(\mathbf{x},L)=j$).
+The interpretation of Q(J\|x) is this: over many independent replicates of the learning set L, $\Phi$ predicts class label j at input x with relative frequency Q(J\|x).
+Let $P(J|\mathbf{x})$ be the probability that input x generates class j.
+Then the probability that the predictors classifies the generated state at x correctly is $\sum_{j}Q(J|\mathbf{x})P(J|\mathbf{x})$.
+The overall probability of correct classification is r= $\int[Q(J|\mathbf{x})P(J|\mathbf{x})]P_x(d_x)$ where $P_x(d_x)$ is the x probability distribution.
+Note that for any $Q(j|\mathbf{x})$, $\sum_{j}Q(J|\mathbf{x})P(J|\mathbf{x})\leq\max\_jP(J|\mathbf{x})$ with equality only if $$
+\begin{cases} 
+1\quad if\quad P(j|\mathbf{x})=max_iP(i|\mathbf{x})) \\
+O\quad else \\
+\end{cases}
+$$ The predictor $\delta^*(\mathbf{x})$= $argmax_jP(J|\mathbf{x})$ leads to the above expression for $Q(J|\mathbf{x})$ and gives the highest attainable correct classification rate: $r^*$=$\int max_j P(j|\mathbf{x})P_X(\mathbf{})$.
+Call $\Phi$ order-correct at the input x if $argmax_jQ(j|\mathbf{x})=argmax_jP(j|\mathbf{x})$.
+This means that if input x results in class j more often than any other class, then $\delta$ also predicts class j at x more often than any other class.
+The aggregated predictor is: $\delta_A(\mathbf{x})= argmax_jQ(j|\mathbf({x}))$.
+For the aggregated predictor the probability of correct classification at x is $\sum_{j}I(argmax_iQ(i|\mathbf{x})=j)P(j|\mathbf{x})$.
+If $\delta$ is order_correct at x, then the previous formula equals $max_jP(j|\mathbf{x})$.
+Letting C be the set of all inputs x at which $\Phi$ is order-correct, we get for the correct classification probability of $\Phi_A$ the expression:$$r_A=\int_\mathbf{x\in C}max_jP(J|\mathbf{x})P_x(d\mathbf{x})+\int_\mathbf{x\in C'}[\sum_jI(\delta_A(\mathbf{x})=j)P(j|\mathbf{x})]P_x(\mathbf{x}))] $$ Even if $\Phi$ is order-correct at x its correct classification rate can be far from optimal.
+But $\delta_A$ is optimal.
+If a predictor is good in the sense that it is order-correct for most inputs x, then aggregation can transform it into a nearly optimal predictor.
+On the other hand, unlike the numerical prediction situation, poor predictors can be transformed into worse ones.
+The same behavior regarding stability holds.
+Bagging unstable classifiers usually improves them.
+Bagging stable classifiers is not a good idea.

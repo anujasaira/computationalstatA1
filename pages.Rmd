@@ -283,37 +283,38 @@ Substituting this two values in the inequality we get: $$E_{y,\mathbf{x}}y^2-2E_
 So how much lower the mean squared error of $\Phi_A$ is depends on how unequal the two sides of $$[E_L\Phi(\mathbf{x},L)]^2\leq[E_L\Phi^2({x},L)]$$ are.
 The effect of instability is clear;
 
--   if $\Phi(x,L)$ does not change too much with replicate L the two sides will be nearly equal, and aggregation will not help;
-
-<!-- -->
-
--   the more highly variable the $\Phi(x,L)$ are, the more improvement may produce. But $\Phi_A(x,L)$ always improves on $\Phi$.
+-   if $\phi(x,L)$ does not change too much with replicate L the two sides will be nearly equal, and aggregation will not help.
+-   the more highly variable the $\phi(x,L)$ are, the more improvement may produce. But $\phi_A(x,L)$ always improves on $\phi$.
 
 To clarify better this last point we have to remind that if the predictors remain constant, then the expected value will also remain constant over repeated observations.
 In this case, both sides of the inequality will be equal because the expected value squared will be the same as the expected value of the squared predictors.
-Instead, when the predictors are highly variable the square of the mean might understimate the average value of the squared predictors because it doesn't account for the variability.
+Instead, when the predictors are highly variable the square of the mean might undere stimate the average value of the squared predictors because it doesn't account for the variability.
 
 **Classification**
 
-In classification, a predictor $\delta(\mathbf{x},L)$ predicts a class label j $\in$ {1,...,J}.
-Denote Q(J\|**x**)= P($\delta(\mathbf{x},L)=j$).
-The interpretation of Q(J\|**x**) is this: over many independent replicates of the learning set *L*, $\Phi$ predicts class label j at input **x** with relative frequency Q(J\|**x**).
-Let $P(J|\mathbf{x})$ be the probability that input **x** generates class j.
-Then the probability that the predictors classifies the generated state at **x** correctly is $\sum_{j}Q(J|\mathbf{x})P(J|\mathbf{x})$.
-The overall probability of correct classification is r= $\int[Q(J|\mathbf{x})P(J|\mathbf{x})]P_x(d_x)$ where $P_x(d_x)$ is the **x** probability distribution.
-Note that for any $Q(j|\mathbf{x})$, $\sum_{j}Q(J|\mathbf{x})P(J|\mathbf{x})\leq\max\_jP(J|\mathbf{x})$ with equality only if $$
+In classification, a predictor $\varphi(\mathbf{x},\mathcal{L})$ predicts a class label j $\in$ {1,...,J}.
+Denote $\mathit{Q}$(j\|**x**)= $P(\phi(\mathbf{x},\mathcal{L})=j)$.
+The interpretation of $\mathit{Q}$(j\|**x**) is that over many independent replicates of the learning set $\mathcal{L}$, $\phi$ predicts class label j at input **x** with relative frequency $\mathit{Q}$(j\|**x**).
+Let $P(j|\mathbf{x})$ be the probability that input **x** generates class j.
+Then the probability that the predictors classifies the generated state at **x** correctly is $\sum_{j}Q(j|\mathbf{x})P(j|\mathbf{x})$.
+The overall probability of correct classification is
+
+$$\mathit{r}= \int[Q(J|\mathbf{x})P(J|\mathbf{x})]P_x(d_x)$$
+
+where $P_x(d_x)$ is the **x** probability distribution.
+Note that for any $Q(j|\mathbf{x})$;
+
+$\sum_{j}Q(j|\mathbf{x})P(j|\mathbf{x})\leq max_jP(j|\mathbf{x})$ with equality only if $$
 \begin{cases} 
 1\quad if\quad P(j|\mathbf{x})=max_iP(i|\mathbf{x})) \\
-O\quad else \\
+0\quad else \\
 \end{cases}
-$$ The predictor $\delta^*(\mathbf{x})$= $argmax_jP(J|\mathbf{x})$ leads to the above expression for $Q(J|\mathbf{x})$ and gives the highest attainable correct classification rate: $r^*$=$\int max_j P(j|\mathbf{x})P_X(\mathbf{})$.
-Call $\Phi$ order-correct at the input **x** if $argmax_jQ(j|\mathbf{x})=argmax_jP(j|\mathbf{x})$.
+$$ The predictor $\phi^*(\mathbf{x})$= $argmax_jP(j|\mathbf{x})$ leads to the above expression for $Q(j|\mathbf{x})$ and gives the highest attainable correct classification rate: $r^*=\int max_j P(j|\mathbf{x})P_X(\mathbf{x})$.
+Call $\phi$ order-correct at the input **x** if $argmax_jQ(j|\mathbf{x})=argmax_jP(j|\mathbf{x})$.
 This means that if input **x** results in class j more often than any other class, then $\delta$ also predicts class j at **x** more often than any other class.
-The aggregated predictor is: $\delta_A(\mathbf{x})= argmax_jQ(j|\mathbf({x}))$.
-For the aggregated predictor the probability of correct classification at **x** is $\sum_{j}I(argmax_iQ(i|\mathbf{x})=j)P(j|\mathbf{x})$.
-If $\delta$ is order_correct at **x**, then the previous formula equals $max_jP(j|\mathbf{x})$.
-Letting C be the set of all inputs **x** at which $\Phi$ is order-correct, we get for the correct classification probability of $\Phi_A$ the expression:$$r_A=\int_\mathbf{x\in C}max_jP(J|\mathbf{x})P_x(d\mathbf{x})+\int_\mathbf{x\in C'}[\sum_jI(\delta_A(\mathbf{x})=j)P(j|\mathbf{x})]P_x(\mathbf{x}))] $$ Even if $\Phi$ is order-correct at **x** its correct classification rate can be far from optimal.
-But $\delta_A$ is optimal.
+The aggregated predictor is: $$\phi_A(\mathbf{x})= argmax_jQ(j|\mathbf({x}))$$For the aggregated predictor the probability of correct classification at **x** is $\sum_{j}I(argmax_iQ(i|\mathbf{x})=j)P(j|\mathbf{x})$.
+If $\phi$ is order-correct at **x**, then the previous formula equals $max_jP(j|\mathbf{x})$.
+Let $$C=\{{\mathbf{x};argmax_jP(j|\mathbf{x})= argmax_j\mathit{Q}(j|x)}\}$$ we get for the correct classification probability of $\phi_A$ the expression:$$r_A=\int_\mathbf{x\in C}max_jP(j|\mathbf{x})P_x(d\mathbf{x})+\int_\mathbf{x\in C'}[\sum_jI(\phi_A(\mathbf{x})=j)P(j|\mathbf{x})]P_x(d\mathbf{x}))]$$Even if $\phi$ is order-correct at **x** its correct classification rate can be far from optimal because $\sum_j Q(j|\mathbf{x})P(j|\mathbf{x}) \leq max_jP(j|\mathbf{x})$.
 If a predictor is good in the sense that it is order-correct for most inputs **x**, then aggregation can transform it into a nearly optimal predictor.
 On the other hand, unlike the numerical prediction situation, poor predictors can be transformed into worse ones.
 The same behavior regarding stability holds.
