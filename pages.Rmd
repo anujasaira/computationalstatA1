@@ -100,6 +100,34 @@ The main difference between bagging and random forests lies in the choice of the
 If we use all predictors, it's equivalent to bagging.
 However, when using the square root of the total predictors, random forests show a reduction in the test error.
 
+**Bagging Regression Trees**
+
+Regression trees are decision trees in which the target variables can take continuous values instead of class labels in leaves.
+Regression trees use modified split selection criteria and stopping criteria.
+By using a regression tree, you can explain the decisions, identify possible events that might occur, and see potential outcomes.
+The analysis helps you determine what the best decision would be.
+To divide the data into subsets, regression tree models use nodes, branches, and leaves.
+The steps to follow to create a bagged regression tree is same as bagged classification tree.
+The dataset sample is split into learning(10%) and test(90%) set.
+A regression tree is constructed from the learning set using 10-fold cross-validation.
+Running the test set down this tree gives the squared error.
+A bootstrapsample $\mathcal{L_B}$ is selected from $\mathcal{L}$ and a tree grown using $\mathcal{L_B}$ and $\mathcal{L}$ used to select the pruned subtree.
+This is repeated 25 times giving tree predictors \$\phi\*1(x)\* $,...,$\phi{25}(x) \$.The bagged predictor is $\hat{\mathit{y_n}}$ = $\mathit{av_k}\phi_{k}(x_n)$, and the squared error $\mathit{e_B(L,T)}$ is $\mathit{av_n(y_n-\hat{y_n})^2}$.
+The random division of the data into 12 and T is repeated 100 times and the errors averaged.
+
+![Figure 3.Bagging Regession Tree](baggreg.png){width="600px," height="450px"}
+
+There is a decrease in error even in this case.
+
+**Larger Data Sets**
+For large dataset that is dataset with more than 2000 samples, 10% of the data is set aside as training set and the remaining 90% as learning set.The set aside 10% was then used to select the best pruned subtree.In bagging, 50 bootstrap replicates of the training set were generated and a large tree grown on each one.
+The error rate given in the paper shown below.
+
+![Figure 3. Misclassification Rate](largedataerr.png){width="500px," height="200px"}
+
+The percentage of decrease in misclassification rate is similar to the rate of difference in small dataset.
+But if we have a closer look at the errors, the error for classification tree is very much small and the improvement is not extremely significant.
+
 ## Application in R
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -190,34 +218,6 @@ err_data
 
 From the table above we can see that the Error is maximum for Decision Tree and least for Random Forest.
 Bagged Predictor model performs better than Decision Tree ie it can reduce the variance of an unstable dataset.
-
-**Larger Data Sets**
-For large dataset that is dataset with more than 2000 samples, 10% of the data is set aside as training set and the remaining 90% as learning set.The set aside 10% was then used to select the best pruned subtree.In bagging, 50 bootstrap replicates of the training set were generated and a large tree grown on each one.
-The error rate given in the paper shown below.
-
-![Figure 3. Misclassification Rate](largedataerr.png){width="500px," height="200px"}
-
-The percentage of decrease in misclassification rate is similar to the rate of difference in small dataset.
-But if we have a closer look at the errors, the error for classification tree is very much small and the improvement is not extremely significant.
-
-**Bagging Regression Trees**
-
-Regression trees are decision trees in which the target variables can take continuous values instead of class labels in leaves.
-Regression trees use modified split selection criteria and stopping criteria.
-By using a regression tree, you can explain the decisions, identify possible events that might occur, and see potential outcomes.
-The analysis helps you determine what the best decision would be.
-To divide the data into subsets, regression tree models use nodes, branches, and leaves.
-The steps to follow to create a bagged regression tree is same as bagged classification tree.
-The dataset sample is split into learning(10%) and test(90%) set.
-A regression tree is constructed from the learning set using 10-fold cross-validation.
-Running the test set down this tree gives the squared error.
-A bootstrapsample $\mathcal{L_B}$ is selected from $\mathcal{L}$ and a tree grown using $\mathcal{L_B}$ and $\mathcal{L}$ used to select the pruned subtree.
-This is repeated 25 times giving tree predictors \$\phi\*1(x)\* $,...,$\phi{25}(x) \$.The bagged predictor is $\hat{\mathit{y_n}}$ = $\mathit{av_k}\phi_{k}(x_n)$, and the squared error $\mathit{e_B(L,T)}$ is $\mathit{av_n(y_n-\hat{y_n})^2}$.
-The random division of the data into 12 and T is repeated 100 times and the errors averaged.
-
-![Figure 3.Bagging Regession Tree](baggreg.png){width="600px," height="450px"}
-
-There is a decrease in error even in this case.
 
 ## Why bagging works
 
