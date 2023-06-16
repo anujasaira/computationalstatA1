@@ -181,46 +181,28 @@ The whole process is iterated 100 times for different combination of learning an
 ```{r}
 for (i in 1:100){
   index <- createDataPartition(E_sim$Outcome, p = 0.7, list = FALSE)
-
   # Divide the data into test set T and learning set L
   T <- E_sim[-index, ]
   L <- E_sim[index, ]
-  
   # Train the classification tree model with 10-fold cross-validation 
-  modeldt <- train(
-    Outcome ~ ., 
-    data = L, 
-    method = "rpart", 
-    trControl = trainControl(method = "cv", number = 10)
-  )
-  
+  modeldt <- train(Outcome ~ ., data = L, method = "rpart", 
+                   trControl = trainControl(method = "cv", number = 10))
   rf_model <- randomForest(Outcome ~ ., data = L,mtry = 3, importance=TRUE)
   bagged_tree<- randomForest(Outcome ~ ., data = L,mtry = 8, ntree = 50)
 
-  
-
   # Predict the class labels for the test set using the trained model
   predictions <- predict(modeldt, newdata = T)
+  predictions_rf <- predict(rf_model, newdata = T)
+  predictions_bagged <- predict(bagged_tree, newdata = T)
+  
   # Calculate misclassification rate
   misclassification_rate <- mean(predictions != T$Outcome)
   misclassification_rate_vec[i] <- misclassification_rate
-  
-  
-  predictions_rf <- predict(rf_model, newdata = T)
-  # Calculate misclassification rate
   misclassification_rate_rf <- mean(predictions_rf != T$Outcome)
   misclassification_rate_vec_rf[i] <- misclassification_rate_rf
-  
-  predictions_bagged <- predict(bagged_tree, newdata = T)
-  # Calculate misclassification rate
   misclassification_rate_bagged <- mean(predictions_bagged != T$Outcome)
-
   misclassification_rate_vec_bagged[i] <- misclassification_rate_bagged
-  
 }
-
-
-
 ```
 
 ```{r}

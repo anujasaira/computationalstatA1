@@ -24,14 +24,14 @@ He also provides a theoretical explanation of how bagging reduces the mean-squar
 Unstable classifiers, such as trees, characteristically have high variance and low bias.
 Stable classifiers have low variance, but can have high bias.
 Instability is an essential ingredient for bagging to improve accuracy.
-We have a learning set (L) with data points {$(y_n, x_n)$} for training a predictor ($\delta(x, L)$).
-To improve the predictor, we use a sequence of learning sets {$L_k$} drawn from the same distribution as L.
-We only have access to the predictors {$\delta(x, L_k)$}.
-For numerical responses, we average the predictors $\delta(x, L_k)$ to get an aggregated predictor $\delta_A(x)$.For class labels, we use voting among the predictors $\delta(x, L_k)$ to form the aggregated predictor $\delta_A(x)$.
-If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from L to create bootstrap replicates {$L^{(B)}$}.
-We form predictors ${\delta(x, L^{(B)})}$ using these replicates.
-For numerical responses, the aggregated predictor is $\delta_B(x)$, which is the average of the predictors $\delta(x, L^{(B)})$.
-For class labels, the aggregated predictor $\delta_B(x)$ is determined by voting among the predictors $\delta(x, L^{(B)})$.
+We have a learning set ($\mathcal{L}$) with data points {$(y_n, x_n)$} for training a predictor ($\phi(x,\mathcal{L})$).
+To improve the predictor, we use a sequence of learning sets {$\mathcal{L_k}$} drawn from the same distribution as $\mathcal{L}$.
+We only have access to the predictors {$\phi(x, \mathcal{L_k})$}.
+For numerical responses, we average the predictors $\phi(x, \mathcal{L_k})$ to get an aggregated predictor $\phi_A(x)$.For class labels, we use voting among the predictors $\phi(x, \mathcal{L_k})$ to form the aggregated predictor $\phi_A(x)$.
+If we don't have multiple learning sets, we mimic the process using repeated bootstrap sampling from $\mathcal{L}$ to create bootstrap replicates {$\mathcal{L}^{(B)}$}.
+We form predictors ${\phi(x, \mathcal{L}^{(B)})}$ using these replicates.
+For numerical responses, the aggregated predictor is $\phi_B(x)$, which is the average of the predictors $\phi(x,\mathcal{L}^{(B)}$.
+For class labels, the aggregated predictor $\phi_B(x)$ is determined by voting among the predictors $\phi(x,\mathcal{L}^{(B)})$.
 This paper aims to provide a comprehensive analysis and interpretation of Breiman's influential paper.
 We focus on utilizing classification trees, specifically with the "diabetes" dataset mentioned in the paper, and supplement our findings with relevant code examples.
 Additionally, we incorporate the random forest function and offer an explanation of its significance within our analysis.
@@ -45,12 +45,12 @@ We aim to provide a concise yet comprehensive overview of our research, shedding
 A decision tree is a non-parametric supervised learning algorithm, that is utilized for both classification and regression tasks.
 It has a hierarchical, tree structure, which consists of a root node, branches, internal nodes and leaf nodes.
 
-![Decision Tree](tree_example.png){width="245"}
+![Decision Tree](tree_example.png){width="500px" height="200px"}
 
 Decision tree learning employs a divide and conquer strategy by conducting a greedy search to identify the optimal split points within a tree.
 This process of splitting is then repeated in a top-down, recursive manner until all, or the majority of records have been classified under specific class labels.
 Whether or not all data points are classified as homogeneous sets is largely dependent on the complexity of the decision tree.
-Smaller trees are more easily able to attain pure leaf nodes---i.e.
+Smaller trees are more easily able to attain pure leaf nodes-i.e.
 data points in a single class.However, as a tree grows in size, it becomes increasingly difficult to maintain this purity, and it usually results in too little data falling within a given subtree.
 When this occurs, it is known as data fragmentation, and it can often lead to overfitting.
 As a result, decision trees have preference for small trees.
@@ -69,7 +69,7 @@ A classification tree model is created as and example and an example is availabl
 
 **Regression trees** divide the data into subsets, that is, branches, nodes, and leaves.
 Like decision trees, regression trees select splits that decrease the dispersion of target attribute values.Thus, the target attribute values can be predicted from their mean values in the leaves.
-The resulting model is piecewise-constant.
+The resulting model is piece wise-constant.
 It has fixed predicted values that are assigned to regions for which the domain is split by the tree structure.
 Regression tree growing is done by creating a regression tree from a data set.
 To minimize the dispersion of target attributes, splits are selected.
@@ -78,7 +78,7 @@ Regression tree prediction uses a previously grown regression tree to predict th
 
 **BAGGING DECISION TREE**
 
-![Bagging Regession Tree](baggreg.png){width="281"}
+![Bagging Regession Tree](baggreg.png){width="500px" height="200px"}
 
 The bootstrap is used in many situations in which it is hard or even impossible to directly compute the standard deviation of a quantity of interest.Here the bootstrap can be used in order to improve statistical learning methods such as decision trees.
 The decision trees suffer from high variance.
@@ -99,7 +99,7 @@ A classification tree is constructed from the learning set using 10-fold cross-v
 Running the test set down this tree gives the squared error.
 A bootstrap sample $\mathcal{L_B}$ is selected from $\mathcal{L}$ and a tree grown using $\mathcal{L_B}$ and $\mathcal{L}$ used to select the pruned subtree.
 This is repeated 50 times giving tree predictors $\phi_{1}(x)$,...,$\phi_{50}(x)$.The bagged predictor is estimates as which class has the plurality in $\phi_{1}(x)$,...,$\phi_{50}(x)$.
-That is by the highest number of votes or taking the class with highest probability in $\phi_{1}(x)$,...,$\phi_{50}(x)$.The proportion of times the estimated class differs from the true class is the bagging misclassification rate $\mathit{e_B(L,T)}$.The random division of the data into L and T is repeated 100 times and giving the result $\mathit{\bar{e_s}}$,$\mathit{\bar{e_B}}$.
+That is by the highest number of votes or taking the class with highest probability in $\phi_{1}(x)$,...,$\phi_{50}(x)$.The proportion of times the estimated class differs from the true class is the bagging misclassification rate $\mathit{e_B(L,T)}$.The random division of the data into$\mathcal{L}$and T is repeated 100 times and giving the result $\mathit{\bar{e_s}}$,$\mathit{\bar{e_B}}$.
 
 **Bagging regression tree**
 
@@ -141,12 +141,12 @@ However, when using the square root of the total predictors, random forests show
 For large dataset that is dataset with more than 2000 samples, 10% of the data is set aside as training set and the remaining 90% as learning set.The set aside 10% was then used to select the best pruned subtree.In bagging, 50 bootstrap replicates of the training set were generated and a large tree grown on each one.
 The error rate given in the paper shown below.
 
-![Figure 3: Misclassification Rate](largedataerr.png){width="168" height="91"}
+![Misclassification Rate](largedataerr.png){width="500px" height="100px"}
 
 The percentage of decrease in misclassification rate is similar to the rate of difference in small dataset.
 But if we have a closer look at the errors, the error for classification tree is very much small and the improvement is not extremely significant.
 
-**APPLICATION IN R**
+**EXAMPLE PROGRAM IN R**
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -154,13 +154,12 @@ library(caret)
 library(randomForest)
 ```
 
-We are going to use diabetes dataset gathered among the Pima Indians by the National Institute of Diabetes and Digestive and Kidney Diseases and compare the result of decision tree, bagged and random forest.
+We are going to use diabetes dataset gathered among the Pima Indians by the National Institute of Diabetes and Digestive and Kidney Diseases and compare the result of classification tree, bagged and random forest.
 
-```{r}
+```{r echo=TRUE}
 misclassification_rate_vec <- rep(0,100)
 misclassification_rate_vec_rf <- rep(0,100)
 misclassification_rate_vec_bagged<- rep(0,100)
-
 E_sim <- read.table('diabetes.csv',sep=',',header = TRUE)
 E_sim$Outcome<- as.factor(E_sim$Outcome)
 
@@ -173,50 +172,37 @@ The classes are: tested positive for diabetes (268) or negative (500).
 In the simulated data, Breiman uses 300 samples as learning set from the 1800 samples generated.
 However we are going to use the raw dataset and split the dataset into 2 - a learning set, L, (10% of the data) with 76 rows and a test set, T, (90% of the data) with 692 rows.
 Next we will construct the classification tree model using train() function with 10-fold cross-validation.
-A bagged decision tree is created in parallel using the function randomForest() and setting the number of trees as 25 and mtry (the number of variables used) as 8.
-Last we create a Random Forest model using the same function but here we mtry as 3 ($\sqrt{8}$).
+A bagged classification tree is created in parallel using the function randomForest() and setting the number of trees as 25 and mtry (the number of variables used) as 8.
+Last we create a Random Forest model using the same function but here we mtry as 3 (approx equal to $\sqrt{8}$).
 So the best 3 variables among the 8 will be chosen.
 The three models are made to predict the result using the test dataset T and the miscalculation rate is calculated.
 The whole process is iterated 100 times for different combination of learning and test data and the mean error is calculated.
 
-```{r}
+```{r echo=TRUE}
 for (i in 1:100){
   index <- createDataPartition(E_sim$Outcome, p = 0.7, list = FALSE)
-
   # Divide the data into test set T and learning set L
   T <- E_sim[-index, ]
   L <- E_sim[index, ]
-  
   # Train the classification tree model with 10-fold cross-validation 
-  modeldt <- train(
-    Outcome ~ ., 
-    data = L, 
-    method = "rpart", 
-    trControl = trainControl(method = "cv", number = 10)
-  )
-  
+  modeldt <- train(Outcome ~ ., data = L, method = "rpart", 
+                   trControl = trainControl(method = "cv", number = 10))
   rf_model <- randomForest(Outcome ~ ., data = L,mtry = 3, importance=TRUE)
-  bagged_tree<- randomForest(Outcome ~ ., data = L,mtry = 8, ntree = 25)
-  
+  bagged_tree<- randomForest(Outcome ~ ., data = L,mtry = 8, ntree = 50)
+
   # Predict the class labels for the test set using the trained model
   predictions <- predict(modeldt, newdata = T)
+  predictions_rf <- predict(rf_model, newdata = T)
+  predictions_bagged <- predict(bagged_tree, newdata = T)
+  
   # Calculate misclassification rate
   misclassification_rate <- mean(predictions != T$Outcome)
   misclassification_rate_vec[i] <- misclassification_rate
-  predictions_rf <- predict(rf_model, newdata = T)
-  # Calculate misclassification rate
   misclassification_rate_rf <- mean(predictions_rf != T$Outcome)
   misclassification_rate_vec_rf[i] <- misclassification_rate_rf
-  predictions_bagged <- predict(bagged_tree, newdata = T)
-  # Calculate misclassification rate
   misclassification_rate_bagged <- mean(predictions_bagged != T$Outcome)
   misclassification_rate_vec_bagged[i] <- misclassification_rate_bagged
-  
 }
-
-```
-
-```{r}
 mis<- mean(misclassification_rate_vec)
 mis_rf <- mean(misclassification_rate_vec_rf)
 mis_bagg <- mean(misclassification_rate_vec_bagged)
@@ -226,7 +212,7 @@ err_data
 ```
 
 From the table above we can see that the Error is maximum for Decision Tree and least for Random Forest.
-Bagged Predictor model performs better than Decision Tree ie it can reduce the variance of an unstable dataset.
+Bagged Predictor model performs better than Decision Tree i.e. it can reduce the variance of an unstable dataset.
 
 **WHY BAGGING WORKS**
 
@@ -239,25 +225,29 @@ This diversity is achieved through the bootstrap sampling process, where each ba
 If the base models used in bagging are stable, meaning they produce similar predictions when trained on slightly different datasets, the ensemble model's performance may not significantly improve.
 This is because the models will produce similar predictions and will not provide enough diversity to effectively reduce variance.
 On the other hand, if the base models are unstable, meaning they are sensitive to small changes in the training data, the ensemble model will benefit from the aggregation of these diverse models.
-Let each (y,**x**) case in L be independently drawn from the probability distribution P.
-Suppose y is numerical and $\Phi(\mathbf{x},L)$ the predictor.
-The aggregated predictor is $\Phi_A(\mathbf{x},P)=E_L\Phi(x,L)$.
-Now assume $z=y-\Phi(\mathbf{x},L)$, apply the inequality $E(Z)^2\geq(EZ)^2$ and take the expectation over L(mean squared error):$$E_L(y-\Phi(\mathbf{x},L))^2\geq(E_L(y-\Phi(\mathbf{x},L))^2$$ Now we take the $E_{y,\mathbf{x}}$ of both members of the inequality and so we get average prediction error:
+Let each (y,**x**) case in $\mathcal{L}$ be independently drawn from the probability distribution P.
+Suppose y is numerical and $\phi(\mathbf{x},\mathcal{L})$ the predictor.
+The aggregated predictor is $\phi_A(\mathbf{x},P)=E_L\phi(x,\mathcal{L})$.
+Now assume $z=y-\phi(\mathbf{x},\mathcal{L})$, apply the inequality $E(Z)^2\geq(EZ)^2$ and take the expectation over L(mean squared error):$$E_L(y-\phi(\mathbf{x},\mathcal{L}))^2\geq(E_L(y-\phi(\mathbf{x},\mathcal{L}))^2$$ Now we take the $E_{y,\mathbf{x}}$ of both members of the inequality and so we get average prediction error:
 
-1.  $E_{y,\mathbf{x}}[E_L(y-\Phi(\mathbf{x},L))^2]$= $E_{y,\mathbf{x}}E_L(y^2-2y\Phi(\mathbf{x},L)+\Phi^2(\mathbf{x},L))$= $E_{y,{x}}E_Ly^2-2E_{y,\mathbf{x}}E_Ly\Phi(\mathbf{x},L)+E_{y,\mathbf{x}}E_L\Phi^2(\mathbf{x},L)$=$E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}y\Phi_A+E_{y,\mathbf{x}}E_L\Phi^2({x},L)$
-2.  $E_{y,\mathbf{x}}(E_L(y-\Phi(\mathbf{x},L))^2$=$E_{y,\mathbf{x}}(y-\Phi_A)^2$=$E_{y,\mathbf{x}}(y^2-2y\Phi_A+\Phi_A^2)$=$E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\Phi_A+E_{y,\mathbf{x}}\Phi_a^2$
+LHS: $E_{y,\mathbf{x}}[E_L(y-\phi(\mathbf{x},\mathcal{L}))^2]$ = $E_{y,\mathbf{x}}E_L(y^2-2y\phi(\mathbf{x},\mathcal{L})+\phi^2(\mathbf{x},\mathcal{L}))$
 
-Substituting this two values in the inequality we get: $$E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}y\Phi_A+E_{y,\mathbf{x}}E_L\Phi^2({x},L)\geq(E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\Phi_A+E_{y,\mathbf{x}}\Phi_A^2)$$
+i.e. $E_{y,{x}}E_Ly^2-2E_{y,\mathbf{x}}E_Ly\phi(\mathbf{x},\mathcal{L})+E_{y,\mathbf{x}}E_L\phi^2(\mathbf{x},\mathcal{L})$ = $E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}y\phi_A+E_{y,\mathbf{x}}E_L\phi^2({x},L)$
 
-So how much lower the mean squared error of $\Phi_A$ is depends on how unequal the two sides of $$[E_L\Phi(\mathbf{x},L)]^2\leq[E_L\Phi^2({x},L)]$$ are.
-The effect of instability is clear;
+RHS: $E_{y,\mathbf{x}}(E_L(y-\phi(\mathbf{x},\mathcal{L}))^2$=$E_{y,\mathbf{x}}(y-\phi_A)^2$
 
--   if $\phi(x,L)$ does not change too much with replicate L the two sides will be nearly equal, and aggregation will not help.
--   the more highly variable the $\phi(x,L)$ are, the more improvement may produce. But $\phi_A(x,L)$ always improves on $\phi$.
+i.e. $E_{y,\mathbf{x}}(y^2-2y\phi_A+\phi_A^2)$ = $E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\phi_A+E_{y,\mathbf{x}}\phi_a^2$
+
+Substituting this two values in the inequality we get: $$E_{y,\mathbf{x}}y^2 - 2E_{y,\mathbf{x}}y\phi_A+E_{y,\mathbf{x}}E_L\phi^2({x},\mathcal{L})\geq(E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\phi_A+E_{y,\mathbf{x}}\phi_A^2)$$
+
+So how much lower the mean squared error of $\phi_A$ is depends on how unequal the two sides of $$[E_L\phi(\mathbf{x},L)]^2\leq[E_L\phi^2({x},L)]$$ are.
+The effect of instability is clear; - if $\phi(x,L)$ does not change too much with replicate $\mathcal{L}$ the two sides will be nearly equal, and aggregation will not help.
+- the more highly variable the $\phi(x,\mathcal{L})$ are, the more improvement may produce.
+But $\phi_A(x,\mathcal{L})$ always improves on $\phi$.
 
 To clarify better this last point we have to remind that if the predictors remain constant, then the expected value will also remain constant over repeated observations.
 In this case, both sides of the inequality will be equal because the expected value squared will be the same as the expected value of the squared predictors.
-Instead, when the predictors are highly variable the square of the mean might undere stimate the average value of the squared predictors because it doesn't account for the variability.
+Instead, when the predictors are highly variable the square of the mean might underestimate the average value of the squared predictors because it doesn't account for the variability.
 
 **Classification**
 
@@ -268,7 +258,7 @@ Let $P(j|\mathbf{x})$ be the probability that input **x** generates class j.
 Then the probability that the predictors classifies the generated state at **x** correctly is $\sum_{j}Q(j|\mathbf{x})P(j|\mathbf{x})$.
 The overall probability of correct classification is
 
-$$\mathit{r}= \int[Q(J|\mathbf{x})P(J|\mathbf{x})]P_x(d_x)$$
+$$\mathit{r}= \int[Q(j|\mathbf{x})P(j|\mathbf{x})]P_x(d_x)$$
 
 where $P_x(d_x)$ is the **x** probability distribution.
 Note that for any $Q(j|\mathbf{x})$;
@@ -280,7 +270,7 @@ $\sum_{j}Q(j|\mathbf{x})P(j|\mathbf{x})\leq max_jP(j|\mathbf{x})$ with equality 
 \end{cases}
 $$ The predictor $\phi^*(\mathbf{x})$= $argmax_jP(j|\mathbf{x})$ leads to the above expression for $Q(j|\mathbf{x})$ and gives the highest attainable correct classification rate: $r^*=\int max_j P(j|\mathbf{x})P_X(\mathbf{x})$.
 Call $\phi$ order-correct at the input **x** if $argmax_jQ(j|\mathbf{x})=argmax_jP(j|\mathbf{x})$.
-This means that if input **x** results in class j more often than any other class, then $\delta$ also predicts class j at **x** more often than any other class.
+This means that if input **x** results in class j more often than any other class, then $\phi$ also predicts class j at **x** more often than any other class.
 The aggregated predictor is: $$\phi_A(\mathbf{x})= argmax_jQ(j|\mathbf({x}))$$For the aggregated predictor the probability of correct classification at **x** is $\sum_{j}I(argmax_iQ(i|\mathbf{x})=j)P(j|\mathbf{x})$.
 If $\phi$ is order-correct at **x**, then the previous formula equals $max_jP(j|\mathbf{x})$.
 Let $$C=\{{\mathbf{x};argmax_jP(j|\mathbf{x})= argmax_j\mathit{Q}(j|x)}\}$$ we get for the correct classification probability of $\phi_A$ the expression:$$r_A=\int_\mathbf{x\in C}max_jP(j|\mathbf{x})P_x(d\mathbf{x})+\int_\mathbf{x\in C'}[\sum_jI(\phi_A(\mathbf{x})=j)P(j|\mathbf{x})]P_x(d\mathbf{x}))]$$Even if $\phi$ is order-correct at **x** its correct classification rate can be far from optimal because $\sum_j Q(j|\mathbf{x})P(j|\mathbf{x}) \leq max_jP(j|\mathbf{x})$.
@@ -294,12 +284,12 @@ Bagging stable classifiers is not a good idea.
 
 **Forward variable selection**
 
-With data of the form $L={(y_n,\mathbf{x_n}),n=1...N}$ where $\mathbf{x}=(x_1,...,x_M)$ consists of M predictor variables, a popular prediction method consists of forming predictors $\delta_1(\mathbf{x})...\delta_M(\mathbf{x})$ where $\delta_m(\mathbf{x})$ is linear in **x** and depends on only m of the M x-variables.
-Then one of the $\delta_m(\mathbf{x})$ is chosen as the designated predictor.
-A common method for constructing the $\delta_m(\mathbf{x})$, and one that is used in our simulation, is forward variable entry.
-If the variables used in $\delta_k(\mathbf{x})$ are $(x_{1k},...,x_{mk})$ then for each m $\notin {m_1,...m_K}$ form the linear regression of y on $(x_{m1},...,x_{mk+1}, x_m)$, compute the RSS(m) and take $x_{mk+1}$ such that $m_{k+1}$ minimizes RSS(m) and $\delta_{k+1}(\mathbf{x})$ the linear regression based on $(x_{m1},...,x_{mk+1})$.
+With data of the form $\mathcal{L}={(y_n,\mathbf{x_n}),n=1...N}$ where $\mathbf{x}=(x_1,...,x_M)$ consists of M predictor variables, a popular prediction method consists of forming predictors $\phi_1(\mathbf{x})...\phi_M(\mathbf{x})$ where $\phi_m(\mathbf{x})$ is linear in **x** and depends on only m of the M x-variables.
+Then one of the $\phi_m(\mathbf{x})$ is chosen as the designated predictor.
+A common method for constructing the $\phi_m(\mathbf{x})$, and one that is used in our simulation, is forward variable entry.
+If the variables used in $\phi_k(\mathbf{x})$ are $(x_{1k},...,x_{mk})$ then for each m $\notin {m_1,...m_K}$ form the linear regression of y on $(x_{m1},...,x_{mk+1}, x_m)$, compute the RSS(m) and take $x_{mk+1}$ such that $m_{k+1}$ minimizes RSS(m) and $\phi_{k+1}(\mathbf{x})$ the linear regression based on $(x_{m1},...,x_{mk+1})$.
 What is clear about this procedure is that it is an unstable procedures.
-The variables are competing for inclusion in the $\delta_m$ and small changes in the data can cause large changes in the $\delta_m$.
+The variables are competing for inclusion in the $\phi_m$ and small changes in the data can cause large changes in the $\phi_m$.
 Forward variable selection is considered an unstable procedure due to the following reasons:dependency on the order of variable selection, sensitivity to correlated variables and impact of small data variations(forward variable selection can be sensitive to small variations in the input data).
 To mitigate the potential instability of forward variable selection, techniques such as cross-validation or bootstrap can be used to assess the stability of selected variables and the robustness of the resulting model.
 
@@ -318,26 +308,26 @@ Three sets of coefficients are used in the paper's example.In the first set of c
 For each set of coefficients, the following procedure was replicated 250 times:
 
 1\.
-Data $L={(y_n,\mathbf{x_n}),n=1...60}$ was drawn from the model y=$\sum_{m}\beta_mx_m+\epsilon$.
+Data $\mathcal{L}={(y_n,\mathbf{x_n}),n=1...60}$ was drawn from the model y=$\sum_{m}\beta_mx_m+\epsilon$.
 
 2\.
-Forward entry variables was done using L to get the predictors $\delta_1(\mathbf{x})...\delta_M(\mathbf{x})$.
+Forward entry variables was done using$\mathcal{L}$to get the predictors $\phi_1(\mathbf{x})...\phi_M(\mathbf{x})$.
 The mean squared prediction error of each of these was computed giving $e_1...e_M$.
 
 3\.
-Fifty bootstrap replicates $L_B$ of L were generated.
-For each of these, forward step-wise regression was applied to construct predictors ${\delta_1(\mathbf{x},L_B)...\delta_M(\mathbf{x},L_B)}$.
-These were averaged over the $L_b$ to give the bagged sequence $\delta^B_1(\mathbf{X})...\delta^B_M(\mathbf{X})$.
+Fifty bootstrap replicates $\mathcal{L_B}$ of$\mathcal{L}$were generated.
+For each of these, forward step-wise regression was applied to construct predictors ${\phi_1(\mathbf{x},\mathcal{L_B})...\phi_M(\mathbf{x},\mathcal{L_B})}$.
+These were averaged over the $\mathcal{L_B}$ to give the bagged sequence $\phi^B_1(\mathbf{X})...\phi^B_M(\mathbf{X})$.
 The prediction errors $e^B_1...e^B_M$ for this sequence were computed.
 
 These computed mean-squared-errors were averaged over the 250 repetitions to give the sequences ${\bar{e}^S_m},{\bar{e}^B_m}$.
 For each set of coefficients, these two sequences are plotted vs m in Figure 4 a,b,c.
 
-![Prediction error for subset selection and bagged subset selection](aleimm.png){width="365"}
+![Prediction error for subset selection and bagged subset selection](aleimm.png){width="500px" height="200px"}
 
 Looking at Figures 4 a,b,c an obvious result is that the most accurate bagged predictor is at least as good as the most accurate subset predictor.
 In the first set of coefficients (with only three non-zero ${\beta_m}$), subset selection is nearly optimal and there is no improvement.In the second and third set of coefficients there is substantial improvement.
-*Bagging can improve only if the unbagged is not optimal*.Note that in all three graphs there is a point past which the bagged predictors have larger prediction error than the unbagged.The explenation is this: linear regression using all variables is a fairly stable procedure.The stability decreases as the number of variable used in the predictor decreases.*For a stable procedure* $\delta_B= \delta_A(\mathbf{x},P_L)$ *is not as accurate as* $\delta(\mathbf{x},P)$.As m decreases, the instability increases and there is a cross-over point at which $\delta^B_m$ becomes more accurate than $\delta_m$.
+*Bagging can improve only if the unbagged is not optimal*.Note that in all three graphs there is a point past which the bagged predictors have larger prediction error than the unbagged.The explenation is this: linear regression using all variables is a fairly stable procedure.The stability decreases as the number of variable used in the predictor decreases.*For a stable procedure* $\phi_B= \phi_A(\mathbf{x},P_L)$ *is not as accurate as* $\phi(\mathbf{x},P)$.As m decreases, the instability increases and there is a cross-over point at which $\phi^B_m$ becomes more accurate than $\phi_m$.
 
 **REMARKS**
 
@@ -346,7 +336,7 @@ In the first set of coefficients (with only three non-zero ${\beta_m}$), subset 
 In the Leo Breiman paper's experiment, 50 bootstrap replicates was used for classification and 25 for regression.
 To give some ideas of what the results are as connected with the number of bootstrap replicates we have run our example with the diabetes dataset.
 
-![Table diabetes dataset, number of bootstrap replicates](MissClassificationRate%20vs%20Num%20Bootstrap.png){width="307"}
+![Table diabetes dataset, number of bootstrap replicates](MISSCLASSVSSom.png){width="500px" height="150px"}
 
 The diabates dataset was run using 10,25,50,100 replicates.
 The results appear in the table above.
@@ -358,7 +348,7 @@ In this example the unbagged rate was 29.1 and most of the improvement was reach
 **How big should the bootstrap learning set be?**
 
 In the Leo Breiman paper's simulations the bootstrap replicates $L^B$ were used of the same size as the initial learning set L.
-While a bootstrap replicate may have 2,3,... duplicates of a given instance, it also leaves out about .37 of the instances.A reader of the technical report on which the paper is based remarked that this was an appreciable loss of data, and that accuracy might improve if a larger bootstrap set was used.Anyway with a bootstrap learning sets twice the size of L there was no improvement in accuracy.
+While a bootstrap replicate may have 2,3,... duplicates of a given instance, it also leaves out about .37 of the instances.A reader of the technical report on which the paper is based remarked that this was an appreciable loss of data, and that accuracy might improve if a larger bootstrap set was used.Anyway with a bootstrap learning sets twice the size of$\mathcal{L}$there was no improvement in accuracy.
 
 **COMPARISON**
 
@@ -416,10 +406,10 @@ Breiman L.
 \\ Breiman L.
 (2001).
 *Random forest*, Statistics Department, University of California, Berkeley.
-\ Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani (2021).
+ Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani (2021).
 *An Introduction to Statistical Learning with Applications in R*, Second Edition.
-\ Tae-Hwy Lee, Aman Ullah and Ran Wang.
+ Tae-Hwy Lee, Aman Ullah and Ran Wang.
 *Bootstrap Aggregating and Random Forest*.
-\ Andreas Buja, Werner Stuetzle.*Observation on Bagging*.
+ Andreas Buja, Werner Stuetzle.*Observation on Bagging*.
 University of Pennsylvania and University of Washington.
-\ Peter Bühlmann, Bin Yu (2002).*Analyzing bagging*, ETH Zürich and University of California, Berkely.
+ Peter Bühlmann, Bin Yu (2002).*Analyzing bagging*, ETH Zürich and University of California, Berkely.
