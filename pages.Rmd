@@ -99,7 +99,7 @@ A classification tree is constructed from the learning set using 10-fold cross-v
 Running the test set down this tree gives the squared error.
 A bootstrap sample $\mathcal{L_B}$ is selected from $\mathcal{L}$ and a tree grown using $\mathcal{L_B}$ and $\mathcal{L}$ used to select the pruned subtree.
 This is repeated 50 times giving tree predictors $\phi_{1}(x)$,...,$\phi_{50}(x)$.The bagged predictor is estimates as which class has the plurality in $\phi_{1}(x)$,...,$\phi_{50}(x)$.
-That is by the highest number of votes or taking the class with highest probability in $\phi_{1}(x)$,...,$\phi_{50}(x)$.The proportion of times the estimated class differs from the true class is the bagging misclassification rate $\mathit{e_B(L,T)}$.The random division of the data into$\mathcal{L}$and T is repeated 100 times and giving the result $\mathit{\bar{e_s}}$,$\mathit{\bar{e_B}}$.
+That is by the highest number of votes or taking the class with highest probability in $\phi_{1}(x)$,...,$\phi_{50}(x)$.The proportion of times the estimated class differs from the true class is the bagging misclassification rate $\mathit{e_B(\mathcal{L,T})}$.The random division of the data into $\mathcal{L}$ and $\mathcal{T}$ is repeated 100 times and giving the result $\mathit{\bar{e_s}}$,$\mathit{\bar{e_B}}$.
 
 **Bagging regression tree**
 
