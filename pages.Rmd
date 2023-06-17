@@ -79,10 +79,10 @@ Regression tree prediction uses a previously grown regression tree to predict th
 
 ![Bagging Decision Tree](baggreg.png){width="500px" height="200px"}
 
-The bootstrap is used in many situations in which it is hard or even impossible to directly compute the standard deviation of a quantity of interest.
-Here the bootstrap can be used in order to improve statistical learning methods such as decision trees.
+The bootstrap is used in situations in which it is hard to directly compute the standard deviation of a quantity of interest.
+It can be used in order to improve decision trees.
 The decision trees suffer from high variance.
-Bootstrap aggregation, or bagging, is a general-purpose procedure for reducing the variance of a statistical learning method; we introduce it here because it is particularly useful and frequently used in the context of decision trees.
+Bagging, is a general-purpose procedure for reducing the variance of a statistical learning method, it is particularly useful and frequently used in the context of decision trees.
 Given a set of $\mathit{n}$ independent observations $\mathit{Z_1}$,...,$\mathit{Z_n}$, each with variance $\sigma^2$, the variance of the mean $\overline{\mathit{Z}}$ of the observations is given by $\sigma^2$/$\mathit{n}$.
 In other words, averaging a set of observations reduces variance.
 Hence a natural way to reduce the variance and increase the test set accuracy of a statistical learning method is to take many training sets from the population, build a separate prediction model using each training set, and average the resulting predictions.
@@ -178,6 +178,7 @@ The three models are made to predict the result using the test dataset T and the
 The whole process is iterated 100 times for different combination of learning and test data and the mean error is calculated.
 
 ```{r echo=TRUE}
+set.seed(100)
 for (i in 1:100){
   index <- createDataPartition(E_sim$Outcome, p = 0.7, list = FALSE)
   # Divide the data into test set T and learning set L
