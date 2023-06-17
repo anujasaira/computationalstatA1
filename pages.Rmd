@@ -51,7 +51,8 @@ Decision tree learning employs a divide and conquer strategy by conducting a gre
 This process of splitting is then repeated in a top-down, recursive manner until all, or the majority of records have been classified under specific class labels.
 Whether or not all data points are classified as homogeneous sets is largely dependent on the complexity of the decision tree.
 Smaller trees are more easily able to attain pure leaf nodes-i.e.
-data points in a single class.However, as a tree grows in size, it becomes increasingly difficult to maintain this purity, and it usually results in too little data falling within a given subtree.
+data points in a single class.
+However, as a tree grows in size, it becomes increasingly difficult to maintain this purity, and it usually results in too little data falling within a given subtree.
 When this occurs, it is known as data fragmentation, and it can often lead to overfitting.
 As a result, decision trees have preference for small trees.
 Decision trees can maintain their accuracy is by forming an ensemble via a random forest algorithm; this classifier predicts more accurate results, particularly when the individual trees are uncorrelated with each other.
@@ -65,15 +66,13 @@ A **Classification Tree** is an algorithm where the target variable is categoric
 The algorithm is then used to identify the "Class" within which the target variable is most likely to fall.
 Classification trees are used when the dataset needs to be split into classes that belong to the response variable(like yes or no).
 In use, the decision process starts at the trunk and follows the branches until a leaf is reached.
-A classification tree model is created as and example and an example is available after the explanation of the trees.
+A classification tree model is created as an example and is available after the explanation of the trees.
 
 **Regression Tree** divide the data into subsets, that is, branches, nodes, and leaves.
-Like decision trees, regression trees select splits that decrease the dispersion of target attribute values.Thus, the target attribute values can be predicted from their mean values in the leaves.
+Like classification trees, regression trees select splits that decrease the dispersion of target attribute values.Thus, the target attribute values can be predicted from their mean values in the leaves.
 The resulting model is piece wise-constant.
 It has fixed predicted values that are assigned to regions for which the domain is split by the tree structure.
-Regression tree growing is done by creating a regression tree from a data set.
-To minimize the dispersion of target attributes, splits are selected.
-At the same time, target values are assigned to leaves when no further splits are required or possible.
+Regression tree growing is done by creating a regression tree from a data set, splits are selected and, at the same time, target values are assigned to leaves when no further splits are required or possible.
 Regression tree prediction uses a previously grown regression tree to predict the attribute values of a target for a data set.
 
 **BAGGING DECISION TREE**
@@ -171,7 +170,7 @@ The dataset consists of 768 cases, 8 variables and two classes.
 The variables are medical measurements on the patient plus age and pregnancy information.
 The classes are: tested positive for diabetes (268) or negative (500).
 In the simulated data, Breiman uses 300 samples as learning set from the 1800 samples generated.
-However we are going to use the raw dataset and split the dataset into 2 - a learning set, L, (70% of the data) with 76 rows and a test set, T, (30% of the data) with 692 rows.
+However we are going to use the raw dataset and split the dataset into 2 - a learning set, L, (70% of the data) with 538 rows and a test set, T, (30% of the data) with 230 rows.
 Next we will construct the classification tree model using train() function with 10-fold cross-validation.
 A bagged classification tree and a random forest is created in parallel using the function randomForest() and setting the number of trees as 25 and mtry (the number of variables used) as 8 for former and 3 ($\sqrt{8}$) for the latter.
 So the best 3 variables among the 8 will be chosen in the Random Forest.
@@ -286,12 +285,11 @@ Bagging stable classifiers is not a good idea.
 
 With data of the form $\mathcal{L}={(y_n,\mathbf{x_n}),n=1...N}$ where $\mathbf{x}=(x_1,...,x_M)$ consists of M predictor variables, a popular prediction method consists of forming predictors $\phi_1(\mathbf{x})...\phi_M(\mathbf{x})$ where $\phi_m(\mathbf{x})$ is linear in **x** and depends on only m of the M x-variables.
 Then one of the $\phi_m(\mathbf{x})$ is chosen as the designated predictor.
-A common method for constructing the $\phi_m(\mathbf{x})$, and one that is used in our simulation, is forward variable entry.
-If the variables used in $\phi_k(\mathbf{x})$ are $(x_{1k},...,x_{mk})$ then for each m $\notin {m_1,...m_K}$ form the linear regression of y on $(x_{m1},...,x_{mk}, x_m)$, compute the RSS(m) and take $x_{mk+1}$ such that $m_{k+1}$ minimizes RSS(m) and $\phi_{k+1}(\mathbf{x})$ the linear regression based on $(x_{m1},...,x_{mk+1})$.
+A common method for constructing the $\phi_m(\mathbf{x})$, and one that is used in the simulation below, is forward variable entry.
+If the variables used in $\phi_k(\mathbf{x})$ are $(x_{1_k},...,x_{m_k})$ then for each m $\notin {m_1,...m_k}$ form the linear regression of y on $(x_{m_1},...,x_{m_k}, x_m)$, compute the RSS(m) and take $x_{m_{k+1}}$ such that $m_{k+1}$ minimizes RSS(m) and $\phi_{k+1}(\mathbf{x})$ the linear regression based on $(x_{m_1},...,x_{m_{k+1}})$.
 What is clear about this procedure is that it is an unstable procedures.
 The variables are competing for inclusion in the $\phi_m$ and small changes in the data can cause large changes in the $\phi_m$.
 Forward variable selection is considered an unstable procedure due to the following reasons:dependency on the order of variable selection, sensitivity to correlated variables and impact of small data variations(forward variable selection can be sensitive to small variations in the input data).
-To mitigate the potential instability of forward variable selection, techniques such as cross-validation or bootstrap can be used to assess the stability of selected variables and the robustness of the resulting model.
 
 **Simulation structure**
 
@@ -357,12 +355,13 @@ In this example the unbagged rate was 29.1 and most of the improvement was reach
 
 In the Leo Breiman paper's simulations the bootstrap replicates $\mathcal{L}^B$ were used of the same size as the initial learning set $\mathcal{L}$.
 While a bootstrap replicate may have 2,3,... duplicates of a given instance, it also leaves out about 0.37 of the instances.
-A reader of the technical report on which the paper is based remarked that this was an appreciable loss of data, and that accuracy might improve if a larger bootstrap set was used.Anyway with a bootstrap learning sets twice the size of $\mathcal{L}$ there was no improvement in accuracy.
+A reader of the technical report on which the paper is based remarked that this was an appreciable loss of data, and that accuracy might improve if a larger bootstrap set was used.
+Anyway with a bootstrap learning sets twice the size of $\mathcal{L}$ there was no improvement in accuracy.
 
 **COMPARISON**
 
 Starting from what we studied in class, related to the Breiman's paper about bagging predictors, we can talk about bootstrap.
-We've seen different approach one of which is the paired bootstrap.
+We've seen different approaches, one of which is the paired bootstrap.
 We consider the original sample $\{(Y_i,X_i)\}_{i=1}^n$ as i.i.d. from an unknown distribution $F_{X,Y}$.
 We follow this algorithm:
 
@@ -371,6 +370,7 @@ For b=1,...,B: - obtain a bootstrap sample $\{(Y_1^*,X_1^*),...,(Y_n^*,X_n^*)\}$
 
 2\.
 Use the sample $(\hat{\beta^*}_{(1)},...,\hat{\beta^*}_{(B)})$ to draw inference.
+
 Instead the bagging algorithm has three basic steps:
 
 -Bootstrapping: Bagging employs a bootstrapping sampling technique, which involves creating diverse subsets of the training dataset.
@@ -413,16 +413,14 @@ Bagging can be regarded as an application or extension of bootstrap, where an ad
 
 **REFERENCES**
 
-Breiman L.
-(1996).
-*Bagging Predictors*, Statistics Department, University of California, Berkeley.
-\\ Breiman L.
-(2001).
-*Random forest*, Statistics Department, University of California, Berkeley.
- Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani (2021).
-*An Introduction to Statistical Learning with Applications in R*, Second Edition.
- Tae-Hwy Lee, Aman Ullah and Ran Wang.
-*Bootstrap Aggregating and Random Forest*.
- Andreas Buja, Werner Stuetzle.*Observation on Bagging*.
-University of Pennsylvania and University of Washington.
- Peter Bühlmann, Bin Yu (2002).*Analyzing bagging*, ETH Zürich and University of California, Berkely.
+Breiman L.(1996).*Bagging Predictors*, Statistics Department, University of California, Berkeley.
+
+Breiman L.(2001).*Random forest*, Statistics Department, University of California, Berkeley.
+
+Gareth James, Daniela Witten, Trevor Hastie, Robert Tibshirani (2021).*An Introduction to Statistical Learning with Applications in R*, Second Edition.
+
+Tae-Hwy Lee, Aman Ullah and Ran Wang.*Bootstrap Aggregating and Random Forest*.
+
+Andreas Buja, Werner Stuetzle.*Observation on Bagging*.University of Pennsylvania and University of Washington.
+
+Peter Bühlmann, Bin Yu (2002).*Analyzing bagging*, ETH Zürich and University of California, Berkely.
