@@ -345,7 +345,7 @@ To give some ideas of what the results are as connected with the number of boots
 ![Table diabetes dataset, number of bootstrap replicates](MISSCLASSVSSom.png){width="500px" height="150px"}
 
 The diabates dataset was run using 10, 25, 50, 100 replicates.
-The results appear in the table above.
+The results appear in the table in Figure 5.
 The unbagged misclassification rate is .253, so it's clear that we are getting most of the improvement using 25 replicates and so using more than 25 replicates would not be useful.
 In this case we have a small decrease because bagging is pushing close to the minimal attainable error rate.
 In the Leo Breiman paper's instead we have an example with a simulated dataset in which bagging reduces the excess error by about two-thirds.
