@@ -55,7 +55,7 @@ data points in a single class.
 However, as a tree grows in size, it becomes increasingly difficult to maintain this purity, and it usually results in too little data falling within a given subtree.
 When this occurs, it is known as data fragmentation, and it can often lead to overfitting.
 As a result, decision trees have preference for small trees.
-Decision trees can maintain their accuracy is by forming an ensemble via a random forest algorithm; this classifier predicts more accurate results, particularly when the individual trees are uncorrelated with each other.
+Decision trees can maintain their accuracy by forming an ensemble via a random forest algorithm; this classifier predicts more accurate results, particularly when the individual trees are uncorrelated with each other.
 It is explained further in the following section.
 Decision Trees are broadly classified into 5: ID3, C4.5,CHAID,MARS, CART. In this paper we are going to explore only about CART.
 CART is a predictive algorithm used in Machine Learning and it explains how the target variable's values can be predicted based on other matters.
