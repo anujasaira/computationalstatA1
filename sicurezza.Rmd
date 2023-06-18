@@ -1,0 +1,18 @@
+---
+title: "sicurezza"
+author: "Alessia"
+date: "2023-06-18"
+output: html_document
+---
+
+Now assume $z=y-\phi(\mathbf{x},\mathcal{L})$, apply the inequality $E(Z)^2\geq(EZ)^2$ and take the expectation over $\mathcal{L}$ (mean squared error):$$E_L(y-\phi(\mathbf{x},\mathcal{L}))^2\geq(E_L(y-\phi(\mathbf{x},\mathcal{L}))^2$$ Now we take the $E_{y,\mathbf{x}}$ of both members of the inequality and so we get average prediction error:
+
+LHS: $E_{y,\mathbf{x}}[E_L(y-\phi(\mathbf{x},\mathcal{L}))^2]$ = $E_{y,\mathbf{x}}E_L(y^2-2y\phi(\mathbf{x},\mathcal{L})+\phi^2(\mathbf{x},\mathcal{L}))$
+
+i.e. $E_{y,{x}}E_Ly^2-2E_{y,\mathbf{x}}E_Ly\phi(\mathbf{x},\mathcal{L})+E_{y,\mathbf{x}}E_L\phi^2(\mathbf{x},\mathcal{L})$ = $E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}y\phi_A+E_{y,\mathbf{x}}E_L\phi^2({x},L)$
+
+RHS: $E_{y,\mathbf{x}}(E_L(y-\phi(\mathbf{x},\mathcal{L}))^2$=$E_{y,\mathbf{x}}(y-\phi_A)^2$
+
+i.e. $E_{y,\mathbf{x}}(y^2-2y\phi_A+\phi_A^2)$ = $E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\phi_A+E_{y,\mathbf{x}}\phi_a^2$
+
+Substituting this two values in the inequality we get: $$E_{y,\mathbf{x}}y^2 - 2E_{y,\mathbf{x}}y\phi_A+E_{y,\mathbf{x}}E_L\phi^2({x},\mathcal{L})\geq(E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\phi_A+E_{y,\mathbf{x}}\phi_A^2)$$

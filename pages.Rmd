@@ -225,29 +225,25 @@ This diversity is achieved through the bootstrap sampling process, where each ba
 If the base models used in bagging are stable, meaning they produce similar predictions when trained on slightly different datasets, the ensemble model's performance may not significantly improve.
 This is because the models will produce similar predictions and will not provide enough diversity to effectively reduce variance.
 On the other hand, if the base models are unstable, meaning they are sensitive to small changes in the training data, the ensemble model will benefit from the aggregation of these diverse models.
+
 Let each (y,**x**) case in $\mathcal{L}$ be independently drawn from the probability distribution P.
 Suppose y is numerical and $\phi(\mathbf{x},\mathcal{L})$ the predictor.
 The aggregated predictor is $\phi_A(\mathbf{x},P)=E_L\phi(x,\mathcal{L})$.
-Now assume $z=y-\phi(\mathbf{x},\mathcal{L})$, apply the inequality $E(Z)^2\geq(EZ)^2$ and take the expectation over $\mathcal{L}$ (mean squared error):$$E_L(y-\phi(\mathbf{x},\mathcal{L}))^2\geq(E_L(y-\phi(\mathbf{x},\mathcal{L}))^2$$ Now we take the $E_{y,\mathbf{x}}$ of both members of the inequality and so we get average prediction error:
-
-LHS: $E_{y,\mathbf{x}}[E_L(y-\phi(\mathbf{x},\mathcal{L}))^2]$ = $E_{y,\mathbf{x}}E_L(y^2-2y\phi(\mathbf{x},\mathcal{L})+\phi^2(\mathbf{x},\mathcal{L}))$
-
-i.e. $E_{y,{x}}E_Ly^2-2E_{y,\mathbf{x}}E_Ly\phi(\mathbf{x},\mathcal{L})+E_{y,\mathbf{x}}E_L\phi^2(\mathbf{x},\mathcal{L})$ = $E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}y\phi_A+E_{y,\mathbf{x}}E_L\phi^2({x},L)$
-
-RHS: $E_{y,\mathbf{x}}(E_L(y-\phi(\mathbf{x},\mathcal{L}))^2$=$E_{y,\mathbf{x}}(y-\phi_A)^2$
-
-i.e. $E_{y,\mathbf{x}}(y^2-2y\phi_A+\phi_A^2)$ = $E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\phi_A+E_{y,\mathbf{x}}\phi_a^2$
-
-Substituting this two values in the inequality we get: $$E_{y,\mathbf{x}}y^2 - 2E_{y,\mathbf{x}}y\phi_A+E_{y,\mathbf{x}}E_L\phi^2({x},\mathcal{L})\geq(E_{y,\mathbf{x}}y^2-2E_{y,\mathbf{x}}\phi_A+E_{y,\mathbf{x}}\phi_A^2)$$
-
-So how much lower the mean squared error of $\phi_A$ is depends on how unequal the two sides of $$[E_L\phi(\mathbf{x},L)]^2\leq[E_L\phi^2({x},L)]$$ are.
-The effect of instability is clear; - if $\phi(x,L)$ does not change too much with replicate $\mathcal{L}$ the two sides will be nearly equal, and aggregation will not help.
-- the more highly variable the $\phi(x,\mathcal{L})$ are, the more improvement may produce.
+Take Y,**X** to be random variables having distribution P and independent of L.
+The average prediction error e in $\Phi(\mathbf{x},L)$ is $E_LE_{y,\mathbf{x}}(y-\phi(\mathbf{x},\mathcal{L}))^2$.
+Define the error in the aggregated predictor to be $e_A=E_{y,\mathbf{x}}(y-\phi_A(\mathbf{x},\mathcal{P}))^2$.
+Using the inequality $(EZ)^2\leq{E(Z)^2}$ gives e= $EY^2-2EY\phi_A+E_{Y,\mathbf{X}}E_L\phi^2(\mathbf{X},L)\geq{E(Y-\phi_A)^2=e_A}$ Thus, $\phi_A$ has lower mean_squared prediction error than $\Phi$.
+How much lower depends on how unequal the two side of $$[E_L\phi(\mathbf{x},L)]^2\leq[E_L\phi^2({x},L)]$$ are.
+The effect of instability is clear; - if $\phi(x,L)$ does not change too much with replicate $\mathcal{L}$ the two sides will be nearly equal, and aggregation will not help - the more highly variable the $\phi(x,\mathcal{L})$ are, the more improvement may produce.
 But $\phi_A(x,\mathcal{L})$ always improves on $\phi$.
-
 To clarify better this last point we have to remind that if the predictors remain constant, then the expected value will also remain constant over repeated observations.
 In this case, both sides of the inequality will be equal because the expected value squared will be the same as the expected value of the squared predictors.
 Instead, when the predictors are highly variable the square of the mean might underestimate the average value of the squared predictors because it doesn't account for the variability.
+Now, the bagged estimate is not $\Phi_A(\mathbf{X},P)$, but rather $\Phi_B$=$\Phi_A(\mathbf{X},P_L)$ where $P_L$ is the distribution that concentrates mass 1/N at each point (y,**x**)$\in$L, $P_L$ is called the bootstrap approximation to P.
+Then if the procedure is unstable, then $\phi_B$ can improve through aggregation.
+On the other side, is the procedure is table $\phi_B$ will not be as accurate for data drawn from P as $\phi_A(\mathbf{x},P)$.
+There is a cross-over point between stability and instability at which $\phi_B$ stops improving on $\phi_A(\mathbf{x},P)$ and does worse.
+This has an illustration in the linear regression subset selection example in the next section.
 
 **Classification**
 
